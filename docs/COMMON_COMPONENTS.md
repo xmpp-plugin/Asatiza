@@ -1,0 +1,29 @@
+# Common Components
+
+## Verified
+
+None. The starter app uses Material widgets directly. VERIFIED
+
+## Decided Shared Components (`lib/core/`)
+
+| Component | Location | Used by |
+|---|---|---|
+| Theme (colors, text styles, spacing) | `lib/core/theme/` | All |
+| Primary / secondary buttons | `lib/core/widgets/` | All |
+| Text input with validation | `lib/core/widgets/` | Auth, profile, post, chat |
+| 6-digit OTP input (auto-submit, resend after 60 s) | `lib/core/widgets/` | Sign-up, forgot password |
+| Avatar (with placeholder) | `lib/core/widgets/` | Feed, discover, chat, profile |
+| Post card | `lib/core/widgets/` or `features/feed` | Feed, profile |
+| Person card with Connect | `lib/core/widgets/` | Discover, connections |
+| Empty / loading / error views | `lib/core/widgets/` | All lists |
+| Report / Block bottom sheet | `lib/core/widgets/` | Post, profile, chat |
+| Profile-strength card (widget; % from `ProfileStrengthCalculator` in `lib/core/logic/`) | `features/profile_setup` | Home, profile |
+| Validators (email, password 8+, lengths) | `lib/core/utils/` | Forms |
+| `ImageCompressor` service (posts ~200 KB, avatars ~60 KB) | `lib/core/services/` | Profile, post, chat |
+| `ImagePickerService`, `PushNotificationService`, `ErrorReporter` | `lib/core/services/` | Profile, post, chat, notifications, app root |
+
+Update this table when a component is created (mark VERIFIED with its real path).
+
+## Reuse Rule
+
+Search `lib/core/` and the affected feature before creating new UI or helpers. When an existing component is not suitable, document why in the phase file. Adding a shared widget requires approval unless listed in the approved phase.

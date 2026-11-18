@@ -1,0 +1,25 @@
+# Execution Report
+
+- Phase ID:
+- Status:
+- Current step:
+- Approval:
+- Outcome:
+- Summary:
+- Files modified:
+- Files created:
+- Files deleted:
+- Purpose of each file change:
+- File-by-file change log:
+- Existing components reused:
+- Approved new components:
+- API changes:
+- Model changes:
+- Platform changes:
+- Dependency changes:
+- Compact technical check results, excluding app launch/build unless explicitly requested:
+- Newly introduced issues fixed:
+- Pre-existing unrelated issues not fixed:
+- Commands unable to run and reason:
+- Out-of-scope findings:
+- Ready for developer manual testing:

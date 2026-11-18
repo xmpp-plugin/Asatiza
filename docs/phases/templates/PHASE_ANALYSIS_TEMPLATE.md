@@ -1,0 +1,49 @@
+# Phase Analysis
+
+- Phase ID:
+- Status:
+- Current step:
+- Approval:
+- Outcome:
+- Module:
+- Priority:
+- Risk:
+- Created:
+- Last updated:
+- Developer request:
+- Business objective:
+- Current behavior:
+- Expected behavior:
+- Root cause or implementation gap:
+- End-to-end flow:
+- Relevant files:
+- Existing components to reuse:
+- Existing API details:
+- Existing models:
+- State-management impact:
+- Navigation impact:
+- Cache and database impact:
+- Supabase tables, migrations and RLS impact:
+- Storage, Realtime and Edge Function impact:
+- Teacher / Student / signed-out impact:
+- Android impact:
+- iOS impact:
+- Permission impact:
+- Security impact:
+- Backward-compatibility impact:
+- Dependency impact:
+- Proposed new files:
+- Proposed new classes:
+- Risk level:
+- Proposed solution:
+- Alternative solutions:
+- Reason for selected solution:
+- Expected files to change:
+- Files that must not change:
+- Automated test plan:
+- Manual test plan:
+- Rollback strategy:
+- Approval requirement:
+- Blocking information:
+- Open questions:
+- Completion criteria:

@@ -1,0 +1,77 @@
+# Architecture
+
+## Verified Architecture (audit 2026-11-18)
+
+- Single-file starter app: `lib/main.dart` defines `MyApp` (`MaterialApp`, `ColorScheme.fromSeed(Colors.deepPurple)`) and `MyHomePage` (`StatefulWidget` counter). VERIFIED
+- No state-management package, no router package, no backend client, no repositories, no models. VERIFIED
+
+## Decided Target Architecture
+
+```
+Screens / widgets (lib/features/<feature>/presentation)
+        │ BlocBuilder / BlocListener / context.read
+Blocs / cubits (lib/features/<feature>/bloc) ──uses──▶ Logic classes (lib/features/<feature>/logic, shared: lib/core/logic)
+        │ call (constructor-injected abstractions)
+Repository interfaces (lib/data/repositories/*_repository.dart)      Service interfaces (lib/core/services)
+        │ implemented by                                               │ implemented by
+Supabase implementations (lib/data/repositories/supabase/)            Firebase / plugin implementations
+  SupabaseClient + Dio injected        → later api/ (Dio → Python FastAPI)   (FCM, local notifications, Crashlytics,
+        │                                                                     image compress, image picker)
+Supabase Auth · Postgres + RLS · Storage · Realtime · Edge Functions (send-push → FCM)
+```
+
+Dependency direction is strictly top-down. Repositories and services never import blocs/cubits or Flutter UI. Logic classes import only models and other logic. SOLID rules: `CLASS_AND_COMPONENT_RULES.md`.
+
+## Module Table (DECIDED)
+
+| Feature | Path | Blocs / cubits | Repositories / services | Tables / services |
+|---|---|---|---|---|
+| auth | `lib/features/auth/` | auth state, sign-up, OTP, login, reset | `AuthRepository` | Supabase Auth, `profiles` |
+| onboarding | `lib/features/onboarding/` | splash/welcome | — | — |
+| profile_setup | `lib/features/profile_setup/` | setup steps, strength | `ProfileRepository`, `MediaRepository`, `ImagePickerService`, `ImageCompressor` | `profiles`, `teacher_details`, `student_details`, `avatars`, `certificates` |
+| feed / post | `lib/features/feed/`, `lib/features/post/` | feed, create post, likes, comments | `FeedRepository`, `MediaRepository`, `ImagePickerService`, `ImageCompressor` | `posts`, `post_likes`, `post_comments`, `post-images` |
+| discover | `lib/features/discover/` | search, filters | `DiscoverRepository` | `profiles`, detail tables |
+| connections | `lib/features/connections/` | requests, list | `ConnectionRepository` | `connections` |
+| chat | `lib/features/chat/` | conversations, messages | `ChatRepository`, `MediaRepository`, `ImagePickerService`, `ImageCompressor` | `conversations`, `messages`, `chat-images`, Realtime |
+| notifications | `lib/features/notifications/` | list, unread, push | `NotificationRepository`, `PushNotificationService` | `notifications`, `device_tokens`, FCM, `send-push` |
+| profile | `lib/features/profile/` | my/other profile, edit | `ProfileRepository`, `MediaRepository` | `profiles` + details |
+| settings | `lib/features/settings/` | password, toggles, delete | `AuthRepository`, `SafetyRepository` | `reports`, `blocks`, deletion |
+
+Logic classes (examples, created only through approved phases): `ProfileStrengthCalculator` (shared: profile_setup, profile, Home card → `lib/core/logic/`), `DiscoverVisibilityRules` (discover, connections → `lib/core/logic/`), `PostLimits`, `FeedOrdering` (feed).
+
+## Composition Root (DECIDED)
+
+`lib/main.dart` only — the single place where concrete classes are created:
+
+1. `WidgetsFlutterBinding.ensureInitialized()`, Firebase init (FCM + Crashlytics), `Supabase.initialize` with URL/anon key from `--dart-define`, error handlers wired to `ErrorReporter`.
+2. Create `SupabaseClient` (from `Supabase.instance.client`, read once here), `Dio` (configured by `lib/core/network/`) and service implementations.
+3. Create repository implementations with constructor injection and register them by interface type: `MultiRepositoryProvider(providers: [RepositoryProvider<ProfileRepository>(create: (_) => SupabaseProfileRepository(client)), ...])`.
+4. App-wide blocs (e.g. `AuthBloc`) in `MultiBlocProvider`, then `AsatizaApp()` wiring the go_router config and theme from `lib/core/`.
+
+Choosing Supabase vs later Python API implementations happens only here.
+
+## Lifecycle
+
+- Auth state stream drives the go_router redirect (signed-out → OTP pending → profile setup (skip-able) → tabs).
+- Realtime channels and stream subscriptions are opened in blocs/cubits and cancelled in `close()`.
+- FCM token is registered (through `PushNotificationService` + `NotificationRepository`) after sign-in and removed on sign-out/account deletion.
+
+## Conflict-Resolution Note
+
+Generic rule "documentation must not introduce architecture" is merged with the owner's plan: the architecture above is owner-approved, so docs describe it as the DECIDED target. It becomes VERIFIED only when it exists in code. If code differs from the plan, code wins for VERIFIED facts; the gap is recorded in `KNOWN_ISSUES.md` and the owner decides. Never silently "fix" either side.
+
+## Architecture Rules
+
+- One state-management library: BLoC (`flutter_bloc`), Cubit by default. No Riverpod, GetX, MobX, `get_it` or direct `provider`.
+- Dependency injection by constructor; repositories and services registered by interface type with `RepositoryProvider`/`MultiRepositoryProvider`.
+- HTTP: `supabase_flutter` for Auth, database, Storage, Realtime; Dio for Edge Function calls and the later Python API. Dio instance configured in `lib/core/network/` (base URL, timeouts, auth-token interceptor, logging in debug only).
+- One router (go_router). No `Navigator.push` route tables outside it except dialogs/sheets.
+- One data path per feature: bloc/cubit → repository interface → implementation.
+- `SupabaseClient` and `Dio` are used only inside repository implementations (`lib/data/repositories/supabase/`, later `api/`), received through constructors; `Supabase.instance` is read only in `lib/main.dart`.
+- Platform plugins (`firebase_*`, `flutter_local_notifications`, `flutter_image_compress`, `image_picker`) are imported only by their service implementation in `lib/core/services/`.
+- Repository interfaces are the contract the Python API must also satisfy; changes are HIGH risk.
+- No parallel architectures, duplicate repositories, or feature-local Supabase clients.
+
+## Development Rule
+
+All 1.0 structure is created through approved phases, created one at a time by the developer. Update this file's VERIFIED sections whenever a phase closes.

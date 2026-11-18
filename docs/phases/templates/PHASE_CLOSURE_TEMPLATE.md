@@ -1,0 +1,22 @@
+# Phase Closure
+
+- Phase ID:
+- Final status:
+- Current step:
+- Approval:
+- Outcome:
+- Completion date:
+- Developer manual-test confirmation:
+- Tested platforms and devices:
+- Failed and retested cases:
+- Final changed files:
+- Execute technical checks and results:
+- Reused technical evidence:
+- No unapproved dependency changes:
+- No unapproved architecture changes:
+- Known limitations:
+- Follow-up phases:
+- Rollback guidance:
+- Phase file path:
+- Phase state/index updated:
+- Local commit result, only when explicitly approved:

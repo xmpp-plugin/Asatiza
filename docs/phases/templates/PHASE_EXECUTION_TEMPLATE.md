@@ -1,0 +1,44 @@
+# Phase Execution
+
+- Phase ID:
+- Status:
+- Current step:
+- Approval:
+- Outcome:
+- Implementation started:
+- Implementation completed:
+- Active-phase conflict check:
+- Pre-existing unrelated changes:
+- Approved scope:
+- Explicit non-scope:
+- Readiness checklist complete:
+- Files modified:
+- Files created:
+- Files deleted:
+- Purpose of each change:
+- File-by-file change log:
+- Existing components reused:
+- Approved new components:
+- API changes:
+- Model changes:
+- Repository changes:
+- State-management changes:
+- Navigation changes:
+- Cache/database changes:
+- Supabase migration/RLS/function changes:
+- Android changes:
+- iOS changes:
+- Dependency changes:
+- Out-of-scope findings:
+- Stop conditions encountered:
+- Changed-file evidence:
+- Git status/diff rerun reason:
+- Patch/whitespace check result, when run:
+- Relevant Dart formatting:
+- Scoped or project analysis command/result:
+- Relevant targeted tests/result:
+- Newly introduced issues found:
+- Newly introduced issues fixed:
+- Pre-existing unrelated issues not fixed:
+- Commands unable to run and reason:
+- Ready for developer manual testing:
