@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-19 (`PHASE_002`): routes `/` (Splash) · `/welcome` · `/sign-up` · `/sign-up/code` · `/log-in` · `/forgot-password` (email + code steps) · `/forgot-password/new` · `/setup/teacher` · `/setup/student` · shell `/home` `/teachers` `/chats` `/alerts` · `/create-post` (full-screen) · `/post/:id`. Redirect on `SessionCubit`: signed out → Welcome (Splash and sign-in screens allowed); after sign-up → role setup until finished/skipped; signed in → sign-in screens redirect to Home. Report is a modal bottom sheet. Bottom bar uses the design SVG icons.
+
 VERIFIED 2026-11-19 (`PHASE_001`):
 
 - `lib/core/router/app_router.dart`: top-level `appRouter` (`GoRouter`, initial `/home`) with `StatefulShellRoute.indexedStack` → 4 branches `/home` (`HomeScreen`), `/teachers` (`DiscoverScreen`), `/chats` (`ChatsScreen`), `/alerts` (`NotificationsScreen`); each branch keeps its own stack.

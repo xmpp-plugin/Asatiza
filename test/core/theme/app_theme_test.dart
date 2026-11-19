@@ -1,4 +1,6 @@
 import 'package:asatiza/core/theme/app_colors.dart';
+import 'package:asatiza/core/theme/app_radius.dart';
+import 'package:asatiza/core/theme/app_spacing.dart';
 import 'package:asatiza/core/theme/app_text_styles.dart';
 import 'package:asatiza/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -127,6 +129,67 @@ void main() {
       size: 24,
       lineHeight: 44,
       weight: FontWeight.w400,
+    );
+    // Artboard values outside the type scale (PHASE_002).
+    expectStyle(
+      AppTextStyles.splashWordmark,
+      family: 'Fraunces',
+      size: 44,
+      lineHeight: 48,
+      weight: FontWeight.w600,
+    );
+    expectStyle(
+      AppTextStyles.authTitle,
+      family: 'Fraunces',
+      size: 28,
+      lineHeight: 34,
+      weight: FontWeight.w600,
+    );
+    expectStyle(
+      AppTextStyles.bodyMd,
+      family: 'PlusJakartaSans',
+      size: 15,
+      lineHeight: 22,
+      weight: FontWeight.w400,
+    );
+    expectStyle(
+      AppTextStyles.helper,
+      family: 'PlusJakartaSans',
+      size: 13,
+      lineHeight: 18,
+      weight: FontWeight.w400,
+    );
+    expectStyle(
+      AppTextStyles.composer,
+      family: 'PlusJakartaSans',
+      size: 17,
+      lineHeight: 26,
+      weight: FontWeight.w400,
+    );
+  });
+
+  test('artboard spacing and radius values', () {
+    expect(
+      <double>[
+        AppSpacing.gap2,
+        AppSpacing.gap6,
+        AppSpacing.gap10,
+        AppSpacing.gap14,
+        AppSpacing.gap18,
+        AppSpacing.gap22,
+      ],
+      <double>[2, 6, 10, 14, 18, 22],
+    );
+    expect(
+      <double>[
+        AppRadius.commentTail,
+        AppRadius.checkbox,
+        AppRadius.segment,
+        AppRadius.otpBox,
+        AppRadius.optionCard,
+        AppRadius.strengthCard,
+      ],
+      <double>[4, 6, 9, 10, 14, 20],
     );
   });
 }

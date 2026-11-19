@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-19 (`PHASE_002`): Dart models mirror the planned tables — `Profile` (`profiles`), `TeacherDetails` (`teacher_details`), `StudentDetails` (`student_details`), `Post` (`posts`, as seen by a viewer: `likedByMe`), `Comment` (`post_comments`). UUID string ids, storage paths not URLs, `copyWith`, `Equatable`; no JSON mapping yet (added with the Supabase phase). Mock data is in memory and resets on restart.
+
 No `supabase/` folder, migrations, local database or cache code exists (audit 2026-11-18). VERIFIED
 
 ## Decided Tables (PostgreSQL on Supabase)

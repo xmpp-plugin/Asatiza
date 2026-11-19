@@ -2,6 +2,8 @@
 
 ## Verified Tests
 
+- 2026-11-19 (`PHASE_002`): 57 tests, all passing — logic and formatter units, mock data and repositories, all cubits, screen flows (sign-up both roles, log-in, password reset, setup, post detail/report/block, create post), app/router/theme. `test/helpers/test_app.dart` builds the app with fresh mocks and loads the real fonts. Widget tests that await a stream cancel must use `tester.runAsync` (cancel futures complete in the real zone). No golden tests (developer decision). VERIFIED
+
 - 2026-11-19 (`PHASE_001`): `test/app_test.dart` (boot, tabs, light/dark), `test/core/router/app_router_test.dart` (navigation, system back), `test/core/theme/app_theme_test.dart` (design tokens). 12 tests, all passing. The global `appRouter` keeps its location between tests, so each test starts with `appRouter.go(AppRoutes.home)`. VERIFIED
 - No `integration_test/`. VERIFIED
 - Flutter lints configured through `analysis_options.yaml`. VERIFIED

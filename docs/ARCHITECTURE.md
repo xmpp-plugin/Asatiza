@@ -2,6 +2,12 @@
 
 ## Verified Architecture (updated 2026-11-19, `PHASE_001`)
 
+VERIFIED 2026-11-19 (`PHASE_002`, part 1):
+- Data layer exists: 5 models + 12 enums (`lib/data/models/`), 4 provisional repository interfaces (`AuthRepository`, `ProfileRepository`, `FeedRepository`, `SafetyRepository`) and their in-memory mock implementations in `lib/data/repositories/mock/` with seed data in `lib/data/mock/`. Mocks are created and registered by interface type only in `lib/main.dart` (`MultiRepositoryProvider`).
+- State: `flutter_bloc` — app-wide `SessionCubit` (`lib/core/session/`) plus 11 screen cubits; cubits receive repositories through constructors.
+- Logic classes: `ProfileStrengthCalculator` (core), `FeedOrdering`, `PostRules`, `PasswordRules`, `OtpRules`; `RelativeTimeFormatter` (core/utils). Mock repositories reuse these rules (as the backend will enforce them server-side).
+- Router: `createAppRouter(SessionCubit)` with a session redirect (signed out → sign-in screens; right after sign-up → that role's setup; signed in → never back to sign-in).
+
 - `lib/main.dart` boots and registers font licenses; `lib/app.dart` (`AsatizaApp`) wires `AppTheme.light()`/`dark()` (`ThemeMode.system`), `AppLocalizations` (English) and `appRouter`. VERIFIED
 - `lib/core/theme/` (tokens + theme), `lib/core/router/` (go_router shell), `lib/core/widgets/main_shell.dart`, and placeholder screens in `lib/features/{feed,discover,chat,notifications,post}/presentation/`. VERIFIED
 - No state-management package, backend client, repositories, services or models yet; no `MultiRepositoryProvider` until the first repository exists. VERIFIED

@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-19 (`PHASE_002`): the 4 interfaces above exist in `lib/data/repositories/` with method contracts in Dart doc comments; status **provisional** until each backend phase confirms it. Only mock implementations exist (`lib/data/repositories/mock/`); no Supabase or Dio code yet.
+
 No backend client, repository, Supabase project files, Edge Functions or API calls exist in the repository (audit 2026-11-18). VERIFIED
 
 ## Decided Contracts (Version 1.0)

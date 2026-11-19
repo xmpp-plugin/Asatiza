@@ -8,14 +8,14 @@
 - Module: UI
 - Priority: High
 - Risk level: High (3 production dependencies, ≈ 135 new Dart/test files + 50 SVG assets, new `mock/` data layer, first models and repository interfaces, shared core widgets and theme constants, router rewrite)
-- Current status: APPROVED
-- Current step: APPROVAL
+- Current status: ACTIVE
+- Current step: MANUAL_TEST
 - Approval: APPROVED
 - Outcome: NONE
 - Version: 1.0
 - Created date: 2026-11-19
-- Last updated date: 2026-11-19 (approved)
-- Started date: Not started
+- Last updated date: 2026-11-19 (implemented; waiting for developer manual test)
+- Started date: 2026-11-19
 - Completed date: Not completed
 - Developer owner: Repository owner (developer) — owner and manual tester
 - Dependency phases: PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION
@@ -189,16 +189,31 @@ All changes are local Dart, assets, pubspec and docs; no native, data or remote 
 ## Implementation
 
 - Approved implementation plan: Approved 2026-11-19 by the developer (repository owner) with the explicit request "APPROVE PHASE: PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA". The approval covers the Scope section of part 1 exactly as written: the 3 dependencies (`flutter_bloc`, `flutter_svg`, `equatable`); the new folders `lib/data/repositories/mock/`, `lib/data/mock/`, `lib/core/session/`, `lib/data/models/enums/`; 50 SVG assets (42 icons, 6 illustrations, 2 logos) exported from the owner's canvas version `1795090178-e295`; 12 enums, 5 models, `failures.dart`; 4 provisional repository interfaces (`AuthRepository`, `ProfileRepository`, `FeedRepository`, `SafetyRepository`) and their mock implementations and seed data; `SessionCubit`; 6 logic files; off-token theme constants added to `AppTextStyles`, `AppSpacing`, `AppRadius` (existing values unchanged); 20 shared widgets, 10 feature widgets, 11 cubits with states; the screens for the 18 in-scope artboards (+ feed empty state, post-card skeleton); router/session redirect; `MainShell` design icons; ARB strings; tests; and the listed doc updates. Anything outside this list needs new approval (step `APPROVAL`, approval `PENDING`). No golden tests. Native code, Supabase and Firebase stay untouched.
-- Implementation log: Not started
-- Exact changed files: None
-- Purpose of every changed file: None
-- Existing components reused: PHASE_001 theme tokens, `AppTheme`, `AppRoutes`, `appRouter`, `MainShell`, l10n setup, bundled fonts.
-- New approved components: None
+- Implementation log (2026-11-19):
+  1. Readiness OK; no other active phase; Git baseline branch `PHASE_002_UI_ADD_FULL_APP_DESIGN` at `b5b53e6`, clean tree.
+  2. Assets exported by script from the saved canvas files (version `1795090178-e295`): 41 icons matched by content hash + `read_ticks`, 6 illustrations (checked: no CSS variables inside), 2 logo uploads.
+  3. `flutter pub add flutter_bloc flutter_svg equatable` → `flutter_bloc ^9.1.1`, `flutter_svg ^2.3.4`, `equatable ^3.0.0`; asset folders declared.
+  4. Theme constants for artboard values added to `AppTextStyles` (splashWordmark, authTitle, composer, cardTitle, bodyMd, nameMd, sectionTitle, helper, helperStrong, otpDigit, micro), `AppSpacing` (gap2…gap22), `AppRadius` (commentTail, checkbox, segment, otpBox, optionCard, strengthCard). Existing values unchanged.
+  5. 12 enums, 5 models, failures, 4 interfaces (provisional contracts), 4 mock repositories, seed data (20 teachers, 14 students, 14 posts, 20 comments), 6 logic files, `SessionCubit`.
+  6. 20 shared widgets, 10 feature widgets, 11 cubits + states, 13 screens/sheets (incl. replaced Home and Create post), router with session redirect, `AsatizaApp`/`main.dart` wiring, `MainShell` design icons.
+  7. `app_en.arb`: 231 strings (all UI copy from the artboards); `flutter gen-l10n`.
+  8. Tests: helper + 8 test files (57 tests). Docs updated.
+- Exact changed files: see Change Log (32 modified, 155 added — all inside the approved groups).
+- Existing components reused: PHASE_001 tokens, `AppTheme`, `AppRoutes`, `MainShell` (structure kept), fonts, l10n.
+- New approved components: all approved groups created (see Change Log). Implementation decisions inside approved files (recorded for review):
+  - Enum labels are extension methods in each enum file that take `AppLocalizations` (one place per enum; the data layer reads generated l10n types only).
+  - `ProfileStrengthItem` enum lives in `profile_strength_calculator.dart` as the calculator's vocabulary.
+  - Mock repositories reuse the pure logic classes (`PasswordRules`, `OtpRules`, `PostRules`, `FeedOrdering`), mirroring server-side enforcement.
+  - Screen-local private widgets (no new files): segmented control (teacher + student setup), radio option tile (student setup + report sheet), age-group card, design switch, info box copies, resend row (email code + forgot password). Duplication is small; promote to shared widgets in part 2 (needs approval).
+  - `WelcomeSlide` takes an `indicator` (dots sit 8 px under the text, as on the artboards); `PostCard.onReport` is optional (own posts show no Report).
+  - The design illustrations' overlay labels ("Certificate photo", "Photo", "Qaida page") are not drawn: they are design placeholders, and the request forbids placeholder text.
 - Out-of-scope findings:
-  - Launcher icons / native splash from `assets/logos/` (separate phase; native change).
-  - Check Amiri diacritics for the Quran verse on Android and iOS during manual test.
-  - Git: the working branch is still `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION`; a new branch for this phase is recommended before execution.
-- Unexpected risks: None
+  - Home avatar opens profile setup and Home search opens the Teachers tab until My profile and search results exist (part 2). Terms / Privacy links in sign-up are styled but not tappable until the policy screens exist (part 2).
+  - Country and time-zone pickers use fixed lists in `teacher_setup_screen.dart` (data, English proper nouns) until a backend list exists.
+  - Seed size is 20 teachers / 14 students (approved "≈ 24 / 18"); part 2 can add more for list screens.
+  - Widget tests that await a stream cancel must use `tester.runAsync` (fake-async limitation, not an app bug).
+- Unexpected risks: None beyond those listed. Issues introduced and fixed during execution: `AppIcon.key` name clash with `Widget.key` (renamed `keyIcon`); mock `async*` watch streams blocked cancellation → rewritten with `StreamController`; unit test needed `initializeDateFormatting`; tests now load the real fonts (Ahem caused false overflows).
+- Known limitation: iOS not built here (Windows); app not launched by Claude.
 
 ## Change Log
 
@@ -206,24 +221,42 @@ For every changed file, record:
 
 | File path | Change type | Approved in phase | What changed | Why it changed | Existing behavior preserved | Possible side effects | File-level checks |
 |---|---|---|---|---|---|---|---|
-| None | Not changed | Not applicable | Not applicable | Not applicable | Not applicable | Not applicable | Not applicable |
+| `assets/icons/*.svg` (42) | added | Yes | Design stroke icons + read ticks | Use the design's real icons | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `assets/illustrations/*.svg` (6), `assets/images/logo_{splash,mark}.svg` | added | Yes | Welcome heroes 1–3, certificate/post/qaida images, 2 logos | Design artwork | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `pubspec.yaml`, `pubspec.lock` | modified | Yes | `flutter_bloc`, `flutter_svg`, `equatable`; 3 asset folders | Approved dependencies | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/core/theme/app_text_styles.dart`, `app_spacing.dart`, `app_radius.dart` | modified | Yes | Artboard constants added; token values unchanged | Answer 6c | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/data/models/enums/*.dart` (12) | added | Yes | Selectable values + l10n label extensions | Enums for selections | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/data/models/{profile,teacher_details,student_details,post,comment}.dart` | added | Yes | Immutable Equatable models | Mirror plan tables | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/core/errors/failures.dart` | added | Yes | Sealed `Failure` + `ValidationReason` | Repository error contract | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/data/repositories/{auth,profile,feed,safety}_repository.dart` | added | Yes | Interfaces with method contracts (provisional) | Boundary for backend swap | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/data/repositories/mock/*.dart` (4), `lib/data/mock/{mock_profiles,mock_posts}.dart` | added | Yes | In-memory implementations + seed data | UI phase data | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/core/session/session_{cubit,state}.dart` | added | Yes | Signed-in user, needsSetup, log out | Session + redirect | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/core/logic/profile_strength_calculator.dart`, `lib/core/utils/relative_time_formatter.dart`, `lib/features/{feed,post,auth}/logic/*.dart` (4) | added | Yes | Strength %, feed order, post/password/OTP rules, relative time | Business rules out of widgets | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/core/widgets/*.dart` (20 new) + `main_shell.dart` (modified) | added/modified | Yes | Shared components; bottom bar uses design SVG icons | Reusable design components | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/features/*/presentation/widgets/*.dart` (10) | added | Yes | Role card, info note, slide, dots, weekday picker, photo/upload tiles, top bar, comment tile/composer | Feature components | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/features/*/bloc/*.dart` (22) | added | Yes | 11 cubits + states | Screen state | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/features/{onboarding,auth,profile_setup,feed,post,safety}/presentation/*.dart` (13; Home and Create post modified) | added/modified | Yes | Splash, Welcome, Sign up, Email code, Log in, Forgot password, New password, Teacher/Student setup, Home, Post detail, Create post, Report sheet | 18 artboards | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/core/router/app_routes.dart`, `app_router.dart`, `lib/app.dart`, `lib/main.dart` | modified | Yes | Route map + session redirect; app wiring; mocks registered by interface | Navigation + composition root | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `lib/l10n/app_en.arb` (+ generated) | modified | Yes | 231 strings | All UI copy from ARB | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `test/helpers/test_app.dart`, `test/**` (8 test files) | added/modified | Yes | 57 tests | Automated checks | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
+| `docs/*` (11), phase file, index, state | modified | Yes | VERIFIED sections, file catalog, logs | Docs workflow | PHASE_001 shell, theme values, fonts, Teachers/Chats/Alerts placeholders | See out-of-scope findings | analyze, tests |
 
 ## Execute Technical Checks
 
-- Changed-file evidence reviewed after changes: Not reviewed
-- Git status/diff rerun reason: Not needed yet
-- Patch/whitespace check result, when run: Not run
-- Relevant Dart formatting: Not run
-- Scoped or project analysis commands: Not run
-- Relevant targeted tests: Not run
-- Newly introduced issues found: None recorded
-- Newly introduced issues fixed: None recorded
-- Pre-existing unrelated issues: None recorded
-- Commands that could not run and why: None recorded
+- Changed-file evidence reviewed after changes: Yes — `git status --short --untracked-files=all` (32 modified, 155 added), all in approved groups. No native, Supabase or Firebase files touched.
+- Git status/diff rerun reason: once, to build the change log.
+- Patch/whitespace check result, when run: Not run (no commit/merge).
+- Relevant Dart formatting: `dart format lib test` → `--set-exit-if-changed` 0 changed (126 files).
+- Scoped or project analysis commands: `flutter analyze` → "No issues found!" (after fixing 1 error + 3 infos introduced here).
+- Relevant targeted tests: `flutter test` → 57 passed, 0 failed (run file by file while fixing, then the full suite).
+- Other checks: no screen/cubit imports a mock class; no hard-coded colors in features; no Material `Icons.*` left; no "lorem/test/sample" UI text; seed-data test asserts no placeholder words.
+- Newly introduced issues found / fixed: 5 / 5 (icon name clash; mock stream cancellation; date-symbol init in a unit test; test fonts; consent-checkbox tap in tests).
+- Pre-existing unrelated issues: None.
+- Commands that could not run and why: app launch and iOS build — not requested / Windows; developer manual test.
 
 ## Manual Testing
 
-- Ready for developer manual testing: No
+- Ready for developer manual testing: Yes (2026-11-19): `flutter run` on Android (and iOS on a Mac). Mock accounts: `ayesha.khan@gmail.com` (student) and `ahmed.khan@gmail.com` (teacher), any 8+ character password; any 6 digits for codes. Every launch starts signed out.
 - Developer manual-test confirmation: Not provided
 - Manual-test notes requested by developer: None
 

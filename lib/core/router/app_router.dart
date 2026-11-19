@@ -1,64 +1,149 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/email_code_screen.dart';
+import '../../features/auth/presentation/forgot_password_screen.dart';
+import '../../features/auth/presentation/log_in_screen.dart';
+import '../../features/auth/presentation/new_password_screen.dart';
+import '../../features/auth/presentation/sign_up_screen.dart';
 import '../../features/chat/presentation/chats_screen.dart';
 import '../../features/discover/presentation/discover_screen.dart';
 import '../../features/feed/presentation/home_screen.dart';
+import '../../features/feed/presentation/post_detail_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
+import '../../features/onboarding/presentation/splash_screen.dart';
+import '../../features/onboarding/presentation/welcome_screen.dart';
 import '../../features/post/presentation/create_post_screen.dart';
+import '../../features/profile_setup/presentation/student_setup_screen.dart';
+import '../../features/profile_setup/presentation/teacher_setup_screen.dart';
+import '../session/session_cubit.dart';
 import '../widgets/main_shell.dart';
 import 'app_routes.dart';
 
-/// The app's route table: a 4-branch bottom-bar shell (each tab keeps its
-/// own navigation stack) plus Create post as a full-screen route above it.
-final GoRouter appRouter = GoRouter(
-  initialLocation: AppRoutes.home,
-  routes: <RouteBase>[
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) =>
-          MainShell(navigationShell: navigationShell),
-      branches: <StatefulShellBranch>[
-        StatefulShellBranch(
-          routes: <RouteBase>[
-            GoRoute(
-              path: AppRoutes.home,
-              builder: (context, state) => const HomeScreen(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: <RouteBase>[
-            GoRoute(
-              path: AppRoutes.teachers,
-              builder: (context, state) => const DiscoverScreen(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: <RouteBase>[
-            GoRoute(
-              path: AppRoutes.chats,
-              builder: (context, state) => const ChatsScreen(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: <RouteBase>[
-            GoRoute(
-              path: AppRoutes.alerts,
-              builder: (context, state) => const NotificationsScreen(),
-            ),
-          ],
-        ),
-      ],
-    ),
-    GoRoute(
-      path: AppRoutes.createPost,
-      pageBuilder: (context, state) => MaterialPage<void>(
-        key: state.pageKey,
-        fullscreenDialog: true,
-        child: const CreatePostScreen(),
+/// Builds the app's route table, redirecting on the [session]:
+/// - signed out → only Splash and the sign-in screens;
+/// - signed in right after sign-up → that role's profile setup;
+/// - signed in → never back to the sign-in screens.
+GoRouter createAppRouter(SessionCubit session) {
+  return GoRouter(
+    initialLocation: AppRoutes.splash,
+    refreshListenable: _SessionListenable(session),
+    redirect: (context, state) {
+      final location = state.matchedLocation;
+      if (location == AppRoutes.splash) {
+        return null;
+      }
+      final current = session.state;
+      final user = current.user;
+      if (user == null) {
+        return AppRoutes.signedOut.contains(location)
+            ? null
+            : AppRoutes.welcome;
+      }
+      if (current.needsSetup) {
+        final setup = AppRoutes.setupFor(user.role);
+        return location == setup ? null : setup;
+      }
+      return AppRoutes.signedOut.contains(location) ? AppRoutes.home : null;
+    },
+    routes: <RouteBase>[
+      GoRoute(path: AppRoutes.splash, builder: (_, _) => const SplashScreen()),
+      GoRoute(
+        path: AppRoutes.welcome,
+        builder: (_, _) => const WelcomeScreen(),
       ),
-    ),
-  ],
-);
+      GoRoute(path: AppRoutes.signUp, builder: (_, _) => const SignUpScreen()),
+      GoRoute(
+        path: AppRoutes.signUpCode,
+        builder: (_, state) =>
+            EmailCodeScreen(email: state.extra as String? ?? ''),
+      ),
+      GoRoute(path: AppRoutes.logIn, builder: (_, _) => const LogInScreen()),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (_, _) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.newPassword,
+        builder: (_, state) =>
+            NewPasswordScreen(email: state.extra as String? ?? ''),
+      ),
+      GoRoute(
+        path: AppRoutes.teacherSetup,
+        builder: (_, _) => const TeacherSetupScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.studentSetup,
+        builder: (_, _) => const StudentSetupScreen(),
+      ),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MainShell(navigationShell: navigationShell),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: AppRoutes.home,
+                builder: (_, _) => const HomeScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: AppRoutes.teachers,
+                builder: (_, _) => const DiscoverScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: AppRoutes.chats,
+                builder: (_, _) => const ChatsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: AppRoutes.alerts,
+                builder: (_, _) => const NotificationsScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: AppRoutes.createPost,
+        pageBuilder: (context, state) => MaterialPage<void>(
+          key: state.pageKey,
+          fullscreenDialog: true,
+          child: const CreatePostScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.postPattern,
+        builder: (_, state) =>
+            PostDetailScreen(postId: state.pathParameters['id']!),
+      ),
+    ],
+  );
+}
+
+/// Notifies go_router whenever the session changes so redirects re-run.
+class _SessionListenable extends ChangeNotifier {
+  _SessionListenable(SessionCubit session) {
+    _subscription = session.stream.listen((_) => notifyListeners());
+  }
+
+  late final StreamSubscription<Object?> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}

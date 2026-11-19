@@ -97,6 +97,99 @@ abstract final class AppTextStyles {
     fontWeight: FontWeight.w700,
   );
 
+  // ---- Artboard values outside the type scale (design is the source of
+  // truth; token values above are unchanged). ----
+
+  /// Splash wordmark: Fraunces 44/48.
+  static const TextStyle splashWordmark = TextStyle(
+    fontFamily: displayFamily,
+    fontSize: 44,
+    height: 48 / 44,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.44,
+  );
+
+  /// Sign-in and setup titles: Fraunces 28/34.
+  static const TextStyle authTitle = TextStyle(
+    fontFamily: displayFamily,
+    fontSize: 28,
+    height: 34 / 28,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.28,
+  );
+
+  /// Post composer text: 17/26.
+  static const TextStyle composer = TextStyle(
+    fontFamily: sansFamily,
+    fontSize: 17,
+    height: 26 / 17,
+    fontWeight: FontWeight.w400,
+  );
+
+  /// Profile-strength card title: 16 / 700.
+  static const TextStyle cardTitle = TextStyle(
+    fontFamily: sansFamily,
+    fontSize: 16,
+    height: 22 / 16,
+    fontWeight: FontWeight.w700,
+  );
+
+  /// Subtitles and post text: 15/22.
+  static const TextStyle bodyMd = TextStyle(
+    fontFamily: sansFamily,
+    fontSize: 15,
+    height: 22 / 15,
+    fontWeight: FontWeight.w400,
+  );
+
+  /// Names on cards and option titles: 15/20 / 600.
+  static const TextStyle nameMd = TextStyle(
+    fontFamily: sansFamily,
+    fontSize: 15,
+    height: 20 / 15,
+    fontWeight: FontWeight.w600,
+  );
+
+  /// Section headings: 15/20 / 700.
+  static const TextStyle sectionTitle = TextStyle(
+    fontFamily: sansFamily,
+    fontSize: 15,
+    height: 20 / 15,
+    fontWeight: FontWeight.w700,
+  );
+
+  /// Helper text, info boxes, meta lines: 13/18.
+  static const TextStyle helper = TextStyle(
+    fontFamily: sansFamily,
+    fontSize: 13,
+    height: 18 / 13,
+    fontWeight: FontWeight.w400,
+  );
+
+  /// Step labels and comment author names: 13/18 / 600.
+  static const TextStyle helperStrong = TextStyle(
+    fontFamily: sansFamily,
+    fontSize: 13,
+    height: 18 / 13,
+    fontWeight: FontWeight.w600,
+  );
+
+  /// OTP digits: 24 / 600.
+  static const TextStyle otpDigit = TextStyle(
+    fontFamily: sansFamily,
+    fontSize: 24,
+    height: 32 / 24,
+    fontWeight: FontWeight.w600,
+  );
+
+  /// Count badges: 11 / 700.
+  static const TextStyle micro = TextStyle(
+    fontFamily: sansFamily,
+    fontSize: 11,
+    height: 14 / 11,
+    fontWeight: FontWeight.w700,
+  );
+
   static const TextStyle quran = TextStyle(
     fontFamily: arabicFamily,
     fontSize: 24,

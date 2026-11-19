@@ -2,6 +2,8 @@
 
 ## Verified From Repository (audit 2026-11-18)
 
+- 2026-11-19 (`PHASE_002`): the app runs on mock data only — every launch starts signed out and all changes reset on restart; any valid email + 8-character password signs in; any 6 digits pass the code step. Teachers, Chats and Alerts tabs are still placeholders (part 2). Home avatar opens profile setup and Home search opens the Teachers tab until My profile and search results exist (part 2). "Photo", "Add a profile photo" and "Upload certificates" attach sample files (no camera/gallery).
+
 - Updated 2026-11-19 (`PHASE_001`): Git repository on branch `main`. App foundation exists (theme, router, shell, placeholder screens). App ID `com.asatiza.app` on Android and iOS — permanent after the first store upload.
 - `README.md` is still the Flutter starter README.
 - No Supabase, Firebase, flutter_bloc or Dio dependencies yet (added by the phases that use them).

@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-19 (`PHASE_002`) — `lib/core/widgets/`: `AppIcon` (design SVG icons, stroke/fill variants), `AppButton` (primary/secondary/danger, 48 px / 36 px), `AppTextField`, `AppTextArea` (counter), `AppChip`, `TagChip`, `AppAvatar` (initials + verified), `VerifiedBadge`, `AppCheckbox`, `SectionLabel`, `BackHeader`, `AppBottomSheet`, `StepProgressHeader`, `NumberedStepper`, `OtpInput`, `ProfileStrengthCard`, `PostCard`, `EmptyStateView`, `SkeletonBox`, `PostCardSkeleton`. Feature widgets: `RoleCard`, `InfoNote` (auth); `WelcomeSlide`, `PageDots` (onboarding); `WeekdayPicker`, `PhotoPickerTile`, `UploadTile` (profile_setup); `HomeTopBar`, `CommentTile`, `CommentComposer` (feed). Private, screen-local for now (promote in part 2 with approval): segmented control, radio option tile, age-group card, design switch.
+
 VERIFIED 2026-11-19 (`PHASE_001`):
 
 | Component | Location | Used by |

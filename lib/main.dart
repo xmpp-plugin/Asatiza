@@ -1,15 +1,45 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app.dart';
+import 'core/session/session_cubit.dart';
+import 'data/repositories/auth_repository.dart';
+import 'data/repositories/feed_repository.dart';
+import 'data/repositories/mock/mock_auth_repository.dart';
+import 'data/repositories/mock/mock_feed_repository.dart';
+import 'data/repositories/mock/mock_profile_repository.dart';
+import 'data/repositories/mock/mock_safety_repository.dart';
+import 'data/repositories/profile_repository.dart';
+import 'data/repositories/safety_repository.dart';
 
-/// Composition root: starts the app. Later phases create services and
-/// repositories here and register them by interface type.
+/// Composition root: the only place concrete repositories are created.
+/// UI-only phase: in-memory mock implementations (reset on restart). The
+/// backend phases swap them for Supabase implementations here.
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   _registerFontLicenses();
-  runApp(const AsatizaApp());
+
+  final profiles = MockProfileRepository();
+  final auth = MockAuthRepository(profiles);
+  final feed = MockFeedRepository();
+  final safety = MockSafetyRepository();
+
+  runApp(
+    MultiRepositoryProvider(
+      providers: <RepositoryProvider<Object>>[
+        RepositoryProvider<AuthRepository>.value(value: auth),
+        RepositoryProvider<ProfileRepository>.value(value: profiles),
+        RepositoryProvider<FeedRepository>.value(value: feed),
+        RepositoryProvider<SafetyRepository>.value(value: safety),
+      ],
+      child: BlocProvider<SessionCubit>(
+        create: (_) => SessionCubit(auth, profiles),
+        child: const AsatizaApp(),
+      ),
+    ),
+  );
 }
 
 /// The bundled fonts use the SIL Open Font License, which requires shipping

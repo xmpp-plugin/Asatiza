@@ -8,6 +8,7 @@ import '../theme/app_radius.dart';
 import '../theme/app_shadows.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
+import 'app_icon.dart';
 
 /// App shell with the designed bottom bar: Home · Teachers · raised centre
 /// "+" · Chats · Alerts. Tab screens are the [navigationShell] branches.
@@ -45,15 +46,13 @@ class MainShell extends StatelessWidget {
           children: <Widget>[
             _TabItem(
               label: l10n.tabHome,
-              icon: Icons.home_outlined,
-              selectedIcon: Icons.home,
+              icon: AppIcon.home,
               selected: current == 0,
               onTap: () => _selectTab(0),
             ),
             _TabItem(
               label: l10n.tabTeachers,
-              icon: Icons.people_outline,
-              selectedIcon: Icons.people,
+              icon: AppIcon.people,
               selected: current == 1,
               onTap: () => _selectTab(1),
             ),
@@ -63,15 +62,13 @@ class MainShell extends StatelessWidget {
             ),
             _TabItem(
               label: l10n.tabChats,
-              icon: Icons.chat_bubble_outline,
-              selectedIcon: Icons.chat_bubble,
+              icon: AppIcon.chat,
               selected: current == 2,
               onTap: () => _selectTab(2),
             ),
             _TabItem(
               label: l10n.tabAlerts,
-              icon: Icons.notifications_none,
-              selectedIcon: Icons.notifications,
+              icon: AppIcon.bell,
               selected: current == 3,
               onTap: () => _selectTab(3),
             ),
@@ -122,14 +119,14 @@ class _TabItem extends StatelessWidget {
   const _TabItem({
     required this.label,
     required this.icon,
-    required this.selectedIcon,
     required this.selected,
     required this.onTap,
   });
 
   final String label;
-  final IconData icon;
-  final IconData selectedIcon;
+
+  /// Design icon name (see [AppIcon]); drawn bolder when selected.
+  final String icon;
   final bool selected;
   final VoidCallback onTap;
 
@@ -159,9 +156,10 @@ class _TabItem extends StatelessWidget {
                   color: selected ? colors.brand100 : null,
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                 ),
-                child: Icon(
-                  selected ? selectedIcon : icon,
+                child: AppIcon(
+                  icon,
                   size: 22,
+                  strokeWidth: selected ? 2.1 : 1.8,
                   color: foreground,
                 ),
               ),
@@ -220,7 +218,14 @@ class _CreatePostButton extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: onTap,
-                child: Icon(Icons.add, size: 28, color: colors.onBrand),
+                child: Center(
+                  child: AppIcon(
+                    AppIcon.plus,
+                    size: 28,
+                    strokeWidth: 2.4,
+                    color: colors.onBrand,
+                  ),
+                ),
               ),
             ),
           ),

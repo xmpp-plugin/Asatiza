@@ -2,6 +2,8 @@
 
 ## Verified Tree (updated 2026-11-19, `PHASE_001`)
 
+VERIFIED 2026-11-19 (`PHASE_002`): added `assets/icons/` (42), `assets/illustrations/` (6), `assets/images/` (2 logos); `lib/core/{errors,logic,session,utils}/`, 18 new widgets in `lib/core/widgets/`; `lib/data/models/` (+ `enums/`), `lib/data/repositories/` (+ `mock/`), `lib/data/mock/`; features `onboarding`, `auth`, `profile_setup`, `feed`, `post`, `safety` with `bloc/`, `logic/`, `presentation/` (+ `widgets/`). Mock folders hold UI-phase stand-ins only; screens and cubits never import them.
+
 ```
 asatiza/
   .claude/skills/asatiza-docs-and-phases/   project skill (this workflow)

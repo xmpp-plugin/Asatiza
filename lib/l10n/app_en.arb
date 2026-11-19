@@ -1,47 +1,347 @@
 {
   "@@locale": "en",
   "appTitle": "Asatiza",
-  "@appTitle": {
-    "description": "App name shown by the operating system task switcher."
-  },
   "tabHome": "Home",
-  "@tabHome": {
-    "description": "Bottom bar label of the Home tab."
-  },
   "tabTeachers": "Teachers",
-  "@tabTeachers": {
-    "description": "Bottom bar label of the Teachers tab (student view)."
-  },
   "tabChats": "Chats",
-  "@tabChats": {
-    "description": "Bottom bar label of the Chats tab."
-  },
   "tabAlerts": "Alerts",
-  "@tabAlerts": {
-    "description": "Bottom bar label of the notifications tab, as named in the design."
-  },
   "createPostAction": "Create post",
-  "@createPostAction": {
-    "description": "Accessibility label and tooltip of the centre + button."
-  },
   "teachersTitle": "Teachers",
-  "@teachersTitle": {
-    "description": "Title of the Teachers list screen."
-  },
   "chatsTitle": "Chats",
-  "@chatsTitle": {
-    "description": "Title of the Chats list screen."
-  },
   "notificationsTitle": "Notifications",
-  "@notificationsTitle": {
-    "description": "Title of the notifications screen."
-  },
   "newPostTitle": "New post",
-  "@newPostTitle": {
-    "description": "Title of the Create post screen."
-  },
   "closeAction": "Close",
-  "@closeAction": {
-    "description": "Accessibility label and tooltip of a close button."
-  }
+  "backAction": "Back",
+  "logoLabel": "Asatiza logo",
+  "loadingLabel": "Loading",
+  "splashTagline": "Find Quran teachers & students",
+  "skipAction": "Skip",
+  "welcomeTitle1": "Learn the Quran with the right teacher",
+  "welcomeMessage1": "Find verified Tajweed, Hifz and Nazra teachers who match your language, time zone and goals.",
+  "welcomeTitle2": "Connect with verified teachers",
+  "welcomeMessage2": "Send a request with a short note. Once a teacher accepts, you can chat safely in a moderated community.",
+  "welcomeTitle3": "Share and grow together",
+  "welcomeMessage3": "Post Islamic reminders, Tajweed tips and your Hifz achievements, and learn from teachers you follow.",
+  "slideOf": "Slide {current} of {total}",
+  "@slideOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "createAccountAction": "Create account",
+  "haveAccountAction": "I already have an account",
+  "signUpTitle": "Create your account",
+  "signUpSubtitle": "Join teachers and students learning the Quran together.",
+  "iAmA": "I am a",
+  "roleStudent": "Student",
+  "roleStudentDescription": "I want to learn, or I’m signing up my child",
+  "roleTeacher": "Teacher",
+  "roleTeacherDescription": "I teach the Quran",
+  "fullNameLabel": "Full name",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "showPasswordAction": "Show password",
+  "hidePasswordAction": "Hide password",
+  "passwordRuleLength": "At least 8 characters",
+  "passwordRuleMatch": "Passwords match",
+  "consentPrefix": "I am 18 or older and agree to the ",
+  "termsLink": "Terms",
+  "consentAnd": " and ",
+  "privacyLink": "Privacy Policy",
+  "consentSuffix": ". Parents may sign up for their child.",
+  "haveAccountQuestion": "Already have an account? ",
+  "logInAction": "Log in",
+  "errorInvalidEmail": "Enter a valid email address",
+  "errorEmailRegistered": "This email already has an account. Log in instead.",
+  "errorWrongCredentials": "Email or password is not correct",
+  "errorInvalidCode": "That code didn’t work. Check it and try again.",
+  "checkEmailTitle": "Check your email",
+  "codeSentPrefix": "We sent a 6-digit code to ",
+  "codeSentSuffix": ". Enter it below.",
+  "codeFieldLabel": "6-digit code",
+  "resendCodeIn": "Resend code in ",
+  "resendCodeAction": "Resend code",
+  "wrongEmailAction": "Wrong email? Change it",
+  "spamFolderNote": "Can’t find it? Check your Spam or Promotions folder. The code is valid for 10 minutes.",
+  "verifyAction": "Verify",
+  "logInTitle": "Welcome back",
+  "logInSubtitle": "Assalamu alaikum! Log in to continue.",
+  "forgotPasswordAction": "Forgot password?",
+  "newToAsatiza": "New to Asatiza? ",
+  "resetStepEmail": "Email",
+  "resetStepCode": "Code",
+  "resetStepNewPassword": "New password",
+  "resetTitle": "Reset your password",
+  "resetSubtitle": "Enter the email you signed up with. We’ll send you a 6-digit code.",
+  "sendCodeAction": "Send code",
+  "enterCodeTitle": "Enter the code",
+  "continueAction": "Continue",
+  "newPasswordTitle": "Create a new password",
+  "newPasswordSubtitle": "Choose something you haven’t used before.",
+  "newPasswordLabel": "New password",
+  "confirmPasswordLabel": "Confirm password",
+  "saveAndLogInAction": "Save and log in",
+  "setupStepOf": "Step {step} of {total}",
+  "@setupStepOf": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "skipForNow": "Skip for now",
+  "teacherSetupTitle1": "Let students see who you are",
+  "teacherSetupTitle2": "What do you teach?",
+  "teacherSetupTitle3": "Your classes and fee",
+  "addProfilePhoto": "Add a profile photo",
+  "teacherPhotoHint": "A clear, modest photo builds trust with parents and students.",
+  "headlineLabel": "Headline",
+  "headlineHint": "Shown under your name everywhere. 60 characters max.",
+  "profilePercent": "Profile {percent}%",
+  "@profilePercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "subjectsLabel": "Subjects",
+  "teachingLanguagesLabel": "Languages you teach in",
+  "genderLabel": "Gender",
+  "countryLabel": "Country",
+  "timeZoneLabel": "Time zone",
+  "bioLabel": "Bio",
+  "experienceLabel": "Experience (years)",
+  "feeLabel": "Fee ({currency})",
+  "@feeLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "availableDaysLabel": "Available days",
+  "uploadCertificatesAction": "Upload certificates",
+  "uploadCertificatesHint": "JPG or PDF",
+  "certificatesAdded": "{count, plural, =1{1 certificate added} other{{count} certificates added}}",
+  "@certificatesAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "finishSetupAction": "Finish setup",
+  "studentSetupTitle1": "Tell us about the learner",
+  "addPhotoOptional": "Add a photo (optional)",
+  "studentPhotoHint": "Your photo is never shown in the Students list. Teachers see it only on your profile.",
+  "learnerAgeGroupLabel": "Learner age group",
+  "parentSetupNote": "Setting up for your child? Choose Child. You keep the account and see every chat with their teacher.",
+  "studentSetupTitle2": "What would you like to learn?",
+  "currentLevelLabel": "Current level",
+  "languagesLabel": "Languages",
+  "studentSetupTitle3": "Your ideal teacher",
+  "preferredTeacherGenderLabel": "Preferred teacher gender",
+  "lookingForTeacherLabel": "Looking for a teacher",
+  "lookingForTeacherHint": "Teachers can find you in the Students tab and send you requests.",
+  "shortNoteLabel": "Short note (optional)",
+  "shortNotePlaceholder": "For example: evenings after 6 pm work best for me.",
+  "characterCounter": "{count} / {max}",
+  "@characterCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "genderMale": "Male",
+  "genderFemale": "Female",
+  "genderAny": "Any",
+  "subjectNooraniQaida": "Noorani Qaida",
+  "subjectNazra": "Nazra",
+  "subjectTajweed": "Tajweed",
+  "subjectHifz": "Hifz",
+  "subjectTafsir": "Tafsir",
+  "subjectArabic": "Arabic",
+  "subjectIslamicStudies": "Islamic studies",
+  "languageUrdu": "Urdu",
+  "languageEnglish": "English",
+  "languageArabic": "Arabic",
+  "languagePunjabi": "Punjabi",
+  "languagePashto": "Pashto",
+  "languageHindi": "Hindi",
+  "ageGroupChild": "Child",
+  "ageGroupTeen": "Teen",
+  "ageGroupAdult": "Adult",
+  "ageGroupChildRange": "6–12",
+  "ageGroupTeenRange": "13–17",
+  "ageGroupAdultRange": "18+",
+  "levelBeginner": "Beginner",
+  "levelBeginnerDescription": "Can’t read Arabic letters yet",
+  "levelReadsWithHelp": "Can read with help",
+  "levelReadsWithHelpDescription": "Reads slowly and makes mistakes",
+  "levelReadsFluently": "Reads fluently",
+  "levelReadsFluentlyDescription": "Wants to improve Tajweed",
+  "levelMemorising": "Memorising",
+  "levelMemorisingDescription": "Working on Hifz",
+  "feeUnitPerClass": "Per class",
+  "feeUnitPerMonth": "Per month",
+  "audienceChildren": "Children",
+  "audienceWomen": "Women",
+  "audienceMen": "Men",
+  "audienceAll": "Everyone",
+  "weekdayMonday": "Monday",
+  "weekdayMondayInitial": "M",
+  "weekdayTuesday": "Tuesday",
+  "weekdayTuesdayInitial": "T",
+  "weekdayWednesday": "Wednesday",
+  "weekdayWednesdayInitial": "W",
+  "weekdayThursday": "Thursday",
+  "weekdayThursdayInitial": "T",
+  "weekdayFriday": "Friday",
+  "weekdayFridayInitial": "F",
+  "weekdaySaturday": "Saturday",
+  "weekdaySaturdayInitial": "S",
+  "weekdaySunday": "Sunday",
+  "weekdaySundayInitial": "S",
+  "tagReminder": "Reminder",
+  "tagTajweedTip": "Tajweed tip",
+  "tagHifz": "Hifz",
+  "tagQuestion": "Question",
+  "tagClassAnnouncement": "Class announcement",
+  "tagAchievement": "Achievement",
+  "reportReasonSpam": "Spam",
+  "reportReasonInappropriate": "Inappropriate content",
+  "reportReasonHate": "Hate or harassment",
+  "reportReasonFalseInformation": "False information",
+  "reportReasonSomethingElse": "Something else",
+  "searchPlaceholder": "Search teachers, posts, subjects",
+  "myProfileAndSettings": "My profile and settings",
+  "strengthTitle": "Your profile is {percent}% complete",
+  "@strengthTitle": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "stepsLeft": "{count, plural, =0{All done} =1{1 step left} other{{count} steps left}}",
+  "@stepsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "completeProfileAction": "Complete profile",
+  "hideAction": "Hide",
+  "strengthHintPhoto": "Add a profile photo to build trust.",
+  "strengthHintHeadline": "Add a headline so students know what you teach.",
+  "strengthHintSubjects": "Add the subjects you teach.",
+  "strengthHintLanguages": "Add the languages you speak.",
+  "strengthHintBio": "Write a short bio about your teaching.",
+  "strengthHintExperience": "Add your years of experience.",
+  "strengthHintFee": "Add your fee and available days.",
+  "strengthHintCertificate": "Upload a certificate to get verified faster.",
+  "strengthHintGoals": "Add your learning goal to reach teachers faster.",
+  "strengthHintAgeGroup": "Add the learner’s age group.",
+  "strengthHintLevel": "Add your current reading level.",
+  "strengthHintLocation": "Add your country and time zone.",
+  "strengthHintPreferredGender": "Choose your preferred teacher gender.",
+  "strengthHintPhotoOrNote": "Add a photo or a short note for teachers.",
+  "verifiedTeacher": "Verified teacher",
+  "postMetaTeacher": "{subject} teacher",
+  "@postMetaTeacher": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "postCounts": "{likes, plural, =1{1 like} other{{likes} likes}} · {comments, plural, =1{1 comment} other{{comments} comments}}",
+  "@postCounts": {
+    "placeholders": {
+      "likes": {
+        "type": "int"
+      },
+      "comments": {
+        "type": "int"
+      }
+    }
+  },
+  "likeAction": "Like",
+  "likedAction": "Liked",
+  "commentAction": "Comment",
+  "reportAction": "Report",
+  "replyAction": "Reply",
+  "postOptionsAction": "Post options",
+  "postPhotoLabel": "Post photo",
+  "timeNow": "now",
+  "timeMinutes": "{minutes}m",
+  "@timeMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "timeHours": "{hours}h",
+  "@timeHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "timeYesterday": "Yesterday",
+  "emptyFeedTitle": "Your feed is quiet",
+  "emptyFeedMessage": "Connect with teachers to see their posts here.",
+  "findTeachersAction": "Find teachers",
+  "postTitle": "Post",
+  "commentsHeading": "Comments ({count})",
+  "@commentsHeading": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "writeCommentPlaceholder": "Write a comment…",
+  "sendCommentAction": "Send comment",
+  "postAction": "Post",
+  "postingToEveryone": "Posting to everyone",
+  "postPlaceholder": "Share a reminder, a Tajweed tip or a question…",
+  "removePhotoAction": "Remove photo",
+  "chooseTagLabel": "Choose a tag",
+  "requiredLabel": "Required",
+  "contentPolicyNote": "Keep it Islamic and respectful. No music, politics, sectarian debate or ads.",
+  "photoAction": "Photo",
+  "postCounter": "{count} / {max}",
+  "@postCounter": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "reportTitle": "Report this post",
+  "reportSubtitle": "Your report is anonymous. Our team reviews every report.",
+  "alsoBlockPrefix": "Also block ",
+  "alsoBlockSuffix": ". They won’t see your profile or message you.",
+  "cancelAction": "Cancel",
+  "reportSentMessage": "Thank you. Our team will review this post."
 }

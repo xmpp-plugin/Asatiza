@@ -23,4 +23,13 @@ abstract final class AppSpacing {
 
   /// Minimum touch target height.
   static const double space12 = 48;
+
+  // ---- Artboard gaps outside the spacing scale (design is the source of
+  // truth; token values above are unchanged). ----
+  static const double gap2 = 2;
+  static const double gap6 = 6;
+  static const double gap10 = 10;
+  static const double gap14 = 14;
+  static const double gap18 = 18;
+  static const double gap22 = 22;
 }

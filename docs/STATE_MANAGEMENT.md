@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-19 (`PHASE_002`): `flutter_bloc ^9.1.1` and `equatable ^3.0.0` added. `SessionCubit` (signed in/out, `needsSetup`) is provided above `MaterialApp.router`; screen cubits are created per route with `BlocProvider` and get repositories via `context.read<XRepository>()` in `create`. States are immutable `Equatable` classes with an explicit status enum. Stream subscriptions are cancelled in `close()`; the OTP countdown timer is cancelled in `OtpCubit.close()`.
+
 No state-management package; `MyHomePage` uses `setState` (starter code). VERIFIED
 
 ## Decided: BLoC (`flutter_bloc`) — owner decision 2026-11-18

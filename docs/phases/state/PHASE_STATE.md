@@ -5,8 +5,8 @@ Manually maintained operational record for approvals, handoffs, manual-test evid
 ## Current Snapshot
 
 - Last updated: 2026-11-19
-- Active phase: None
-- Next approved phase: `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` (`APPROVED` / `APPROVAL` / `APPROVED`)
+- Active phase: `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` (`ACTIVE` / `MANUAL_TEST` / `APPROVED`)
+- Next approved phase: None
 - Planned phases: None
 - Closed phases: `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` (`COMPLETED` 2026-11-19)
 - Blocked phases: None
@@ -14,7 +14,7 @@ Manually maintained operational record for approvals, handoffs, manual-test evid
 
 ## Recommended Next Operation
 
-Create a new Git branch for PHASE_002 (current branch is still `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION`), then `EXECUTE PHASE: PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` when the developer asks. Part 2 is created after this phase closes.
+Developer manual test of `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` (Android + iOS, light and dark, side by side with the artboards), then `CLOSE PHASE`. Nothing is committed.
 
 ## Log
 
@@ -35,3 +35,5 @@ Create a new Git branch for PHASE_002 (current branch is still `PHASE_001_FOUNDA
 | 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Create Phase (update) | Developer answers recorded: split into 2 phases (this = part 1), in-memory mock behaviour, mock session as recommended, hybrid = custom + native behaviour, mismatches per recommendation (off-token values as theme constants), `equatable` yes, no golden tests. Canvas re-read: still version `1795067979-b73b` (27 artboards) — added screens/sizes not published yet. Still `PLANNED` / `ANALYSIS` / `PENDING`. |
 | 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Create Phase (update) | Canvas re-read: version `1795090178-e295`, 47 artboards (20 added; original 27 + tokens unchanged). Part 1 now has 18 artboards; 41 icons + ticks, 6 illustrations, 2 logos. No missing information left; step moved to `APPROVAL`, approval `PENDING`. |
 | 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Approve Phase | Explicit developer approval ("APPROVE PHASE: PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA"). Readiness 21/21. Status `APPROVED`, step `APPROVAL`, approval `APPROVED`, outcome `NONE`. Covers part 1 scope: 3 dependencies, new mock/session folders, models/enums, 4 provisional repository interfaces, theme constants, 50 SVG assets, shared widgets, 18 artboards' screens. Not executed. |
+| 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Execute Phase (start) | Readiness OK; no other active phase. Git baseline: branch `PHASE_002_UI_ADD_FULL_APP_DESIGN` at `b5b53e6` (developer commit), clean tree. Status `ACTIVE`, step `EXECUTION`. |
+| 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Execute Phase | Part 1 implemented: 50 SVG assets, 3 dependencies, data layer + mocks, session, 30 widgets, 11 cubits, 13 screens, 231 strings. `flutter analyze` clean; `flutter test` 57/57. Status `ACTIVE`, step `MANUAL_TEST`. Nothing committed. |

@@ -38,6 +38,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  flutter_bloc: ^9.1.1
+  flutter_svg: ^2.3.4
+  equatable: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +72,9 @@ flutter:
     - assets/fonts/OFL-Fraunces.txt
     - assets/fonts/OFL-PlusJakartaSans.txt
     - assets/fonts/OFL-Amiri.txt
+    - assets/icons/
+    - assets/illustrations/
+    - assets/images/
 
   fonts:
     - family: Fraunces
