@@ -8,15 +8,15 @@
 - Module: FOUNDATION
 - Priority: High
 - Risk level: High (production dependency, native app identifier, shared core theme/router)
-- Current status: PLANNED
-- Current step: ANALYSIS
-- Approval: PENDING
-- Outcome: NONE
+- Current status: CLOSED
+- Current step: CLOSURE
+- Approval: APPROVED
+- Outcome: COMPLETED
 - Version: 1.0
 - Created date: 2026-11-18
-- Last updated date: 2026-11-18 (developer answers recorded)
-- Started date: Not started
-- Completed date: Not completed
+- Last updated date: 2026-11-19 (closed)
+- Started date: 2026-11-19
+- Completed date: 2026-11-19
 - Developer owner: Repository owner (developer) — owner and manual tester
 - Dependency phases: None
 
@@ -106,7 +106,7 @@
   - `ios/Runner/Info.plist` (modified: `CFBundleName` → `Asatiza`; add `CFBundleLocalizations` = `en`, which iOS needs to use the app's localization)
   - `test/widget_test.dart` (deleted; replaced by the tests below)
   - Docs listed in scope
-- Files that must not change: `docs/product/*`, `assets/*.pdf`, `android/build.gradle.kts`, `android/settings.gradle.kts`, `android/gradle/**`, `ios/Flutter/**`, `ios/Runner/AppDelegate.swift`, `analysis_options.yaml` (unless missing info 7 says otherwise), `.gitignore`, `CLAUDE.md`, skill files.
+- Files that must not change: `docs/product/*`, `assets/*.pdf`, `android/build.gradle.kts`, `android/settings.gradle.kts`, `android/gradle/**`, `ios/Flutter/**`, `ios/Runner/AppDelegate.swift`, `analysis_options.yaml`, `.gitignore`, `CLAUDE.md`, skill files.
 - Proposed new files (approval requested):
 
   | Path | Class | Responsibility | Why needed / why existing code is not suitable |
@@ -153,6 +153,7 @@
 | 4 | Brand theme | Asatiza design system on the owner's design canvas |
 | 5 | Centre "+" | Raised centre button opening Create post full-screen (design) |
 | 6 | Root widget file | Option A: `lib/app.dart` beside `lib/main.dart`; `main.dart` only starts the app |
+| 7 | Lint rules | Keep the default `flutter_lints`; `analysis_options.yaml` does not change |
 | 8 | Owner / manual tester | The developer (repository owner) |
 | 9 | Fonts | Bundle the font files in the app |
 | 10 | Dark mode | Light **and** dark in v1.0, following the phone setting |
@@ -164,15 +165,16 @@ Design findings used for the theme:
 - Tab screens use a 24 px / 700 title and Create post an 18 px / 700 title; neither is in the design system's type scale. Because the design is the source of truth, `AppTextStyles` adds `screenTitle` (24 px, 700) and `pageTitle` (18 px, 700), Plus Jakarta Sans. The artboards set no line height for them: 32 px and 24 px are assumed. UNVERIFIED — designer confirmation welcome.
 - The active tab label is 12 px / 700 (inactive 12 px / 500 = `caption`): a bold variant of `caption`, taken from the artboards.
 
-## Missing Information (blocks approval)
+## Missing Information
 
-7. **Lint rules.** Keep the default `flutter_lints` (recommended, no change) or add stricter rules to `analysis_options.yaml` now? Not answered yet.
-13. **iOS build and test environment.** This repository is worked on from Windows, where iOS apps cannot be built or run. The iOS file changes can be made here, but iOS checks and manual tests need a Mac with Xcode (or a cloud Mac build service). Who or what will run the iOS test? Needed before Close Phase, not before approval.
+No item blocks approval. Remaining (needed before Close Phase):
+
+13. ~~iOS build and test environment~~ — **RESOLVED 2026-11-19:** the developer reports Android and iOS tested. This repository is worked on from Windows, where iOS apps cannot be built or run. The iOS file changes can be made here, but iOS checks and manual tests need a Mac with Xcode (or a cloud Mac build service). Who or what will run the iOS test? Needed before Close Phase, not before approval.
 
 ## Readiness Checklist
 
-- [ ] Requirement is clear
-- [ ] Expected behavior is clear
+- [x] Requirement is clear
+- [x] Expected behavior is clear
 - [x] Existing flow is traced
 - [x] API is verified (not applicable — no API)
 - [x] Request contract is verified (not applicable)
@@ -182,16 +184,16 @@ Design findings used for the theme:
 - [x] Required UI/design is available (design canvas, read 2026-11-18)
 - [x] Existing reusable components are identified (none exist)
 - [x] Proposed files are identified
-- [ ] New files/classes are approved
+- [x] New files/classes are approved
 - [x] Platform behavior is understood
 - [x] Permissions are understood (none)
-- [ ] Dependencies are available (`go_router` approval pending)
+- [x] Dependencies are available (approved: `go_router`, `flutter_localizations`, `intl`; fonts from Google Fonts with download permission asked at execution)
 - [x] Risks are documented
 - [x] Automated tests are defined
 - [x] Manual tests are defined
 - [x] Rollback plan is defined
 - [x] Phase dependencies are completed (none)
-- [ ] Developer approval is recorded
+- [x] Developer approval is recorded
 
 ## Risks
 
@@ -217,17 +219,28 @@ All changes are local files with no data or remote effects. Roll back by reverti
 
 ## Implementation
 
-- Approved implementation plan: Not approved
-- Implementation log: Not started
-- Exact changed files: None
-- Purpose of every changed file: None
-- Existing components reused: None exist (first phase)
-- New approved components: None
+- Approved implementation plan: Approved 2026-11-18 by the developer (repository owner) with the explicit request "APPROVE PHASE: PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION". The approval covers the Scope section exactly as written: the 14 proposed classes and every listed new file (`lib/app.dart`, 6 theme files, router files, `lib/core/widgets/main_shell.dart`, 5 placeholder screens, `l10n.yaml`, `lib/l10n/app_en.arb` + generated localization files, 6 font files + 3 OFL texts, 3 test files); the dependencies `go_router`, `flutter_localizations`, `intl`; the native changes (Android `namespace`/`applicationId` `com.asatiza.app`, label, `MainActivity.kt` move; iOS bundle IDs, `CFBundleName`, `CFBundleLocalizations`); deletion of `test/widget_test.dart`; and the listed doc updates. Anything outside this list needs new approval (step `APPROVAL`, approval `PENDING`). Font downloads still need explicit permission at execution. Item 13 (Mac for iOS testing) must be resolved before Close Phase.
+- Implementation log (2026-11-19):
+  1. Readiness re-checked (`validate_phase_readiness.sh`: OK); no other active phase; Git baseline `main` at `ee9124b`.
+  2. Font download permission asked and granted by the developer. Downloaded to the scratchpad, checked (TrueType header `00 01 00 00`, 4 distinct Plus Jakarta Sans files, OFL texts contain "SIL OPEN FONT LICENSE"), then copied to `assets/fonts/`. Sources: Google Fonts static instances from fonts.gstatic.com (Fraunces v38 wght 600, Plus Jakarta Sans v12 wght 400/500/600/700, Amiri v30 400) and OFL texts from github.com/google/fonts (`ofl/<family>/OFL.txt`).
+  3. Packages: `flutter pub add go_router` (resolved `^17.5.0`), `flutter_localizations` (SDK), `intl:any` (SDK-pinned). `pubspec.yaml`: description, `generate: true`, the 3 OFL texts as assets (one by one), 3 font families.
+  4. Localization: `l10n.yaml` + `lib/l10n/app_en.arb` (11 strings); `flutter gen-l10n` generated `app_localizations.dart` and `app_localizations_en.dart` in `lib/l10n/`.
+  5. Theme (light + dark) from the design tokens, router, shell, 5 placeholder screens, `lib/app.dart`, new `lib/main.dart`.
+  6. Android: `namespace`/`applicationId` → `com.asatiza.app`, label "Asatiza", `MainActivity.kt` moved to `kotlin/com/asatiza/app/` (`git mv`) with `package com.asatiza.app`; old `com/example` folders removed. iOS: 6 `PRODUCT_BUNDLE_IDENTIFIER` values → `com.asatiza.app` / `com.asatiza.app.RunnerTests`; `Info.plist` `CFBundleName` "Asatiza" + `CFBundleLocalizations` [en] (plist parsed OK).
+  7. `test/widget_test.dart` removed (`git rm`); 3 approved test files added.
+  8. Docs updated (see Change Log).
+- Exact changed files: see Change Log (47 paths; all on the approved list).
+- Purpose of every changed file: see Change Log.
+- Existing components reused: None existed. Flutter `StatefulShellRoute.indexedStack` provides per-tab stacks; Material `IconButton`/`InkResponse` used inside the custom bar.
+- New approved components: `AsatizaApp`, `AppColors`, `AppTextStyles`, `AppSpacing`, `AppRadius`, `AppShadows`, `AppTheme`, `AppRoutes`, `appRouter`, `MainShell`, `HomeScreen`, `DiscoverScreen`, `CreatePostScreen`, `ChatsScreen`, `NotificationsScreen` — all created. Private helper widgets inside `main_shell.dart` (`_BottomBar`, `_TabItem`, `_CreatePostButton`) stay inside the approved file.
 - Out-of-scope findings:
-  - `docs/API_REFERENCE.md`, `docs/TESTING_GUIDE.md` and `docs/FILE_CATALOG.md` still mention removed phase numbers (`PHASE_001` meaning the old seed); refresh during this phase's doc update.
-  - `docs/PROJECT_OVERVIEW.md` and `docs/KNOWN_ISSUES.md` still say the folder is not a Git repository; it is (branch `main`).
-  - Admin "ban user" mechanism undefined in the schema (open decision 1) — safety phase.
-- Unexpected risks: None
+  - Tab icons: the design draws custom stroke SVG icons; this phase uses the closest Material outlined icons (`home`, `people`, `chat_bubble`, `notifications`, `add`). Exact icons need SVG assets and an SVG package (new dependency) — a future approved change.
+  - Unread badges on Chats/Alerts are not drawn: there are no counts until the chat/notifications phases.
+  - Fraunces is bundled as the static 600 instance; the design canvas uses CSS optical sizing (`opsz` follows font size). Small visual difference at display sizes only.
+  - `assets/logos/` (developer commit `ee9124b`) is not wired into Android/iOS launcher icons — app icon work is out of scope.
+  - Git index: `git mv` (MainActivity) and `git rm` (`test/widget_test.dart`) staged those two changes; nothing is committed.
+- Unexpected risks: None. One analyzer error during execution (`Brightness` not imported in `app_shadows.dart`) was introduced and fixed in this phase.
+- Known limitation: iOS was not built or run (Windows; item 13).
 
 ## Change Log
 
@@ -235,36 +248,77 @@ For every changed file, record:
 
 | File path | Change type | Approved in phase | What changed | Why it changed | Existing behavior preserved | Possible side effects | File-level checks |
 |---|---|---|---|---|---|---|---|
-| None | Not changed | Not applicable | Not applicable | Not applicable | Not applicable | Not applicable | Not applicable |
+| `lib/main.dart` | modified | Yes | Starter counter app replaced: boot, register 3 OFL licenses, `runApp(AsatizaApp)` | Composition root | None (starter removed by design) | License registry loads assets lazily | analyze, app_test |
+| `lib/app.dart` | added | Yes | `AsatizaApp`: `MaterialApp.router`, light/dark theme, `ThemeMode.system`, localization delegates, `appRouter` | Root widget (answer 6 = A) | n/a | None | analyze, app_test |
+| `lib/core/theme/app_colors.dart` | added | Yes | `AppColors` ThemeExtension, 18 tokens × light/dark, `success` getter, copyWith/lerp | Design color tokens | n/a | None | analyze, app_theme_test |
+| `lib/core/theme/app_text_styles.dart` | added | Yes | 9 design styles + `screenTitle`, `pageTitle`, `captionBold`; family names | Design type scale | n/a | Assumed line heights 32/24 px for the 2 non-token titles | analyze, app_theme_test |
+| `lib/core/theme/app_spacing.dart` | added | Yes | 8 spacing tokens | Design spacing | n/a | None | analyze |
+| `lib/core/theme/app_radius.dart` | added | Yes | 5 radius tokens | Design radii | n/a | None | analyze |
+| `lib/core/theme/app_shadows.dart` | added | Yes | `card()` / `raised()` per brightness | Design shadows | n/a | None (import fix applied) | analyze |
+| `lib/core/theme/app_theme.dart` | added | Yes | Light and dark `ThemeData`: ColorScheme, TextTheme, scaffold background, `AppColors` extension | Theme from tokens | n/a | Material widgets pick colors from ColorScheme mapping | analyze, app_theme_test, app_test |
+| `lib/core/router/app_routes.dart` | added | Yes | Paths `/home`, `/teachers`, `/chats`, `/alerts`, `/create-post` | No string routes in features | n/a | None | analyze |
+| `lib/core/router/app_router.dart` | added | Yes | `appRouter`: `StatefulShellRoute.indexedStack` (4 branches) + full-screen `/create-post` | Navigation shell | n/a | Global router keeps location between tests | analyze, app_router_test |
+| `lib/core/widgets/main_shell.dart` | added | Yes | Designed bottom bar (80 px, pill, raised 56 px "+" with ring and shadow), PopScope back → Home | Shell UI | n/a | Material icons approximate the design's SVG icons | analyze, app_router_test |
+| `lib/features/feed/presentation/home_screen.dart` | added | Yes | Empty Home placeholder | Home tab | n/a | None | app_test |
+| `lib/features/discover/presentation/discover_screen.dart` | added | Yes | Title "Teachers" (24/700) | Teachers tab | n/a | None | app_router_test |
+| `lib/features/chat/presentation/chats_screen.dart` | added | Yes | Title "Chats" | Chats tab | n/a | None | app_router_test |
+| `lib/features/notifications/presentation/notifications_screen.dart` | added | Yes | Title "Notifications" | Alerts tab | n/a | None | app_router_test |
+| `lib/features/post/presentation/create_post_screen.dart` | added | Yes | 56 px header: Close (44 px) + "New post" (18/700) | Create post route | n/a | None | app_router_test |
+| `lib/l10n/app_en.arb` | added | Yes | 11 English strings | Localization source | n/a | None | gen-l10n |
+| `lib/l10n/app_localizations.dart`, `lib/l10n/app_localizations_en.dart` | generated | Yes | `AppLocalizations` from the ARB | gen-l10n output | n/a | Regenerated on `flutter pub get` | gen-l10n, analyze |
+| `l10n.yaml` | added | Yes | arb-dir `lib/l10n`, template `app_en.arb`, class `AppLocalizations`, non-null getter | gen-l10n config | n/a | None | gen-l10n |
+| `pubspec.yaml` | modified | Yes | Description; `go_router ^17.5.0`, `flutter_localizations`, `intl: any`; `generate: true`; 3 OFL assets; 3 font families | Approved dependencies and fonts | Existing deps unchanged; PDFs still not bundled | None | pub get, analyze, test |
+| `pubspec.lock` | modified | Yes | Resolved go_router and transitive packages | Dependency lock | Existing versions unchanged | None | pub get |
+| `assets/fonts/*.ttf` (6) | added | Yes | Fraunces-SemiBold, PlusJakartaSans Regular/Medium/SemiBold/Bold, Amiri-Regular | Bundled design fonts (answer 9) | n/a | +~710 KB app size | header check, test (asset bundling) |
+| `assets/fonts/OFL-*.txt` (3) | added | Yes | SIL OFL 1.1 texts for the 3 families | License compliance | n/a | None | content check |
+| `android/app/build.gradle.kts` | modified | Yes | `namespace`, `applicationId` → `com.asatiza.app` | Final app ID (answer 1) | Build config otherwise unchanged | Permanent after first Play upload | grep |
+| `android/app/src/main/AndroidManifest.xml` | modified | Yes | `android:label="Asatiza"` | Display name | Activity and intent filters unchanged | None | grep |
+| `android/app/src/main/kotlin/com/asatiza/app/MainActivity.kt` | renamed | Yes | Moved from `com/example/asatiza/`; `package com.asatiza.app` | Matches new namespace | Same `FlutterActivity` subclass | Wrong package would crash at launch — checked | grep |
+| `ios/Runner.xcodeproj/project.pbxproj` | modified | Yes | 6 `PRODUCT_BUNDLE_IDENTIFIER` values → `com.asatiza.app` / `.RunnerTests` | Final app ID on iOS | No other build settings changed | Not built on a Mac yet (item 13) | grep |
+| `ios/Runner/Info.plist` | modified | Yes | `CFBundleName` "Asatiza"; `CFBundleLocalizations` [en] | Display name, localization | Other keys unchanged | Not built on a Mac yet | plistlib parse |
+| `test/widget_test.dart` | deleted | Yes | Starter counter test removed | Replaced by approved tests | n/a | None | test |
+| `test/app_test.dart` | added | Yes | 3 tests: boot/tabs, light tokens, dark tokens | Automated checks | n/a | None | flutter test |
+| `test/core/router/app_router_test.dart` | added | Yes | 5 tests: tabs, kept branch state, Create post open/close, back on tab, back on Create post | Router contract | n/a | None | flutter test |
+| `test/core/theme/app_theme_test.dart` | added | Yes | 4 tests: light tokens, body font, dark tokens, type scale | Token pinning | n/a | None | flutter test |
+| `docs/ARCHITECTURE.md`, `docs/DIRECTORY_STRUCTURE.md`, `docs/NAVIGATION.md`, `docs/COMMON_COMPONENTS.md`, `docs/PROJECT_OVERVIEW.md`, `docs/KNOWN_ISSUES.md`, `docs/FILE_CATALOG.md`, `docs/TESTING_GUIDE.md`, `docs/CODING_STANDARDS.md` | modified | Yes | VERIFIED sections for the new structure; open decisions 2 and 3 closed; stale Git/Bash notes fixed; string, RTL and token rules | Approved doc updates | Decided-target sections unchanged | None | validate_phase_structure.sh |
+| `docs/phases/items/PHASE_001_…`, `docs/phases/PHASE_INDEX.md`, `docs/phases/state/PHASE_STATE.md` | modified | Yes | Status, implementation log, change log, checks | Phase workflow | n/a | None | update_phase_index.sh |
 
 ## Execute Technical Checks
 
-- Changed-file evidence reviewed after changes: Not reviewed
-- Git status/diff rerun reason: Not needed yet
-- Patch/whitespace check result, when run: Not run
-- Relevant Dart formatting: Not run
-- Scoped or project analysis commands: Not run
-- Relevant targeted tests: Not run
-- Newly introduced issues found: None recorded
-- Newly introduced issues fixed: None recorded
-- Pre-existing unrelated issues: None recorded
-- Commands that could not run and why: None recorded
+- Changed-file evidence reviewed after changes: Yes — `git status --short --untracked-files=all` (2026-11-19); every path is on the approved list. Pre-existing uncommitted changes before execution: phase docs only.
+- Git status/diff rerun reason: once, to build this change log.
+- Patch/whitespace check result, when run: Not run (not needed: no merge or commit).
+- Relevant Dart formatting: `dart format lib/main.dart lib/app.dart lib/core lib/features test` → 5 files reformatted; re-check `--set-exit-if-changed` → 0 changed.
+- Scoped or project analysis commands: `flutter analyze` → first run 4 errors (missing `Brightness` import in `app_shadows.dart`, introduced here); fixed; second run "No issues found!".
+- Relevant targeted tests: `flutter test` (all 3 new files; the whole suite is these files) → 12 passed, 0 failed.
+- Other checks: `flutter gen-l10n` OK; `Info.plist` parsed with Python `plistlib` OK; font headers and OFL texts checked; `grep` confirms no `com.example` left in Android/iOS sources; no `Color(0x…)`/`Colors.` in `lib/features`.
+- Newly introduced issues found: 1 (missing import) — fixed.
+- Newly introduced issues fixed: 1.
+- Pre-existing unrelated issues: None found.
+- Commands that could not run and why: iOS build/run (`flutter build ios`, simulator) — not possible on Windows; needs a Mac (item 13). App not launched on Android by Claude (not requested; developer manual test).
 
 ## Manual Testing
 
-- Ready for developer manual testing: No
-- Developer manual-test confirmation: Not provided
+- Ready for developer manual testing: Yes (2026-11-19). Run on an Android device: `flutter run`. iOS needs a Mac (item 13). Manual checks: Test Plan → Manual.
+- Developer manual-test confirmation: "Tested working fine" (2026-11-19), Android and iOS.
 - Manual-test notes requested by developer: None
 
 ## Closure
 
-- Developer manual-test confirmation: Not provided
-- Tested platforms: Not provided
-- Tested devices: Not provided
-- Failed and retested cases: None recorded
-- Known limitations: None recorded
-- Follow-up phases: None
-- Reused Execute technical evidence at closure: Not evaluated
-- Rollback guidance: See Rollback Plan
-- Final status: Not closed
-- Completion date: Not completed
+- Developer manual-test confirmation: "Tested working fine" — developer, 2026-11-19 (explicit `CLOSE PHASE` request).
+- Tested platforms: Android and iOS (confirmed by the developer when asked).
+- Tested devices: Not provided.
+- Failed and retested cases: None reported.
+- Final changed files: the 40 implementation paths and 9 docs listed in the Change Log, all on the approved list; reconfirmed with `git status --short --untracked-files=all` at closure (40 non-doc paths, same set as Execute). No unapproved dependency or architecture change.
+- Reused Execute technical evidence at closure: Yes. No implementation file changed after Execute; only `lib/l10n/app_localizations*.dart` were regenerated by `flutter run` from the unchanged `app_en.arb`. Reused: `flutter analyze` no issues; `flutter test` 12/12 passed; formatting clean. No checks rerun.
+- Known limitations:
+  - Tab icons are Material approximations of the design's custom SVG icons.
+  - No unread badges until the chat/notifications phases.
+  - Fraunces bundled as the static 600 instance (no optical sizing).
+  - Launcher icons from `assets/logos/` not wired yet.
+  - Placeholder screens only; no auth gate (no data exists yet).
+- Follow-up phases (suggested, not created): app launcher icons + native splash from `assets/logos/`; exact design icons (SVG assets + package, needs approval); Supabase backend foundation; auth (Splash, Welcome, sign up, OTP, login).
+- Rollback guidance: See Rollback Plan. Nothing is committed: revert by restoring the tracked files with Git and deleting the new files listed in the Change Log. The app ID `com.asatiza.app` must not change after any store upload.
+- Commit: not requested — nothing committed. `git mv`/`git rm` left 2 paths staged (`MainActivity.kt` move, `test/widget_test.dart` deletion).
+- Final status: CLOSED / CLOSURE / COMPLETED
+- Completion date: 2026-11-19

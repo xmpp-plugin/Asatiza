@@ -2,7 +2,13 @@
 
 ## Verified
 
-None. The starter app uses Material widgets directly. VERIFIED
+VERIFIED 2026-11-19 (`PHASE_001`):
+
+| Component | Location | Used by |
+|---|---|---|
+| Theme tokens: `AppColors` (light/dark, read via `Theme.of(context).extension<AppColors>()!`), `AppTextStyles`, `AppSpacing`, `AppRadius`, `AppShadows` | `lib/core/theme/` | All |
+| `AppTheme.light()` / `AppTheme.dark()` | `lib/core/theme/app_theme.dart` | `AsatizaApp` |
+| `MainShell` bottom bar with raised centre "+" | `lib/core/widgets/main_shell.dart` | Router shell |
 
 ## Decided Shared Components (`lib/core/`)
 

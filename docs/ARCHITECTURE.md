@@ -1,9 +1,10 @@
 # Architecture
 
-## Verified Architecture (audit 2026-11-18)
+## Verified Architecture (updated 2026-11-19, `PHASE_001`)
 
-- Single-file starter app: `lib/main.dart` defines `MyApp` (`MaterialApp`, `ColorScheme.fromSeed(Colors.deepPurple)`) and `MyHomePage` (`StatefulWidget` counter). VERIFIED
-- No state-management package, no router package, no backend client, no repositories, no models. VERIFIED
+- `lib/main.dart` boots and registers font licenses; `lib/app.dart` (`AsatizaApp`) wires `AppTheme.light()`/`dark()` (`ThemeMode.system`), `AppLocalizations` (English) and `appRouter`. VERIFIED
+- `lib/core/theme/` (tokens + theme), `lib/core/router/` (go_router shell), `lib/core/widgets/main_shell.dart`, and placeholder screens in `lib/features/{feed,discover,chat,notifications,post}/presentation/`. VERIFIED
+- No state-management package, backend client, repositories, services or models yet; no `MultiRepositoryProvider` until the first repository exists. VERIFIED
 
 ## Decided Target Architecture
 

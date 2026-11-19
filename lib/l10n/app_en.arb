@@ -1,0 +1,47 @@
+{
+  "@@locale": "en",
+  "appTitle": "Asatiza",
+  "@appTitle": {
+    "description": "App name shown by the operating system task switcher."
+  },
+  "tabHome": "Home",
+  "@tabHome": {
+    "description": "Bottom bar label of the Home tab."
+  },
+  "tabTeachers": "Teachers",
+  "@tabTeachers": {
+    "description": "Bottom bar label of the Teachers tab (student view)."
+  },
+  "tabChats": "Chats",
+  "@tabChats": {
+    "description": "Bottom bar label of the Chats tab."
+  },
+  "tabAlerts": "Alerts",
+  "@tabAlerts": {
+    "description": "Bottom bar label of the notifications tab, as named in the design."
+  },
+  "createPostAction": "Create post",
+  "@createPostAction": {
+    "description": "Accessibility label and tooltip of the centre + button."
+  },
+  "teachersTitle": "Teachers",
+  "@teachersTitle": {
+    "description": "Title of the Teachers list screen."
+  },
+  "chatsTitle": "Chats",
+  "@chatsTitle": {
+    "description": "Title of the Chats list screen."
+  },
+  "notificationsTitle": "Notifications",
+  "@notificationsTitle": {
+    "description": "Title of the notifications screen."
+  },
+  "newPostTitle": "New post",
+  "@newPostTitle": {
+    "description": "Title of the Create post screen."
+  },
+  "closeAction": "Close",
+  "@closeAction": {
+    "description": "Accessibility label and tooltip of a close button."
+  }
+}

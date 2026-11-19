@@ -2,16 +2,17 @@
 
 Labels: **VERIFIED** = seen in this repo · **DECIDED** = owner-approved in `docs/product/*`, not yet in code · **UNVERIFIED** = owner confirmation required.
 
-## Verified Facts (audit 2026-11-18)
+## Verified Facts (updated 2026-11-19, `PHASE_001`)
 
-- Package name: `asatiza` (`pubspec.yaml`), version `1.0.0+1`, description "A new Flutter project.". VERIFIED
+- Package name: `asatiza` (`pubspec.yaml`), version `1.0.0+1`, description "Asatiza — Quran teacher & student network". VERIFIED
 - Dart SDK constraint: `^3.11.0`. VERIFIED
-- Dependencies: `flutter`, `cupertino_icons ^1.0.8`; dev: `flutter_test`, `flutter_lints ^6.0.0`. VERIFIED
-- Entry point: `lib/main.dart` — unmodified `flutter create` counter app (`MyApp`, `MyHomePage`, title "Flutter Demo"). VERIFIED
-- Tests: `test/widget_test.dart` (starter counter smoke test). VERIFIED
-- Android: `android/app/build.gradle.kts`, namespace/applicationId `com.example.asatiza` (placeholder), Java/Kotlin 17. VERIFIED
-- iOS: `ios/Runner.xcodeproj`, no `Podfile` yet. VERIFIED
-- Not present: `supabase/`, `integration_test/`, `.github/`, `.git` (folder is not a Git repository). VERIFIED
+- Dependencies: `flutter`, `cupertino_icons ^1.0.8`, `go_router ^17.5.0`, `flutter_localizations` (SDK), `intl` (SDK-pinned); dev: `flutter_test`, `flutter_lints ^6.0.0`. Fonts bundled: Fraunces, Plus Jakarta Sans, Amiri (OFL). VERIFIED
+- Entry point: `lib/main.dart` (boot) → `lib/app.dart` (`AsatizaApp`: light/dark theme, English localization, go_router shell). VERIFIED
+- Tests: `test/app_test.dart`, `test/core/router/app_router_test.dart`, `test/core/theme/app_theme_test.dart`. VERIFIED
+- Android: `android/app/build.gradle.kts`, namespace/applicationId `com.asatiza.app`, label "Asatiza", Java/Kotlin 17. VERIFIED
+- iOS: `ios/Runner.xcodeproj`, bundle ID `com.asatiza.app`, `CFBundleName` "Asatiza", `CFBundleLocalizations` en, no `Podfile` yet. Tested by the developer (2026-11-19). VERIFIED
+- Not present: `supabase/`, `integration_test/`, `.github/`. Git repository on branch `main`. VERIFIED
+- Design source: owner's Claude Design canvas "Asatiza App Design" (https://claude.ai/artifact/LUxhadrsA4EUF74spHVLLc) with the "Asatiza" design system. The design is the source of truth for UI. DECIDED
 
 ## Product
 
@@ -43,9 +44,9 @@ Build against the owner-approved plan through approved phases (`docs/phases/`). 
 
 ## Unverified Items
 
-- Final Android package name / iOS bundle ID (currently `com.example.asatiza`): UNVERIFIED — developer confirmation required
-- Android first, or Android + iOS together in v1.0: UNVERIFIED — developer confirmation required
-- Who approves phases and performs manual testing: UNVERIFIED — developer confirmation required
+- Final Android package name / iOS bundle ID: DECIDED `com.asatiza.app`
+- Platforms: DECIDED Android + iOS in v1.0
+- Phase approver and manual tester: DECIDED — the developer (repository owner)
 - Supabase project created (yes/no): UNVERIFIED — developer confirmation required
 - Extra testing expectations (e.g. minimum widget tests per feature): UNVERIFIED — developer confirmation required
-- Git repository / remote and branching: UNVERIFIED — developer confirmation required
+- Git remote and branching strategy: UNVERIFIED — developer confirmation required (local branch `main` exists)

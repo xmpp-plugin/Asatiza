@@ -1,6 +1,6 @@
 # Directory Structure
 
-## Verified Tree (audit 2026-11-18)
+## Verified Tree (updated 2026-11-19, `PHASE_001`)
 
 ```
 asatiza/
@@ -8,8 +8,16 @@ asatiza/
   CLAUDE.md                                 rules Claude Code reads first
   android/                                  Flutter-generated Android project (build.gradle.kts)
   ios/                                      Flutter-generated iOS project (Runner.xcodeproj)
-  lib/main.dart                             starter counter app
-  test/widget_test.dart                     starter widget test
+  assets/fonts/                             bundled fonts + OFL licenses (declared one by one)
+  assets/logos/                             app icons and logos (not yet wired into launchers)
+  assets/*.pdf                              product plans (not bundled)
+  l10n.yaml                                 gen-l10n config
+  lib/main.dart                             composition root (boot)
+  lib/app.dart                              AsatizaApp root widget
+  lib/core/theme/ lib/core/router/ lib/core/widgets/
+  lib/features/{feed,discover,chat,notifications,post}/presentation/
+  lib/l10n/                                 app_en.arb + generated AppLocalizations
+  test/                                     app, router and theme tests
   docs/                                     documentation + phases + product plans
   analysis_options.yaml                     flutter_lints
   pubspec.yaml / pubspec.lock
@@ -22,6 +30,8 @@ asatiza/
 ```
 lib/
   main.dart                    composition root only
+  app.dart                     AsatizaApp root widget (theme, localization, router)
+  l10n/                        app_<locale>.arb + generated AppLocalizations
   core/                        theme, router, network (Dio setup), constants, env config, shared widgets, utils, error types
     logic/                     shared pure-Dart business rules (2+ features)
     services/                  plugin wrappers: interfaces + one implementation each

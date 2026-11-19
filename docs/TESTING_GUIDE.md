@@ -2,7 +2,7 @@
 
 ## Verified Tests
 
-- `test/widget_test.dart` exists (starter counter smoke test; will need replacing when `lib/main.dart` changes in `PHASE_001`). VERIFIED
+- 2026-11-19 (`PHASE_001`): `test/app_test.dart` (boot, tabs, light/dark), `test/core/router/app_router_test.dart` (navigation, system back), `test/core/theme/app_theme_test.dart` (design tokens). 12 tests, all passing. The global `appRouter` keeps its location between tests, so each test starts with `appRouter.go(AppRoutes.home)`. VERIFIED
 - No `integration_test/`. VERIFIED
 - Flutter lints configured through `analysis_options.yaml`. VERIFIED
 

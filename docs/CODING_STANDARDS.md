@@ -6,6 +6,9 @@
 
 ## Rules For New Work
 
+- Every user-facing string comes from `lib/l10n/app_en.arb` via `AppLocalizations.of(context)`; never hard-code UI text. Never hand-edit the generated `app_localizations*.dart`.
+- Direction-neutral layout for v1.1 Urdu/Arabic: `EdgeInsetsDirectional`, `AlignmentDirectional`, `start`/`end` instead of left/right.
+- Colors only from `AppColors` / `ColorScheme`; text from `AppTextStyles`; spacing, radii and shadows from their token classes.
 - Sound null safety; avoid `!` unless the invariant is proven nearby.
 - Immutable models and state; `const` constructors where possible.
 - `async`/`await` with explicit error handling; never ignore a `Future` that can fail; check `mounted` (widgets) / `isClosed` (blocs/cubits) after awaits before using context or state.
