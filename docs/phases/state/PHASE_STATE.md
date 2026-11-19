@@ -6,7 +6,7 @@ Manually maintained operational record for approvals, handoffs, manual-test evid
 
 - Last updated: 2026-11-19
 - Active phase: None
-- Next approved phase: None
+- Next approved phase: `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` (`APPROVED` / `APPROVAL` / `APPROVED`)
 - Planned phases: None
 - Closed phases: `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` (`COMPLETED` 2026-11-19)
 - Blocked phases: None
@@ -14,7 +14,7 @@ Manually maintained operational record for approvals, handoffs, manual-test evid
 
 ## Recommended Next Operation
 
-No active phase. Optional: a local commit of `PHASE_001` if the developer approves. Next: `CREATE PHASE` for the next feature when the developer asks (suggested: Supabase backend foundation, or launcher icons from `assets/logos/`).
+Create a new Git branch for PHASE_002 (current branch is still `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION`), then `EXECUTE PHASE: PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` when the developer asks. Part 2 is created after this phase closes.
 
 ## Log
 
@@ -31,3 +31,7 @@ No active phase. Optional: a local commit of `PHASE_001` if the developer approv
 | 2026-11-19 | `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` | Execute Phase (start) | Readiness OK; no other active phase. Git baseline: branch `main` at `ee9124b` (developer commit with docs, skill, `assets/logos/`); `lib/` and `test/` are still starter code. Pre-existing uncommitted changes: phase docs only. Status `ACTIVE`, step `EXECUTION`. |
 | 2026-11-19 | `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` | Execute Phase | Implemented approved scope (47 paths, all approved). Fonts downloaded with developer permission. `flutter analyze`: no issues; `flutter test`: 12/12 passed. iOS not built (Windows). Status `ACTIVE`, step `MANUAL_TEST`. Nothing committed; `git mv`/`git rm` staged 2 paths. |
 | 2026-11-19 | `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` | Close Phase | Developer: "Tested working fine" on Android and iOS. Execute evidence reused (no implementation change after Execute). Status `CLOSED`, step `CLOSURE`, outcome `COMPLETED`. No commit requested. |
+| 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Create Phase | Read-only analysis of the owner's design canvas (27 artboards, 39 icons, 4 illustrations, 2 logo images) and current code. Phase created `PLANNED` / `ANALYSIS` / `PENDING`; ≈ 190 new files proposed; 8 missing-information items (split into 6 phases recommended). No production code changed. |
+| 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Create Phase (update) | Developer answers recorded: split into 2 phases (this = part 1), in-memory mock behaviour, mock session as recommended, hybrid = custom + native behaviour, mismatches per recommendation (off-token values as theme constants), `equatable` yes, no golden tests. Canvas re-read: still version `1795067979-b73b` (27 artboards) — added screens/sizes not published yet. Still `PLANNED` / `ANALYSIS` / `PENDING`. |
+| 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Create Phase (update) | Canvas re-read: version `1795090178-e295`, 47 artboards (20 added; original 27 + tokens unchanged). Part 1 now has 18 artboards; 41 icons + ticks, 6 illustrations, 2 logos. No missing information left; step moved to `APPROVAL`, approval `PENDING`. |
+| 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Approve Phase | Explicit developer approval ("APPROVE PHASE: PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA"). Readiness 21/21. Status `APPROVED`, step `APPROVAL`, approval `APPROVED`, outcome `NONE`. Covers part 1 scope: 3 dependencies, new mock/session folders, models/enums, 4 provisional repository interfaces, theme constants, 50 SVG assets, shared widgets, 18 artboards' screens. Not executed. |
