@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/config/app_config.dart';
 import 'core/session/session_cubit.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/chat_repository.dart';
@@ -21,23 +23,34 @@ import 'data/repositories/mock/mock_profile_repository.dart';
 import 'data/repositories/mock/mock_safety_repository.dart';
 import 'data/repositories/profile_repository.dart';
 import 'data/repositories/safety_repository.dart';
+import 'data/repositories/supabase/supabase_auth_repository.dart';
+import 'data/repositories/supabase/supabase_profile_repository.dart';
+
+
 
 /// Composition root: the only place concrete repositories are created.
-/// UI-only phase: in-memory mock implementations (reset on restart). The
-/// backend phases swap them for Supabase implementations here.
-void main() {
+///
+/// Two run modes ([AppConfig]):
+/// - mock (no Supabase settings; tests and demos): every repository is an
+///   in-memory mock that resets on restart;
+/// - backend (`--dart-define-from-file=env/dev.json`): accounts and profiles
+///   use Supabase; feed, discover, connections, chat, notifications and
+///   safety stay mock until their phases (they only know the seeded people).
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _registerFontLicenses();
 
-  final profiles = MockProfileRepository();
+  const config = AppConfig.fromEnvironment();
+
+  final mockProfiles = MockProfileRepository();
   final feed = MockFeedRepository();
   final safety = MockSafetyRepository();
-  final discover = MockDiscoverRepository(profiles, safety);
-  final connections = MockConnectionRepository(profiles);
+  final discover = MockDiscoverRepository(mockProfiles, safety);
+  final connections = MockConnectionRepository(mockProfiles);
   final chats = MockChatRepository(connections);
   final notifications = MockNotificationRepository();
-  final auth = MockAuthRepository(
-    profiles,
+  final mockAuth = MockAuthRepository(
+    mockProfiles,
     onDelete: (userId) {
       feed.removeUser(userId);
       chats.removeUser(userId);
@@ -47,11 +60,25 @@ void main() {
     },
   );
 
+  AuthRepository auth = mockAuth;
+  ProfileRepository userProfiles = mockProfiles;
+  if (config.hasBackend) {
+    await Supabase.initialize(
+      url: config.supabaseUrl,
+      // The public key: the publishable key or the legacy anon key.
+      publishableKey: config.supabaseAnonKey,
+    );
+    final client = Supabase.instance.client;
+    final supabaseProfiles = SupabaseProfileRepository(client);
+    userProfiles = supabaseProfiles;
+    auth = SupabaseAuthRepository(client, supabaseProfiles);
+  }
+
   runApp(
     MultiRepositoryProvider(
       providers: <RepositoryProvider<Object>>[
         RepositoryProvider<AuthRepository>.value(value: auth),
-        RepositoryProvider<ProfileRepository>.value(value: profiles),
+        RepositoryProvider<ProfileRepository>.value(value: userProfiles),
         RepositoryProvider<FeedRepository>.value(value: feed),
         RepositoryProvider<SafetyRepository>.value(value: safety),
         RepositoryProvider<DiscoverRepository>.value(value: discover),
@@ -60,7 +87,7 @@ void main() {
         RepositoryProvider<ConnectionRepository>.value(value: connections),
       ],
       child: BlocProvider<SessionCubit>(
-        create: (_) => SessionCubit(auth, profiles),
+        create: (_) => SessionCubit(auth, userProfiles),
         child: const AsatizaApp(),
       ),
     ),

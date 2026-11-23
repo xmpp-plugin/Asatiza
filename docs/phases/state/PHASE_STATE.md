@@ -5,7 +5,7 @@ Manually maintained operational record for approvals, handoffs, manual-test evid
 ## Current Snapshot
 
 - Last updated: 2026-11-23
-- Active phase: None
+- Active phase: `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` (`ACTIVE` / `MANUAL_TEST` / `APPROVED`)
 - Next approved phase: None
 - Planned phases: None
 - Closed phases: `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` (`COMPLETED` 2026-11-19), `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` (`COMPLETED` 2026-11-23), `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` (`COMPLETED` 2026-11-23)
@@ -14,7 +14,7 @@ Manually maintained operational record for approvals, handoffs, manual-test evid
 
 ## Recommended Next Operation
 
-No active phase. Developer decides on the uncommitted `splash_screen.dart` edit and whether to commit PHASE_003 (all changes are uncommitted on `PHASE_002_UI_ADD_FULL_APP_DESIGN`). Next phase when the developer asks (backend).
+Developer sets up the Supabase project (`docs/TESTING_GUIDE.md` → Backend Mode Setup), applies the two migrations in the SQL editor, creates `env/dev.json`, runs the manual cases in the phase file on Android and iOS, then `CLOSE PHASE` (or reports failures). Nothing is committed.
 
 ## Log
 
@@ -47,3 +47,8 @@ No active phase. Developer decides on the uncommitted `splash_screen.dart` edit 
 | 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Execute Phase (checkpoint 3) | Developer: "Continue". Me & settings implemented; docs updated. `flutter analyze` clean; `flutter test` 98/101 (3 failures from the developer's uncommitted `MockAccounts` email edit). Status `ACTIVE`, step `MANUAL_TEST`. |
 | 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Close Phase | Developer: "Tested and working fine". Checks rerun (files touched after Execute): analyze clean; tests 98/101 (3 failures from the developer's `MockAccounts` email edit); format only flags the developer's `splash_screen.dart` edit. Status `CLOSED`, step `CLOSURE`, outcome `COMPLETED`. No commit requested. |
 | 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Post-closure test fix | Developer keeps the shared `MockAccounts` email. 3 email-based tests updated to expect Qari Ahmed; `flutter test` 101/101. Phase stays `CLOSED` / `COMPLETED`. |
+| 2026-11-23 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Create Phase | Read-only analysis of plan sections 4, 7, 11–16 and the current code (all mocks; no Supabase; main manifest lacks `INTERNET`). Phase created `PLANNED` / `ANALYSIS` / `PENDING`; ≈ 12 new files, `supabase_flutter`, `AuthRepository.restoreSession`, migrations + RLS, Android permission; 8 missing-information items. No production code changed. |
+| 2026-11-23 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Create Phase (update) | Developer: "continue and update it with your recommendations safely". Recommended answers recorded as decisions 1–8 (two run modes; built-in email; `delete_my_account()` via rpc; strength trigger now; Home after log-in; SQL editor; stay signed in). Project existence still to confirm. Step `APPROVAL`, approval `PENDING`. Created date corrected to 2026-11-23. No code changed. |
+| 2026-11-23 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Approve Phase | Developer: "Approve phase". Readiness complete; approved: `supabase_flutter`, `AuthRepository.restoreSession`, new failure reasons + `NetworkFailure`, Android `INTERNET`, ≈ 12 new files, migrations + RLS + `delete_my_account()`. Supabase project existence UNVERIFIED (needed before manual test only). Status `APPROVED`. No code changed. |
+| 2026-11-23 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Execute Phase (start) | Developer: "Execute phase". Readiness OK; no other active phase. Status `ACTIVE`, step `EXECUTION`. |
+| 2026-11-23 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Execute Phase | Implemented: `supabase_flutter ^2.18.3`, `AppConfig`, Supabase Auth + Profile repositories and mappers, `restoreSession`, unconfirmed-email log-in, 2 migrations + RLS checks, Android `INTERNET`, docs. `flutter analyze` clean; `flutter test` 115/115. `codeExpired` / `weakPassword` not needed (mapped to existing reasons). Status `ACTIVE`, step `MANUAL_TEST`. |

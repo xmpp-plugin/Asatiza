@@ -42,9 +42,16 @@ class _LogInView extends StatelessWidget {
 
     return BlocListener<LoginCubit, LoginState>(
       listenWhen: (a, b) =>
-          a.status != b.status && b.status == LoginStatus.signedIn,
-      listener: (context, state) =>
-          context.read<SessionCubit>().signedIn(state.user!),
+          a.status != b.status &&
+          (b.status == LoginStatus.signedIn ||
+              b.status == LoginStatus.needsCode),
+      listener: (context, state) {
+        if (state.status == LoginStatus.needsCode) {
+          context.push(AppRoutes.signUpCode, extra: state.email);
+        } else {
+          context.read<SessionCubit>().signedIn(state.user!);
+        }
+      },
       child: Scaffold(
         body: SafeArea(
           child: Column(

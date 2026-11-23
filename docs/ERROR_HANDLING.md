@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-23 (`PHASE_004`): `SupabaseFailureMapper` maps Supabase errors — Auth codes `invalid_credentials` → `wrongCredentials`, `email_not_confirmed` → `emailNotConfirmed`, `user_already_exists` / `email_exists` → `emailAlreadyRegistered`, `otp_expired` → `invalidCode` (Supabase uses one code for wrong and expired), `weak_password` → `passwordTooShort`, `same_password` → `passwordUnchanged`, `email_address_invalid` → `invalidEmail`; `AuthRetryableFetchException`, `SocketException`, `TimeoutException`, http `ClientException` → `NetworkFailure`; PostgREST `PGRST116` / `42501` → `NotFoundFailure`; anything else → `UnexpectedFailure`. Screens still show no message for `NetworkFailure` / `UnexpectedFailure` (known issue).
+
 No error handling, logging or crash reporting yet. VERIFIED
 
 ## Decided Pattern

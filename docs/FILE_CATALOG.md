@@ -2,17 +2,18 @@
 
 Every project-owned file under `lib/` and `test/`. Generated and tool files are not catalogued (`lib/l10n/app_localizations*.dart` come from `flutter gen-l10n`). Assets: `assets/fonts/` (PHASE_001), `assets/icons/` (42 design icons), `assets/illustrations/` (6), `assets/images/` (2 logos) — PHASE_002.
 
-Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`).
+Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows added 2026-11-23 (`PHASE_004`). Outside `lib/` and `test/`: `supabase/migrations/*.sql`, `supabase/tests/profiles_rls_checks.sql`, `env/dev.example.json` (`PHASE_004`).
 
 | Path | Purpose | Layer | Public types / functions |
 |---|---|---|---|
 | `lib/app.dart` | Root widget: light/dark theme from the design tokens (following the phone setting), English localization and the session-aware router.… | App | `AsatizaApp` |
-| `lib/core/errors/failures.dart` | Base type for every error a repository may throw. No raw exception (Postgrest, Auth, Dio…) leaves a repository. | Core errors | `Failure`, `ValidationFailure`, `ValidationReason`, `NotFoundFailure`, `UnexpectedFailure` |
+| `lib/core/config/app_config.dart` | Run-time settings (`SUPABASE_URL`, `SUPABASE_ANON_KEY` defines); without both the app runs on mocks. | Core config | `AppConfig` |
+| `lib/core/errors/failures.dart` | Base type for every error a repository may throw. No raw exception (Postgrest, Auth, Dio…) leaves a repository. | Core errors | `Failure`, `ValidationFailure`, `ValidationReason`, `NotFoundFailure`, `NetworkFailure`, `UnexpectedFailure` |
 | `lib/core/logic/discover_visibility_rules.dart` | Who appears on the Teachers / Students tabs and who may send a request (plan section 7). The backend phase mirrors these rules in RLS. | Core logic | `DiscoverVisibilityRules` |
 | `lib/core/logic/profile_strength_calculator.dart` | Checklist items behind the profile-strength %, in the order the strength card suggests them. | Core logic | `ProfileStrengthItem`, `ProfileStrengthCalculator` |
 | `lib/core/router/app_router.dart` | Builds the app's route table, redirecting on the [session]: - signed out → only Splash and the sign-in screens; - signed in right after… | Core router | `createAppRouter` |
 | `lib/core/router/app_routes.dart` | — | Core router | `AppRoutes` |
-| `lib/core/session/session_cubit.dart` | App-wide session. Every launch starts signed out (mock data resets). Keeps the signed-in user's profile fresh after edits. | Core session | `SessionCubit` |
+| `lib/core/session/session_cubit.dart` | App-wide session. Starts signed out; `restore` signs back in with a kept session (backend mode). Keeps the signed-in user's profile fresh after edits. | Core session | `SessionCubit` |
 | `lib/core/session/session_state.dart` | Who is signed in, and whether they still see profile setup. | Core session | `SessionState` |
 | `lib/core/session/shell_badges_cubit.dart` | Combines unread chat messages and unread notifications for the bottom bar badges. | Core session | `ShellBadgesCubit` |
 | `lib/core/session/shell_badges_state.dart` | Unread counts on the bottom bar. | Core session | `ShellBadgesState` |
@@ -104,6 +105,10 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`).
 | `lib/data/repositories/notification_repository.dart` | — | Repository interface | `NotificationRepository` |
 | `lib/data/repositories/profile_repository.dart` | — | Repository interface | `ProfileRepository` |
 | `lib/data/repositories/safety_repository.dart` | — | Repository interface | `BlockedUser`, `SafetyRepository` |
+| `lib/data/repositories/supabase/profile_row_mapper.dart` | Converts profile / detail rows to `Profile` and back (snake_case enum text). Pure. | Repository (Supabase) | `ProfileRowMapper` |
+| `lib/data/repositories/supabase/supabase_auth_repository.dart` | `AuthRepository` on Supabase Auth with 6-digit email codes; deletion via `delete_my_account()`. | Repository (Supabase) | `SupabaseAuthRepository` |
+| `lib/data/repositories/supabase/supabase_failure_mapper.dart` | Maps Supabase Auth / PostgREST / network errors to `Failure`s. Pure. | Repository (Supabase) | `SupabaseFailureMapper` |
+| `lib/data/repositories/supabase/supabase_profile_repository.dart` | `ProfileRepository` on `profiles`, `teacher_details`, `student_details` (RLS). | Repository (Supabase) | `SupabaseProfileRepository` |
 | `lib/features/auth/bloc/login_cubit.dart` | Email + password log-in (no code at log-in, plan section 4). | Feature auth · bloc | `LoginCubit` |
 | `lib/features/auth/bloc/login_state.dart` | — | Feature auth · bloc | `LoginStatus`, `LoginState` |
 | `lib/features/auth/bloc/otp_cubit.dart` | 6-digit email code: auto-verifies when complete, runs the 60 s resend countdown (cancelled in [close]). | Feature auth · bloc | `OtpCubit` |
@@ -216,12 +221,15 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`).
 | `lib/features/settings/presentation/log_out_sheet.dart` | — | Feature settings · presentation | `LogOutSheet` |
 | `lib/features/settings/presentation/policy_screen.dart` | The three policy pages (artboards 21c / 21d / 21e). | Feature settings · presentation | `PolicyPage`, `PolicyScreen` |
 | `lib/features/settings/presentation/settings_screen.dart` | 21 Settings: account, notification switches, privacy & safety, log out and delete account. | Feature settings · presentation | `SettingsScreen` |
-| `lib/main.dart` | Composition root: the only place concrete repositories are created. UI-only phase: in-memory mock implementations (reset on restart).… | App entry | `main` |
+| `lib/main.dart` | Composition root: the only place concrete repositories are created; mock or backend mode from `AppConfig`; the only `Supabase.instance` read. | App | `main` |
 | `test/app_test.dart` | Tests | Test | `main` |
+| `test/core/config/app_config_test.dart` | Tests | Test | `main` |
 | `test/core/logic/profile_strength_calculator_test.dart` | Tests | Test | `main` |
 | `test/core/router/app_router_test.dart` | Tests | Test | `tapTab`, `main` |
 | `test/core/theme/app_theme_test.dart` | Pins the theme to the Asatiza design-system tokens (tokens.json), so a drift between design and code shows up as a failing test. | Test | `main` |
 | `test/data/mock_data_test.dart` | Tests | Test | `main` |
+| `test/data/supabase/profile_row_mapper_test.dart` | Tests | Test | `main` |
+| `test/data/supabase/supabase_failure_mapper_test.dart` | Tests | Test | `main` |
 | `test/features/chat_notifications_test.dart` | Tests | Test | `settle`, `main` |
 | `test/features/cubits_test.dart` | Lets stream listeners and async cubit work run. | Test | `settle`, `main` |
 | `test/features/discover_connect_test.dart` | Tests | Test | `settle`, `main` |

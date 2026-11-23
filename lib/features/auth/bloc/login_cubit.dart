@@ -27,9 +27,23 @@ class LoginCubit extends Cubit<LoginState> {
       );
       emit(state.copyWith(status: LoginStatus.signedIn, user: user));
     } on ValidationFailure catch (f) {
+      if (f.reason == ValidationReason.emailNotConfirmed) {
+        await _sendCode();
+        return;
+      }
       emit(state.copyWith(status: LoginStatus.editing, failure: f.reason));
     } on Failure {
       emit(state.copyWith(status: LoginStatus.editing));
     }
+  }
+
+  Future<void> _sendCode() async {
+    try {
+      await _auth.resendCode(email: state.email);
+    } on Failure {
+      // The code screen can resend after its countdown.
+    }
+    emit(state.copyWith(status: LoginStatus.needsCode));
+    emit(state.copyWith(status: LoginStatus.editing));
   }
 }

@@ -7,6 +7,7 @@ import 'package:asatiza/data/models/enums/report_reason.dart';
 import 'package:asatiza/data/models/enums/subject.dart';
 import 'package:asatiza/data/models/enums/user_role.dart';
 import 'package:asatiza/data/models/enums/weekday.dart';
+import 'package:asatiza/data/models/profile.dart';
 import 'package:asatiza/data/repositories/mock/mock_auth_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
@@ -112,6 +113,43 @@ void main() {
       expect(cubit.state.status, LoginStatus.signedIn);
       expect(cubit.state.user!.id, MockIds.ahmed);
       await cubit.close();
+    },
+  );
+
+  test(
+    'LoginCubit: unconfirmed email sends a fresh code and asks for it',
+    () async {
+      final unconfirmed = _UnconfirmedAuth(profiles);
+      final cubit = LoginCubit(unconfirmed)
+        ..emailChanged('new.user@example.com')
+        ..passwordChanged('tajweed2026');
+      final statuses = <LoginStatus>[];
+      final sub = cubit.stream.listen((s) => statuses.add(s.status));
+      await cubit.submit();
+      await settle();
+      expect(statuses, contains(LoginStatus.needsCode));
+      expect(unconfirmed.resentTo, 'new.user@example.com');
+      expect(cubit.state.status, LoginStatus.editing);
+      expect(cubit.state.failure, isNull);
+      await sub.cancel();
+      await cubit.close();
+    },
+  );
+
+  test(
+    'SessionCubit.restore: mock stays signed out; a kept session signs in',
+    () async {
+      final mockSession = SessionCubit(auth, profiles);
+      await mockSession.restore();
+      expect(mockSession.state.isSignedIn, isFalse);
+      await mockSession.close();
+
+      final ahmed = await profiles.getProfile(MockIds.ahmed);
+      final kept = SessionCubit(_KeptSessionAuth(profiles, ahmed), profiles);
+      await kept.restore();
+      expect(kept.state.user?.id, MockIds.ahmed);
+      expect(kept.state.needsSetup, isFalse);
+      await kept.close();
     },
   );
 
@@ -279,4 +317,28 @@ void main() {
       const ValidationFailure(ValidationReason.invalidCode),
     );
   });
+}
+
+/// Log-in always reports an unconfirmed email; records the resend.
+class _UnconfirmedAuth extends MockAuthRepository {
+  _UnconfirmedAuth(super.profiles);
+
+  String? resentTo;
+
+  @override
+  Future<Profile> logIn({required String email, required String password}) =>
+      throw const ValidationFailure(ValidationReason.emailNotConfirmed);
+
+  @override
+  Future<void> resendCode({required String email}) async => resentTo = email;
+}
+
+/// Restores [_user] as if a session was kept from an earlier launch.
+class _KeptSessionAuth extends MockAuthRepository {
+  _KeptSessionAuth(super.profiles, this._user);
+
+  final Profile _user;
+
+  @override
+  Future<Profile?> restoreSession() async => _user;
 }

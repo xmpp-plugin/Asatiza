@@ -2,6 +2,8 @@
 
 ## Verified Architecture (updated 2026-11-19, `PHASE_001`)
 
+VERIFIED 2026-11-23 (`PHASE_004`): two run modes chosen in `lib/main.dart` by `AppConfig` (`lib/core/config/`): mock (no settings; tests) and backend (Auth + Profile on Supabase, other repositories still mock). `Supabase.initialize` and the only `Supabase.instance` read are in `lib/main.dart`; the `SupabaseClient` is passed by constructor to `lib/data/repositories/supabase/`. Pure helpers `ProfileRowMapper` and `SupabaseFailureMapper`. `SessionCubit.restore()` runs from Splash.
+
 VERIFIED 2026-11-19 (`PHASE_002`, part 1):
 
 VERIFIED 2026-11-23 (`PHASE_003`, part 2): features `discover`, `connections`, `chat`, `notifications`, `profile`, `settings` (each `bloc/`, `logic/` where needed, `presentation/` + `widgets/`); 4 new repository interfaces with mocks; `ShellBadgesCubit` in `lib/core/session/`. Mock repositories reference each other only inside `lib/data/repositories/mock/` and are wired in `lib/main.dart` (account deletion clears every mock store).

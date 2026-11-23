@@ -158,6 +158,9 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<Profile?> restoreSession() async => null;
+
+  @override
   Future<void> logOut() async {}
 
   @override

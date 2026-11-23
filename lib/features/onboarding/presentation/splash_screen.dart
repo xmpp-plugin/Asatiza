@@ -2,19 +2,21 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/app_routes.dart';
+import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/app_localizations.dart';
 
 /// 01 Splash: brand green, logo, "Asatiza" wordmark and the tagline. After
-/// a short pause it continues to Home (the router sends signed-out users
-/// to Welcome).
-/// 
+/// a short pause and the session restore it continues to Home (the router
+/// sends signed-out users to Welcome).
+///
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -26,15 +28,26 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Timer? _timer;
+  bool _delayDone = false;
+  bool _restoreDone = false;
 
   @override
   void initState() {
     super.initState();
     _timer = Timer(SplashScreen.delay, () {
-      if (mounted) {
-        context.go(AppRoutes.home);
-      }
+      _delayDone = true;
+      _continue();
     });
+    context.read<SessionCubit>().restore().whenComplete(() {
+      _restoreDone = true;
+      _continue();
+    });
+  }
+
+  void _continue() {
+    if (mounted && _delayDone && _restoreDone) {
+      context.go(AppRoutes.home);
+    }
   }
 
   @override

@@ -30,8 +30,9 @@ abstract interface class AuthRepository {
 
   /// Signs in with email + password and returns the user's [Profile].
   ///
-  /// Throws `ValidationFailure` with `invalidEmail`, `passwordTooShort` or
-  /// `wrongCredentials`.
+  /// Throws `ValidationFailure` with `invalidEmail`, `passwordTooShort`,
+  /// `wrongCredentials` or `emailNotConfirmed` (sign-up code never entered;
+  /// the caller sends a fresh code with [resendCode]), or `NetworkFailure`.
   Future<Profile> logIn({required String email, required String password});
 
   /// Sends a password-reset code to [email]. Throws `ValidationFailure(invalidEmail)`.
@@ -48,6 +49,12 @@ abstract interface class AuthRepository {
     required String password,
     required String confirmation,
   });
+
+  /// The user of a session kept from an earlier launch, or null when
+  /// signed out. Mock: always null (every launch starts signed out).
+  /// Throws `NetworkFailure` or `UnexpectedFailure` when a stored session
+  /// exists but its profile cannot be loaded.
+  Future<Profile?> restoreSession();
 
   /// Ends the session. Never throws.
   Future<void> logOut();

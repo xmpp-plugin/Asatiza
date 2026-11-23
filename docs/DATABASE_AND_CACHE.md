@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-23 (`PHASE_004`): `supabase/migrations/20261123120000_profiles.sql` (tables `profiles` (+ `city`), `teacher_details`, `student_details`; snake_case enum text with `check` constraints; text limits as in the app; `private.profile_strength` + triggers keep `completion_pct` / `is_visible` in step with `ProfileStrengthCalculator` / `DiscoverVisibilityRules`; `private.handle_new_user` creates the profile + detail row from sign-up metadata; RLS + column privileges) and `20261123120100_delete_my_account.sql` (`security definer`, `authenticated` only). Manual checks: `supabase/tests/profiles_rls_checks.sql`. Mapping in `ProfileRowMapper`. Applied to the remote project: UNVERIFIED — the developer applies them in the SQL editor.
+
 VERIFIED 2026-11-19 (`PHASE_002`): Dart models mirror the planned tables — `Profile` (`profiles`), `TeacherDetails` (`teacher_details`), `StudentDetails` (`student_details`), `Post` (`posts`, as seen by a viewer: `likedByMe`), `Comment` (`post_comments`). UUID string ids, storage paths not URLs, `copyWith`, `Equatable`; no JSON mapping yet (added with the Supabase phase). Mock data is in memory and resets on restart.
 
 VERIFIED 2026-11-23 (`PHASE_003`): new models `Connection` (`connections`), `Conversation` / `Message` (`conversations` / `messages`; per-viewer `lastMessage`, `unreadCount`), `AppNotification` (`notifications`), `NotificationSettings`; enums `ConnectionStatus`, `NotificationType`, `ExperienceFilter`, `DiscoverSort`. `TeacherDetails.qualifications` now counts toward profile strength; default fee currency `USD`.
@@ -41,7 +43,7 @@ No `supabase/` folder, migrations, local database or cache code exists (audit 20
 
 ## Migrations
 
-None yet. One file per change: `supabase/migrations/YYYYMMDDHHMMSS_short_description.sql`. Never edit an applied migration.
+`PHASE_004`: `20261123120000_profiles.sql`, `20261123120100_delete_my_account.sql` (applied by the developer in the SQL editor, in order; rollback notes in each file header). One file per change: `supabase/migrations/YYYYMMDDHHMMSS_short_description.sql`. Never edit an applied migration.
 
 ## Local Cache (DECIDED)
 

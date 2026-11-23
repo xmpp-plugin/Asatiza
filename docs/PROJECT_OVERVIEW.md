@@ -4,6 +4,8 @@ Labels: **VERIFIED** = seen in this repo · **DECIDED** = owner-approved in `doc
 
 ## Verified Facts (updated 2026-11-19, `PHASE_001`)
 
+- 2026-11-23 (`PHASE_004`): backend foundation — `supabase_flutter ^2.18.3`; accounts (sign-up with 6-digit email code, log-in, forgot / change password, delete account, stay signed in) and profiles on Supabase in backend mode; migrations + RLS in `supabase/`; Android release manifest gained `INTERNET`. Mock mode remains the default. VERIFIED
+
 - 2026-11-19 (`PHASE_002`, part 1): UI for onboarding, sign-in, profile setup, home feed, post detail, create post and report built from the design canvas with in-memory mock data; dependencies `flutter_bloc ^9.1.1`, `flutter_svg ^2.3.4`, `equatable ^3.0.0` added. VERIFIED
 
 - 2026-11-23 (`PHASE_003`, part 2): the rest of the design — Teachers / Students lists with search and filters, public profiles, connect requests, My connections, search results, chats, notifications with unread badges, My profile, Edit profile, Settings (change password, blocked users, policies, log out, delete account) — on in-memory mock data; no new dependencies. VERIFIED

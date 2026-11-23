@@ -4,7 +4,9 @@ import '../../../core/errors/failures.dart';
 import '../../../data/models/profile.dart';
 import '../logic/password_rules.dart';
 
-enum LoginStatus { editing, submitting, signedIn }
+/// [needsCode]: the email was never confirmed; a fresh sign-up code was
+/// sent and the code screen opens (plan section 4).
+enum LoginStatus { editing, submitting, signedIn, needsCode }
 
 class LoginState extends Equatable {
   const LoginState({

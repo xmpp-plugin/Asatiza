@@ -38,11 +38,19 @@ enum ValidationReason {
   notConnected,
   messageEmpty,
   passwordUnchanged,
+
+  /// Log-in with an email whose sign-up code was never entered.
+  emailNotConfirmed,
 }
 
 /// The requested record does not exist or is not visible.
 final class NotFoundFailure extends Failure {
   const NotFoundFailure();
+}
+
+/// No connection, or the server could not be reached.
+final class NetworkFailure extends Failure {
+  const NetworkFailure();
 }
 
 /// Anything unexpected.
