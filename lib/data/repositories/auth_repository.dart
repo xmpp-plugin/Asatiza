@@ -51,4 +51,19 @@ abstract interface class AuthRepository {
 
   /// Ends the session. Never throws.
   Future<void> logOut();
+
+  /// Changes the signed-in user's password; the session stays signed in.
+  /// Throws `ValidationFailure` with `wrongCredentials` (current password
+  /// wrong), `passwordTooShort`, `passwordUnchanged` or
+  /// `passwordsDoNotMatch`.
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmation,
+  });
+
+  /// Permanently deletes [userId]'s account and data (profile, photo,
+  /// certificates, posts, comments, likes, chats, connections,
+  /// notifications), then signs out.
+  Future<void> deleteAccount(String userId);
 }

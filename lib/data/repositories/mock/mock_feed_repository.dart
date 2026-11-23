@@ -42,6 +42,25 @@ class MockFeedRepository implements FeedRepository {
   static const FeedOrdering _ordering = FeedOrdering();
   static const PostRules _rules = PostRules();
 
+  /// Deletes [userId]'s posts, comments and likes (mock account deletion).
+  void removeUser(String userId) {
+    final postIds = _posts.values
+        .where((p) => p.authorId == userId)
+        .map((p) => p.id)
+        .toSet();
+    _posts.removeWhere((id, _) => postIds.contains(id));
+    _comments.removeWhere(
+      (c) => c.authorId == userId || postIds.contains(c.postId),
+    );
+    for (final likes in _likes.values) {
+      likes.remove(userId);
+    }
+    for (final likes in _commentLikes.values) {
+      likes.remove(userId);
+    }
+    _changes.add(null);
+  }
+
   Post _view(Post post, String viewerId) {
     final likedBy = _likes[post.id] ?? const <String>{};
     return post.copyWith(

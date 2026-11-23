@@ -13,9 +13,14 @@ import 'mock_profile_repository.dart';
 /// and anyone who signed up) get their own profile; other emails sign in as
 /// a new student.
 class MockAuthRepository implements AuthRepository {
-  MockAuthRepository(this._profiles);
+  MockAuthRepository(this._profiles, {void Function(String userId)? onDelete})
+    : _onDelete = onDelete;
 
   final MockProfileRepository _profiles;
+
+  /// Clears the other mock stores when an account is deleted (wired in
+  /// `main.dart`).
+  final void Function(String userId)? _onDelete;
   final Map<String, ({String fullName, UserRole role})> _pendingSignUps =
       <String, ({String fullName, UserRole role})>{};
   final Set<String> _verifiedResets = <String>{};
@@ -154,4 +159,30 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   Future<void> logOut() async {}
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmation,
+  }) async {
+    // Mock: any current password of 8+ characters is accepted.
+    if (!_passwords.hasMinLength(currentPassword)) {
+      throw const ValidationFailure(ValidationReason.wrongCredentials);
+    }
+    _checkPassword(newPassword);
+    if (!_passwords.differs(currentPassword, newPassword)) {
+      throw const ValidationFailure(ValidationReason.passwordUnchanged);
+    }
+    if (!_passwords.matches(newPassword, confirmation)) {
+      throw const ValidationFailure(ValidationReason.passwordsDoNotMatch);
+    }
+  }
+
+  @override
+  Future<void> deleteAccount(String userId) async {
+    await _profiles.getProfile(userId);
+    _onDelete?.call(userId);
+    _profiles.remove(userId);
+  }
 }

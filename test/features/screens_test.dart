@@ -1,3 +1,4 @@
+import 'package:asatiza/data/mock/mock_profiles.dart';
 import 'package:asatiza/core/widgets/app_checkbox.dart';
 import 'package:asatiza/core/widgets/post_card.dart';
 import 'package:asatiza/core/widgets/profile_strength_card.dart';
@@ -89,27 +90,26 @@ void main() {
     await app.stop(tester);
   });
 
-  testWidgets('Log in as Ayesha: strength card 65% and the feed', (
+  testWidgets('Log in with the mock email: Qari Ahmed, strength 90%', (
     tester,
   ) async {
     final app = TestApp();
     await app.start(tester);
     await tapText(tester, 'I already have an account');
     expect(find.byType(LogInScreen), findsOneWidget);
-    await enterField(tester, 'Email', 'ayesha.khan@gmail.com');
+    await enterField(tester, 'Email', MockAccounts.teacherEmail);
     await enterField(tester, 'Password', 'tajweed2026');
     await tapText(tester, 'Log in');
 
     expect(find.byType(HomeScreen), findsOneWidget);
     expect(find.byType(ProfileStrengthCard), findsOneWidget);
-    expect(find.text('Your profile is 65% complete'), findsOneWidget);
+    expect(find.text('Your profile is 90% complete'), findsOneWidget);
     expect(
-      find.text('Add your learning goal to reach teachers faster.'),
+      find.text('Add your experience and qualifications.'),
       findsOneWidget,
     );
-    expect(find.text('2 steps left'), findsOneWidget);
+    expect(find.text('1 step left'), findsOneWidget);
     expect(find.text('Qari Ahmed Khan'), findsWidgets);
-    expect(find.text('Liked'), findsOneWidget);
     await app.stop(tester);
   });
 

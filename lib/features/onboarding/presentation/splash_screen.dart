@@ -14,6 +14,7 @@ import '../../../l10n/app_localizations.dart';
 /// 01 Splash: brand green, logo, "Asatiza" wordmark and the tagline. After
 /// a short pause it continues to Home (the router sends signed-out users
 /// to Welcome).
+/// 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -52,7 +53,9 @@ class _SplashScreenState extends State<SplashScreen> {
         backgroundColor: colors.brand600,
         body: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Row(),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

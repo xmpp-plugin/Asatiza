@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/models/profile.dart';
+import '../../data/repositories/chat_repository.dart';
+import '../../data/repositories/notification_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../router/app_routes.dart';
+import '../session/session_cubit.dart';
+import '../session/shell_badges_cubit.dart';
+import '../session/shell_badges_state.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_shadows.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import 'app_icon.dart';
+import 'count_badge.dart';
 
 /// App shell with the designed bottom bar: Home · Teachers · raised centre
 /// "+" · Chats · Alerts. Tab screens are the [navigationShell] branches.
@@ -32,8 +40,10 @@ class MainShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final current = navigationShell.currentIndex;
+    final user = context.select<SessionCubit, Profile?>((c) => c.state.user);
+    final teacher = user?.isTeacher ?? false;
 
-    return PopScope(
+    final shell = PopScope(
       canPop: current == _homeIndex,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
@@ -51,7 +61,7 @@ class MainShell extends StatelessWidget {
               onTap: () => _selectTab(0),
             ),
             _TabItem(
-              label: l10n.tabTeachers,
+              label: teacher ? l10n.tabStudents : l10n.tabTeachers,
               icon: AppIcon.people,
               selected: current == 1,
               onTap: () => _selectTab(1),
@@ -63,18 +73,32 @@ class MainShell extends StatelessWidget {
             _TabItem(
               label: l10n.tabChats,
               icon: AppIcon.chat,
+              badge: user == null ? null : (s) => s.chats,
               selected: current == 2,
               onTap: () => _selectTab(2),
             ),
             _TabItem(
               label: l10n.tabAlerts,
               icon: AppIcon.bell,
+              badge: user == null ? null : (s) => s.alerts,
               selected: current == 3,
               onTap: () => _selectTab(3),
             ),
           ],
         ),
       ),
+    );
+    if (user == null) {
+      return shell;
+    }
+    return BlocProvider<ShellBadgesCubit>(
+      key: ValueKey<String>(user.id),
+      create: (context) => ShellBadgesCubit(
+        context.read<ChatRepository>(),
+        context.read<NotificationRepository>(),
+        viewerId: user.id,
+      ),
+      child: shell,
     );
   }
 }
@@ -121,9 +145,13 @@ class _TabItem extends StatelessWidget {
     required this.icon,
     required this.selected,
     required this.onTap,
+    this.badge,
   });
 
   final String label;
+
+  /// Reads this tab's unread count from the shell badges, if any.
+  final int Function(ShellBadgesState state)? badge;
 
   /// Design icon name (see [AppIcon]); drawn bolder when selected.
   final String icon;
@@ -134,11 +162,15 @@ class _TabItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
     final foreground = selected ? colors.brand700 : colors.inkMuted;
+    final count = badge == null
+        ? 0
+        : context.select<ShellBadgesCubit, int>((c) => badge!(c.state));
 
     return Semantics(
       button: true,
       selected: selected,
       label: label,
+      value: count > 0 ? '$count' : null,
       excludeSemantics: true,
       child: InkResponse(
         onTap: onTap,
@@ -149,19 +181,33 @@ class _TabItem extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Container(
-                width: 52,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: selected ? colors.brand100 : null,
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                ),
-                child: AppIcon(
-                  icon,
-                  size: 22,
-                  strokeWidth: selected ? 2.1 : 1.8,
-                  color: foreground,
-                ),
+              Stack(
+                clipBehavior: Clip.none,
+                children: <Widget>[
+                  Container(
+                    width: 52,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: selected ? colors.brand100 : null,
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                    ),
+                    child: AppIcon(
+                      icon,
+                      size: 22,
+                      strokeWidth: selected ? 2.1 : 1.8,
+                      color: foreground,
+                    ),
+                  ),
+                  if (count > 0)
+                    PositionedDirectional(
+                      top: -4,
+                      start: 26,
+                      child: CountBadge(
+                        count: count,
+                        ringColor: colors.surface000,
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: AppSpacing.space1),
               Text(

@@ -251,7 +251,7 @@
   "strengthHintSubjects": "Add the subjects you teach.",
   "strengthHintLanguages": "Add the languages you speak.",
   "strengthHintBio": "Write a short bio about your teaching.",
-  "strengthHintExperience": "Add your years of experience.",
+  "strengthHintExperience": "Add your experience and qualifications.",
   "strengthHintFee": "Add your fee and available days.",
   "strengthHintCertificate": "Upload a certificate to get verified faster.",
   "strengthHintGoals": "Add your learning goal to reach teachers faster.",
@@ -343,5 +343,598 @@
   "alsoBlockPrefix": "Also block ",
   "alsoBlockSuffix": ". They won’t see your profile or message you.",
   "cancelAction": "Cancel",
-  "reportSentMessage": "Thank you. Our team will review this post."
+  "reportSentMessage": "Thank you. Our team will review this post.",
+  "tabStudents": "Students",
+  "studentsTitle": "Students",
+  "discoverSearchPlaceholder": "Name, subject or headline",
+  "searchTeachersLabel": "Search teachers",
+  "searchStudentsLabel": "Search students",
+  "filtersButtonLabel": "{count, plural, =0{Filters} =1{Filters, 1 active} other{Filters, {count} active}}",
+  "@filtersButtonLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "verifiedTeacherCount": "{count, plural, =1{1 verified teacher} other{{count} verified teachers}}",
+  "@verifiedTeacherCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mostCompleteFirstSuffix": " · most complete first",
+  "studentCount": "{count, plural, =1{1 student} other{{count} students}}",
+  "@studentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lookingForTeacherSuffix": " looking for a teacher",
+  "teacherGenderChip": "{gender} teacher",
+  "@teacherGenderChip": {
+    "placeholders": {
+      "gender": {
+        "type": "String"
+      }
+    }
+  },
+  "wantsSubjectChip": "Wants {subject}",
+  "@wantsSubjectChip": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "feeRange": "${min} – ${max}",
+  "@feeRange": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "teachesChildrenLabel": "Teaches children",
+  "connectAction": "Connect",
+  "connectedLabel": "Connected",
+  "requestedLabel": "Requested",
+  "acceptAction": "Accept",
+  "declineAction": "Decline",
+  "messageAction": "Message",
+  "viewProfileAction": "View profile",
+  "cityAndTimeZone": "{place} · {timeZone}",
+  "@cityAndTimeZone": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      },
+      "timeZone": {
+        "type": "String"
+      }
+    }
+  },
+  "yearsShort": "{count} yrs",
+  "@yearsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "feePerMonthShort": "${amount}/mo",
+  "@feePerMonthShort": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "feePerClassShort": "${amount}/class",
+  "@feePerClassShort": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "feePerMonthLong": "${amount} / month",
+  "@feePerMonthLong": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "feePerClassLong": "${amount} / class",
+  "@feePerClassLong": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "lookingPill": "Looking",
+  "quotedNote": "“{note}”",
+  "@quotedNote": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "noResultsTitle": "No results for “{query}”",
+  "@noResultsTitle": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "noFilterMatchesTitle": "Nobody matches these filters",
+  "noResultsMessage": "Try a different word, or remove some filters.",
+  "clearFiltersAction": "Clear filters",
+  "filtersTitle": "Filters",
+  "resetAction": "Reset",
+  "subjectFilterLabel": "Subject",
+  "teacherGenderLabel": "Teacher gender",
+  "languageFilterLabel": "Language",
+  "monthlyFeeLabel": "Monthly fee",
+  "experienceFilterLabel": "Experience",
+  "experienceYearsPlus": "{years}+ years",
+  "@experienceYearsPlus": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "showTeachersAction": "{count, plural, =0{No teachers to show} =1{Show 1 teacher} other{Show {count} teachers}}",
+  "@showTeachersAction": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "showStudentsAction": "{count, plural, =0{No students to show} =1{Show 1 student} other{Show {count} students}}",
+  "@showStudentsAction": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sortMostComplete": "Most complete",
+  "sortNewestFirst": "Newest first",
+  "subjectWantedLabel": "Subject wanted",
+  "studentGenderLabel": "Student gender",
+  "countryTimeZoneLabel": "Country / time zone",
+  "anyCountry": "Any country",
+  "levelFilterLabel": "Level",
+  "sortByLabel": "Sort by",
+  "shareProfileAction": "Share profile",
+  "reportOrBlockAction": "Report or block",
+  "profileShareText": "{name} — {headline} · on Asatiza",
+  "@profileShareText": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "headline": {
+        "type": "String"
+      }
+    }
+  },
+  "profileCopiedMessage": "Profile details copied",
+  "blockUserTitle": "Block {name}?",
+  "@blockUserTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blockUserMessage": "They won’t see your profile or message you, and you won’t see them in lists or the feed.",
+  "blockAction": "Block",
+  "userBlockedMessage": "{name} is blocked",
+  "@userBlockedMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profileUnavailableTitle": "Profile not available",
+  "profileUnavailableMessage": "This account may have been deleted.",
+  "learnerLabel": "{ageGroup} learner",
+  "@learnerLabel": {
+    "placeholders": {
+      "ageGroup": {
+        "type": "String"
+      }
+    }
+  },
+  "connectFirstHint": "Connect first to send a message",
+  "statExperience": "Experience",
+  "statConnections": "Connections",
+  "statPosts": "Posts",
+  "aboutLabel": "About",
+  "teachesAudience": "Teaches {audience}",
+  "@teachesAudience": {
+    "placeholders": {
+      "audience": {
+        "type": "String"
+      }
+    }
+  },
+  "feeShortLabel": "Fee",
+  "availabilityLine": "{days} · {from}–{to}",
+  "@availabilityLine": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "noteLabel": "Note",
+  "wantsToLearnLabel": "Wants to learn",
+  "levelLine": "Level: {level}",
+  "@levelLine": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "speaksLine": "Speaks {languages}",
+  "@speaksLine": {
+    "placeholders": {
+      "languages": {
+        "type": "String"
+      }
+    }
+  },
+  "prefersFemaleTeacher": "Prefers a female teacher",
+  "prefersMaleTeacher": "Prefers a male teacher",
+  "prefersAnyTeacher": "Happy with any teacher",
+  "connectWithTitle": "Connect with {name}",
+  "@connectWithTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "connectSheetSubtitle": "{gender, select, male{Once he accepts, you can chat.} female{Once she accepts, you can chat.} other{Once they accept, you can chat.}}",
+  "@connectSheetSubtitle": {
+    "placeholders": {
+      "gender": {
+        "type": "String"
+      }
+    }
+  },
+  "addNoteLabel": "Add a note (optional)",
+  "connectNotePlaceholder": "Say salam and tell them what you would like to learn",
+  "sendRequestAction": "Send request",
+  "requestSentMessage": "Request sent to {name}",
+  "@requestSentMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "connectNoteTooLongError": "Keep your note to 200 characters.",
+  "connectProfileIncompleteError": "Complete at least 60% of your profile to send requests.",
+  "connectAlreadyError": "You already have a request or connection with this person.",
+  "connectionsTitle": "My connections",
+  "connectedTab": "Connected {count}",
+  "@connectedTab": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestsTab": "Requests {count}",
+  "@requestsTab": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sentTab": "Sent {count}",
+  "@sentTab": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "studentLearningSubtitle": "Student · Learning {subject}",
+  "@studentLearningSubtitle": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "removeOrBlockAction": "Remove or block",
+  "removeConnectionAction": "Remove connection",
+  "cancelRequestAction": "Cancel request",
+  "emptyConnectionsTitle": "No connections yet",
+  "emptyConnectionsMessage": "Send a request from a teacher’s profile.",
+  "emptyRequestsTitle": "No requests",
+  "emptyRequestsMessage": "New connection requests will show up here.",
+  "emptySentTitle": "No sent requests",
+  "emptySentMessage": "Requests you send stay here until they are answered.",
+  "searchLabel": "Search",
+  "clearSearchAction": "Clear search",
+  "searchTabAll": "All",
+  "searchTabPosts": "Posts",
+  "seeAllCount": "See all {count}",
+  "@seeAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatOptionsAction": "Chat options",
+  "chatPhotoLabel": "Photo",
+  "chatUnavailableTitle": "Chat not available",
+  "chatUnavailableMessage": "You can chat once your connection request is accepted.",
+  "connectedToday": "Connected today",
+  "connectedDaysAgo": "{days, plural, =1{Connected yesterday} other{Connected {days} days ago}}",
+  "@connectedDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "dayToday": "Today",
+  "emptyChatsTitle": "No chats yet",
+  "emptyChatsMessage": "Chats open once a teacher accepts your request.",
+  "emptyChatsMessageTeacher": "Chats open once you accept a student’s request.",
+  "noChatResultsMessage": "Try another name.",
+  "emptyNotificationsTitle": "You’re all caught up",
+  "emptyNotificationsMessage": "Requests, likes and comments will show up here.",
+  "linkCopiedMessage": "Link copied",
+  "markAllReadAction": "Mark all read",
+  "messageFieldHint": "Message",
+  "messageReadLabel": "Read",
+  "notifWantsToConnect": "wants to connect with you",
+  "notifAccepted": "accepted your request. Say salam!",
+  "notifCommented": "commented: “{text}”",
+  "@notifCommented": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "notifLiked": "{others, plural, =0{liked your post} =1{and 1 other liked your post} other{and {others} others liked your post}}",
+  "@notifLiked": {
+    "placeholders": {
+      "others": {
+        "type": "int"
+      }
+    }
+  },
+  "notifApprovedPrefix": "Your teacher profile was ",
+  "notifApprovedWord": "approved",
+  "notifApprovedSuffix": ". You now appear in search.",
+  "notifNeedsChanges": "Your teacher profile needs a few changes before approval. Check your email for details.",
+  "notificationsNew": "New",
+  "notificationsEarlier": "Earlier",
+  "searchChatsLabel": "Search chats",
+  "sendAction": "Send",
+  "sendPhotoAction": "Send a photo",
+  "sentAPhoto": "Sent a photo",
+  "youPrefix": "You: {text}",
+  "@youPrefix": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "subjectTeacher": "{subject} teacher",
+  "@subjectTeacher": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "timeJustNow": "Just now",
+  "timeMinutesAgo": "{count} min ago",
+  "@timeMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeHoursAgo": "{count}h ago",
+  "@timeHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeDaysAgo": "{count} days ago",
+  "@timeDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ageGroupFieldLabel": "Age group",
+  "appVersionLabel": "Asatiza {version}",
+  "@appVersionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "blockedOn": "Blocked on {date}",
+  "@blockedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "blockedUsersIntro": "Blocked people can’t see your profile or posts, or message you. They aren’t told that you blocked them.",
+  "blockedUsersTitle": "Blocked users",
+  "certificatesApproved": "{count, plural, =1{1 certificate · approved} other{{count} certificates · approved}}",
+  "@certificatesApproved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "certificatesInReview": "{count, plural, =1{1 certificate · in review} other{{count} certificates · in review}}",
+  "@certificatesInReview": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "certificatesApprovedShort": "{count} approved",
+  "@certificatesApprovedShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "certificatesInReviewShort": "{count} in review",
+  "@certificatesInReviewShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "certificatesLabel": "Certificates",
+  "noCertificatesYet": "No certificates yet",
+  "changePasswordIntro": "Use at least 8 characters. You’ll stay logged in on this phone.",
+  "changePasswordTitle": "Change password",
+  "changePhotoAction": "Change photo",
+  "currentPasswordLabel": "Current password",
+  "currentPasswordWrong": "That password isn’t right.",
+  "confirmNewPasswordLabel": "Confirm new password",
+  "passwordRuleDifferent": "Different from your current password",
+  "passwordChangedMessage": "Password changed",
+  "savePasswordAction": "Save password",
+  "forgotCurrentPasswordAction": "Forgot your current password?",
+  "resetByEmailTitle": "Reset by email?",
+  "resetByEmailMessage": "You’ll be logged out and we’ll email you a code to set a new password.",
+  "connectionsCountAction": "Connections ({count})",
+  "@connectionsCountAction": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "contentPolicyTitle": "Content policy",
+  "contentAimTitle": "Our aim",
+  "contentAimBody": "Asatiza is a place to learn and teach the Quran. Everything you share should be respectful and beneficial.",
+  "contentShareTitle": "What you can share",
+  "contentShare1": "Quranic verses, hadith and Islamic reminders with their source",
+  "contentShare2": "Tajweed and Hifz tips, questions and study routines",
+  "contentShare3": "Class announcements and student achievements, with permission",
+  "contentNotAllowedTitle": "Not allowed",
+  "contentNotAllowed1": "Music, songs or music videos",
+  "contentNotAllowed2": "Politics or sectarian debate and attacks",
+  "contentNotAllowed3": "Ads, spam or paid promotions outside your profile",
+  "contentNotAllowed4": "Hate, harassment or private details of others",
+  "contentReportingTitle": "Reporting and review",
+  "contentReportingBody": "Tap Report on any post, comment or profile. A post reported by three people is hidden until our team reviews it. Breaking these rules can lead to a warning or a ban.",
+  "privacyPolicyTitle": "Privacy policy",
+  "privacyCollectTitle": "What we collect",
+  "privacyCollectBody": "Your name, email, role, profile details and photo, the posts, comments and messages you send, a device token for notifications, and crash reports.",
+  "privacyUseTitle": "How we use it",
+  "privacyUseBody": "To run your account, show your profile to the right people, deliver messages and notifications, keep the community safe and fix bugs. We never sell your data.",
+  "privacySeeTitle": "Who can see what",
+  "privacySeeBody": "Your profile and posts are visible to signed-in members. Messages are visible only to you and the person you chat with. Certificates are seen only by our review team.",
+  "privacyChoicesTitle": "Your choices",
+  "privacyChoicesBody": "Edit your profile any time, turn notifications off in Settings, block people, and delete your account from Settings or our website.",
+  "termsTitle": "Terms of use",
+  "termsJoinTitle": "Who can join",
+  "termsJoinBody": "You must be 18 or older. A parent or guardian may create a student account for their child and is responsible for it.",
+  "termsAccountTitle": "Your account",
+  "termsAccountBody": "Keep your password safe and your details accurate. Teachers must only upload certificates that are genuinely theirs.",
+  "termsClassesTitle": "Classes and fees",
+  "termsClassesBody": "Teachers and students arrange class times, video links and fees directly. Asatiza is not a party to these arrangements and does not handle payments.",
+  "termsContentTitle": "Content",
+  "termsContentBody": "You own what you post, and you give Asatiza permission to show it in the app. All content must follow our Content policy.",
+  "termsEndingTitle": "Ending your account",
+  "termsEndingBody": "You can delete your account at any time. We may suspend accounts that break these terms or put others at risk.",
+  "policyLastUpdated": "Last updated 18 November 2026",
+  "deleteAccountAction": "Delete account",
+  "deleteAccountTitle": "Delete your account?",
+  "deleteAccountMessage": "This is permanent and can’t be undone. The following will be deleted:",
+  "deleteItemProfile": "Your profile, photo and certificates",
+  "deleteItemPosts": "Your posts, comments and likes",
+  "deleteItemChats": "Your chats and shared photos",
+  "deleteItemConnections": "Your connections and requests",
+  "deleteAccountConfirm": "I understand that my account and data will be permanently deleted.",
+  "deleteAccountFailed": "Your account couldn’t be deleted. Please try again.",
+  "editProfileAction": "Edit profile",
+  "editProfileTitle": "Edit profile",
+  "saveAction": "Save",
+  "profileSavedMessage": "Profile saved",
+  "nameRequiredError": "Enter your name.",
+  "fromLabel": "From",
+  "toLabel": "To",
+  "iTeachLabel": "I teach",
+  "learningLabel": "Learning",
+  "wantToLearnLabel": "What I want to learn",
+  "lookingSwitchHint": "Teachers can find you and send requests.",
+  "myPostsLabel": "My posts",
+  "noPostsYet": "You haven’t posted yet.",
+  "myProfileTitle": "My profile",
+  "qualificationsLabel": "Qualifications",
+  "qualificationsPlaceholder": "e.g. Ijazah in Hafs, Hifz from Jamia Ashrafia",
+  "removeCertificateAction": "Remove certificate",
+  "uploadCertificateAction": "Upload certificate",
+  "logOutAction": "Log out",
+  "logOutTitle": "Log out of Asatiza?",
+  "logOutMessage": "You can log back in any time with your email and password.",
+  "settingsTitle": "Settings",
+  "settingsAccount": "Account",
+  "settingsNotifications": "Notifications",
+  "settingsPrivacySafety": "Privacy & safety",
+  "settingConnectionRequests": "Connection requests",
+  "settingNewMessages": "New messages",
+  "settingComments": "Comments on my posts",
+  "settingLikes": "Likes",
+  "noBlockedUsersTitle": "No blocked users",
+  "noBlockedUsersMessage": "If you block someone from a profile, post or chat, they’ll appear here.",
+  "unblockAction": "Unblock"
 }

@@ -59,21 +59,15 @@ void main() {
       auth = MockAuthRepository(profiles);
     });
 
-    test('mock accounts keep their role', () async {
-      expect(
-        (await auth.logIn(
-          email: MockAccounts.teacherEmail,
-          password: 'tajweed2026',
-        )).role,
-        UserRole.teacher,
+    // Developer decision 2026-11-23: both mock login emails are the same
+    // address, which opens Qari Ahmed's (teacher) account.
+    test('the mock login email opens Qari Ahmed (teacher)', () async {
+      final user = await auth.logIn(
+        email: MockAccounts.teacherEmail,
+        password: 'tajweed2026',
       );
-      expect(
-        (await auth.logIn(
-          email: MockAccounts.studentEmail,
-          password: 'tajweed2026',
-        )).id,
-        MockIds.ayesha,
-      );
+      expect(user.id, MockIds.ahmed);
+      expect(user.role, UserRole.teacher);
     });
     test(
       'unknown email signs in as a new student named from the email',

@@ -17,6 +17,18 @@ class MockProfileRepository implements ProfileRepository {
   final StreamController<void> _changes = StreamController<void>.broadcast();
 
   /// Mock-layer only: adds a profile created by sign-up or first log-in.
+  /// Every stored profile (mock helper for the other mock repositories).
+  Iterable<Profile> get all => _profiles.values;
+
+  /// Fires after any profile changes (mock helper).
+  Stream<void> get changes => _changes.stream;
+
+  /// Deletes a profile (mock account deletion).
+  void remove(String id) {
+    _profiles.remove(id);
+    _changes.add(null);
+  }
+
   void insert(Profile profile) {
     _profiles[profile.id] = profile;
     _changes.add(null);

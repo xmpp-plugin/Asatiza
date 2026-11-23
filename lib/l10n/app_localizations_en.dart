@@ -612,7 +612,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get strengthHintBio => 'Write a short bio about your teaching.';
 
   @override
-  String get strengthHintExperience => 'Add your years of experience.';
+  String get strengthHintExperience =>
+      'Add your experience and qualifications.';
 
   @override
   String get strengthHintFee => 'Add your fee and available days.';
@@ -777,4 +778,927 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportSentMessage => 'Thank you. Our team will review this post.';
+
+  @override
+  String get tabStudents => 'Students';
+
+  @override
+  String get studentsTitle => 'Students';
+
+  @override
+  String get discoverSearchPlaceholder => 'Name, subject or headline';
+
+  @override
+  String get searchTeachersLabel => 'Search teachers';
+
+  @override
+  String get searchStudentsLabel => 'Search students';
+
+  @override
+  String filtersButtonLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Filters, $count active',
+      one: 'Filters, 1 active',
+      zero: 'Filters',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String verifiedTeacherCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count verified teachers',
+      one: '1 verified teacher',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mostCompleteFirstSuffix => ' · most complete first';
+
+  @override
+  String studentCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count students',
+      one: '1 student',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get lookingForTeacherSuffix => ' looking for a teacher';
+
+  @override
+  String teacherGenderChip(String gender) {
+    return '$gender teacher';
+  }
+
+  @override
+  String wantsSubjectChip(String subject) {
+    return 'Wants $subject';
+  }
+
+  @override
+  String feeRange(int min, int max) {
+    return '\$$min – \$$max';
+  }
+
+  @override
+  String get teachesChildrenLabel => 'Teaches children';
+
+  @override
+  String get connectAction => 'Connect';
+
+  @override
+  String get connectedLabel => 'Connected';
+
+  @override
+  String get requestedLabel => 'Requested';
+
+  @override
+  String get acceptAction => 'Accept';
+
+  @override
+  String get declineAction => 'Decline';
+
+  @override
+  String get messageAction => 'Message';
+
+  @override
+  String get viewProfileAction => 'View profile';
+
+  @override
+  String cityAndTimeZone(String place, String timeZone) {
+    return '$place · $timeZone';
+  }
+
+  @override
+  String yearsShort(int count) {
+    return '$count yrs';
+  }
+
+  @override
+  String feePerMonthShort(int amount) {
+    return '\$$amount/mo';
+  }
+
+  @override
+  String feePerClassShort(int amount) {
+    return '\$$amount/class';
+  }
+
+  @override
+  String feePerMonthLong(int amount) {
+    return '\$$amount / month';
+  }
+
+  @override
+  String feePerClassLong(int amount) {
+    return '\$$amount / class';
+  }
+
+  @override
+  String get lookingPill => 'Looking';
+
+  @override
+  String quotedNote(String note) {
+    return '“$note”';
+  }
+
+  @override
+  String noResultsTitle(String query) {
+    return 'No results for “$query”';
+  }
+
+  @override
+  String get noFilterMatchesTitle => 'Nobody matches these filters';
+
+  @override
+  String get noResultsMessage =>
+      'Try a different word, or remove some filters.';
+
+  @override
+  String get clearFiltersAction => 'Clear filters';
+
+  @override
+  String get filtersTitle => 'Filters';
+
+  @override
+  String get resetAction => 'Reset';
+
+  @override
+  String get subjectFilterLabel => 'Subject';
+
+  @override
+  String get teacherGenderLabel => 'Teacher gender';
+
+  @override
+  String get languageFilterLabel => 'Language';
+
+  @override
+  String get monthlyFeeLabel => 'Monthly fee';
+
+  @override
+  String get experienceFilterLabel => 'Experience';
+
+  @override
+  String experienceYearsPlus(int years) {
+    return '$years+ years';
+  }
+
+  @override
+  String showTeachersAction(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Show $count teachers',
+      one: 'Show 1 teacher',
+      zero: 'No teachers to show',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String showStudentsAction(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Show $count students',
+      one: 'Show 1 student',
+      zero: 'No students to show',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sortMostComplete => 'Most complete';
+
+  @override
+  String get sortNewestFirst => 'Newest first';
+
+  @override
+  String get subjectWantedLabel => 'Subject wanted';
+
+  @override
+  String get studentGenderLabel => 'Student gender';
+
+  @override
+  String get countryTimeZoneLabel => 'Country / time zone';
+
+  @override
+  String get anyCountry => 'Any country';
+
+  @override
+  String get levelFilterLabel => 'Level';
+
+  @override
+  String get sortByLabel => 'Sort by';
+
+  @override
+  String get shareProfileAction => 'Share profile';
+
+  @override
+  String get reportOrBlockAction => 'Report or block';
+
+  @override
+  String profileShareText(String name, String headline) {
+    return '$name — $headline · on Asatiza';
+  }
+
+  @override
+  String get profileCopiedMessage => 'Profile details copied';
+
+  @override
+  String blockUserTitle(String name) {
+    return 'Block $name?';
+  }
+
+  @override
+  String get blockUserMessage =>
+      'They won’t see your profile or message you, and you won’t see them in lists or the feed.';
+
+  @override
+  String get blockAction => 'Block';
+
+  @override
+  String userBlockedMessage(String name) {
+    return '$name is blocked';
+  }
+
+  @override
+  String get profileUnavailableTitle => 'Profile not available';
+
+  @override
+  String get profileUnavailableMessage => 'This account may have been deleted.';
+
+  @override
+  String learnerLabel(String ageGroup) {
+    return '$ageGroup learner';
+  }
+
+  @override
+  String get connectFirstHint => 'Connect first to send a message';
+
+  @override
+  String get statExperience => 'Experience';
+
+  @override
+  String get statConnections => 'Connections';
+
+  @override
+  String get statPosts => 'Posts';
+
+  @override
+  String get aboutLabel => 'About';
+
+  @override
+  String teachesAudience(String audience) {
+    return 'Teaches $audience';
+  }
+
+  @override
+  String get feeShortLabel => 'Fee';
+
+  @override
+  String availabilityLine(String days, String from, String to) {
+    return '$days · $from–$to';
+  }
+
+  @override
+  String get noteLabel => 'Note';
+
+  @override
+  String get wantsToLearnLabel => 'Wants to learn';
+
+  @override
+  String levelLine(String level) {
+    return 'Level: $level';
+  }
+
+  @override
+  String speaksLine(String languages) {
+    return 'Speaks $languages';
+  }
+
+  @override
+  String get prefersFemaleTeacher => 'Prefers a female teacher';
+
+  @override
+  String get prefersMaleTeacher => 'Prefers a male teacher';
+
+  @override
+  String get prefersAnyTeacher => 'Happy with any teacher';
+
+  @override
+  String connectWithTitle(String name) {
+    return 'Connect with $name';
+  }
+
+  @override
+  String connectSheetSubtitle(String gender) {
+    String _temp0 = intl.Intl.selectLogic(gender, {
+      'male': 'Once he accepts, you can chat.',
+      'female': 'Once she accepts, you can chat.',
+      'other': 'Once they accept, you can chat.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get addNoteLabel => 'Add a note (optional)';
+
+  @override
+  String get connectNotePlaceholder =>
+      'Say salam and tell them what you would like to learn';
+
+  @override
+  String get sendRequestAction => 'Send request';
+
+  @override
+  String requestSentMessage(String name) {
+    return 'Request sent to $name';
+  }
+
+  @override
+  String get connectNoteTooLongError => 'Keep your note to 200 characters.';
+
+  @override
+  String get connectProfileIncompleteError =>
+      'Complete at least 60% of your profile to send requests.';
+
+  @override
+  String get connectAlreadyError =>
+      'You already have a request or connection with this person.';
+
+  @override
+  String get connectionsTitle => 'My connections';
+
+  @override
+  String connectedTab(int count) {
+    return 'Connected $count';
+  }
+
+  @override
+  String requestsTab(int count) {
+    return 'Requests $count';
+  }
+
+  @override
+  String sentTab(int count) {
+    return 'Sent $count';
+  }
+
+  @override
+  String studentLearningSubtitle(String subject) {
+    return 'Student · Learning $subject';
+  }
+
+  @override
+  String get removeOrBlockAction => 'Remove or block';
+
+  @override
+  String get removeConnectionAction => 'Remove connection';
+
+  @override
+  String get cancelRequestAction => 'Cancel request';
+
+  @override
+  String get emptyConnectionsTitle => 'No connections yet';
+
+  @override
+  String get emptyConnectionsMessage =>
+      'Send a request from a teacher’s profile.';
+
+  @override
+  String get emptyRequestsTitle => 'No requests';
+
+  @override
+  String get emptyRequestsMessage =>
+      'New connection requests will show up here.';
+
+  @override
+  String get emptySentTitle => 'No sent requests';
+
+  @override
+  String get emptySentMessage =>
+      'Requests you send stay here until they are answered.';
+
+  @override
+  String get searchLabel => 'Search';
+
+  @override
+  String get clearSearchAction => 'Clear search';
+
+  @override
+  String get searchTabAll => 'All';
+
+  @override
+  String get searchTabPosts => 'Posts';
+
+  @override
+  String seeAllCount(int count) {
+    return 'See all $count';
+  }
+
+  @override
+  String get chatOptionsAction => 'Chat options';
+
+  @override
+  String get chatPhotoLabel => 'Photo';
+
+  @override
+  String get chatUnavailableTitle => 'Chat not available';
+
+  @override
+  String get chatUnavailableMessage =>
+      'You can chat once your connection request is accepted.';
+
+  @override
+  String get connectedToday => 'Connected today';
+
+  @override
+  String connectedDaysAgo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Connected $days days ago',
+      one: 'Connected yesterday',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dayToday => 'Today';
+
+  @override
+  String get emptyChatsTitle => 'No chats yet';
+
+  @override
+  String get emptyChatsMessage =>
+      'Chats open once a teacher accepts your request.';
+
+  @override
+  String get emptyChatsMessageTeacher =>
+      'Chats open once you accept a student’s request.';
+
+  @override
+  String get noChatResultsMessage => 'Try another name.';
+
+  @override
+  String get emptyNotificationsTitle => 'You’re all caught up';
+
+  @override
+  String get emptyNotificationsMessage =>
+      'Requests, likes and comments will show up here.';
+
+  @override
+  String get linkCopiedMessage => 'Link copied';
+
+  @override
+  String get markAllReadAction => 'Mark all read';
+
+  @override
+  String get messageFieldHint => 'Message';
+
+  @override
+  String get messageReadLabel => 'Read';
+
+  @override
+  String get notifWantsToConnect => 'wants to connect with you';
+
+  @override
+  String get notifAccepted => 'accepted your request. Say salam!';
+
+  @override
+  String notifCommented(String text) {
+    return 'commented: “$text”';
+  }
+
+  @override
+  String notifLiked(int others) {
+    String _temp0 = intl.Intl.pluralLogic(
+      others,
+      locale: localeName,
+      other: 'and $others others liked your post',
+      one: 'and 1 other liked your post',
+      zero: 'liked your post',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notifApprovedPrefix => 'Your teacher profile was ';
+
+  @override
+  String get notifApprovedWord => 'approved';
+
+  @override
+  String get notifApprovedSuffix => '. You now appear in search.';
+
+  @override
+  String get notifNeedsChanges =>
+      'Your teacher profile needs a few changes before approval. Check your email for details.';
+
+  @override
+  String get notificationsNew => 'New';
+
+  @override
+  String get notificationsEarlier => 'Earlier';
+
+  @override
+  String get searchChatsLabel => 'Search chats';
+
+  @override
+  String get sendAction => 'Send';
+
+  @override
+  String get sendPhotoAction => 'Send a photo';
+
+  @override
+  String get sentAPhoto => 'Sent a photo';
+
+  @override
+  String youPrefix(String text) {
+    return 'You: $text';
+  }
+
+  @override
+  String subjectTeacher(String subject) {
+    return '$subject teacher';
+  }
+
+  @override
+  String get timeJustNow => 'Just now';
+
+  @override
+  String timeMinutesAgo(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String timeHoursAgo(int count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String timeDaysAgo(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String get ageGroupFieldLabel => 'Age group';
+
+  @override
+  String appVersionLabel(String version) {
+    return 'Asatiza $version';
+  }
+
+  @override
+  String blockedOn(String date) {
+    return 'Blocked on $date';
+  }
+
+  @override
+  String get blockedUsersIntro =>
+      'Blocked people can’t see your profile or posts, or message you. They aren’t told that you blocked them.';
+
+  @override
+  String get blockedUsersTitle => 'Blocked users';
+
+  @override
+  String certificatesApproved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count certificates · approved',
+      one: '1 certificate · approved',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String certificatesInReview(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count certificates · in review',
+      one: '1 certificate · in review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String certificatesApprovedShort(int count) {
+    return '$count approved';
+  }
+
+  @override
+  String certificatesInReviewShort(int count) {
+    return '$count in review';
+  }
+
+  @override
+  String get certificatesLabel => 'Certificates';
+
+  @override
+  String get noCertificatesYet => 'No certificates yet';
+
+  @override
+  String get changePasswordIntro =>
+      'Use at least 8 characters. You’ll stay logged in on this phone.';
+
+  @override
+  String get changePasswordTitle => 'Change password';
+
+  @override
+  String get changePhotoAction => 'Change photo';
+
+  @override
+  String get currentPasswordLabel => 'Current password';
+
+  @override
+  String get currentPasswordWrong => 'That password isn’t right.';
+
+  @override
+  String get confirmNewPasswordLabel => 'Confirm new password';
+
+  @override
+  String get passwordRuleDifferent => 'Different from your current password';
+
+  @override
+  String get passwordChangedMessage => 'Password changed';
+
+  @override
+  String get savePasswordAction => 'Save password';
+
+  @override
+  String get forgotCurrentPasswordAction => 'Forgot your current password?';
+
+  @override
+  String get resetByEmailTitle => 'Reset by email?';
+
+  @override
+  String get resetByEmailMessage =>
+      'You’ll be logged out and we’ll email you a code to set a new password.';
+
+  @override
+  String connectionsCountAction(int count) {
+    return 'Connections ($count)';
+  }
+
+  @override
+  String get contentPolicyTitle => 'Content policy';
+
+  @override
+  String get contentAimTitle => 'Our aim';
+
+  @override
+  String get contentAimBody =>
+      'Asatiza is a place to learn and teach the Quran. Everything you share should be respectful and beneficial.';
+
+  @override
+  String get contentShareTitle => 'What you can share';
+
+  @override
+  String get contentShare1 =>
+      'Quranic verses, hadith and Islamic reminders with their source';
+
+  @override
+  String get contentShare2 =>
+      'Tajweed and Hifz tips, questions and study routines';
+
+  @override
+  String get contentShare3 =>
+      'Class announcements and student achievements, with permission';
+
+  @override
+  String get contentNotAllowedTitle => 'Not allowed';
+
+  @override
+  String get contentNotAllowed1 => 'Music, songs or music videos';
+
+  @override
+  String get contentNotAllowed2 => 'Politics or sectarian debate and attacks';
+
+  @override
+  String get contentNotAllowed3 =>
+      'Ads, spam or paid promotions outside your profile';
+
+  @override
+  String get contentNotAllowed4 =>
+      'Hate, harassment or private details of others';
+
+  @override
+  String get contentReportingTitle => 'Reporting and review';
+
+  @override
+  String get contentReportingBody =>
+      'Tap Report on any post, comment or profile. A post reported by three people is hidden until our team reviews it. Breaking these rules can lead to a warning or a ban.';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy policy';
+
+  @override
+  String get privacyCollectTitle => 'What we collect';
+
+  @override
+  String get privacyCollectBody =>
+      'Your name, email, role, profile details and photo, the posts, comments and messages you send, a device token for notifications, and crash reports.';
+
+  @override
+  String get privacyUseTitle => 'How we use it';
+
+  @override
+  String get privacyUseBody =>
+      'To run your account, show your profile to the right people, deliver messages and notifications, keep the community safe and fix bugs. We never sell your data.';
+
+  @override
+  String get privacySeeTitle => 'Who can see what';
+
+  @override
+  String get privacySeeBody =>
+      'Your profile and posts are visible to signed-in members. Messages are visible only to you and the person you chat with. Certificates are seen only by our review team.';
+
+  @override
+  String get privacyChoicesTitle => 'Your choices';
+
+  @override
+  String get privacyChoicesBody =>
+      'Edit your profile any time, turn notifications off in Settings, block people, and delete your account from Settings or our website.';
+
+  @override
+  String get termsTitle => 'Terms of use';
+
+  @override
+  String get termsJoinTitle => 'Who can join';
+
+  @override
+  String get termsJoinBody =>
+      'You must be 18 or older. A parent or guardian may create a student account for their child and is responsible for it.';
+
+  @override
+  String get termsAccountTitle => 'Your account';
+
+  @override
+  String get termsAccountBody =>
+      'Keep your password safe and your details accurate. Teachers must only upload certificates that are genuinely theirs.';
+
+  @override
+  String get termsClassesTitle => 'Classes and fees';
+
+  @override
+  String get termsClassesBody =>
+      'Teachers and students arrange class times, video links and fees directly. Asatiza is not a party to these arrangements and does not handle payments.';
+
+  @override
+  String get termsContentTitle => 'Content';
+
+  @override
+  String get termsContentBody =>
+      'You own what you post, and you give Asatiza permission to show it in the app. All content must follow our Content policy.';
+
+  @override
+  String get termsEndingTitle => 'Ending your account';
+
+  @override
+  String get termsEndingBody =>
+      'You can delete your account at any time. We may suspend accounts that break these terms or put others at risk.';
+
+  @override
+  String get policyLastUpdated => 'Last updated 18 November 2026';
+
+  @override
+  String get deleteAccountAction => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete your account?';
+
+  @override
+  String get deleteAccountMessage =>
+      'This is permanent and can’t be undone. The following will be deleted:';
+
+  @override
+  String get deleteItemProfile => 'Your profile, photo and certificates';
+
+  @override
+  String get deleteItemPosts => 'Your posts, comments and likes';
+
+  @override
+  String get deleteItemChats => 'Your chats and shared photos';
+
+  @override
+  String get deleteItemConnections => 'Your connections and requests';
+
+  @override
+  String get deleteAccountConfirm =>
+      'I understand that my account and data will be permanently deleted.';
+
+  @override
+  String get deleteAccountFailed =>
+      'Your account couldn’t be deleted. Please try again.';
+
+  @override
+  String get editProfileAction => 'Edit profile';
+
+  @override
+  String get editProfileTitle => 'Edit profile';
+
+  @override
+  String get saveAction => 'Save';
+
+  @override
+  String get profileSavedMessage => 'Profile saved';
+
+  @override
+  String get nameRequiredError => 'Enter your name.';
+
+  @override
+  String get fromLabel => 'From';
+
+  @override
+  String get toLabel => 'To';
+
+  @override
+  String get iTeachLabel => 'I teach';
+
+  @override
+  String get learningLabel => 'Learning';
+
+  @override
+  String get wantToLearnLabel => 'What I want to learn';
+
+  @override
+  String get lookingSwitchHint => 'Teachers can find you and send requests.';
+
+  @override
+  String get myPostsLabel => 'My posts';
+
+  @override
+  String get noPostsYet => 'You haven’t posted yet.';
+
+  @override
+  String get myProfileTitle => 'My profile';
+
+  @override
+  String get qualificationsLabel => 'Qualifications';
+
+  @override
+  String get qualificationsPlaceholder =>
+      'e.g. Ijazah in Hafs, Hifz from Jamia Ashrafia';
+
+  @override
+  String get removeCertificateAction => 'Remove certificate';
+
+  @override
+  String get uploadCertificateAction => 'Upload certificate';
+
+  @override
+  String get logOutAction => 'Log out';
+
+  @override
+  String get logOutTitle => 'Log out of Asatiza?';
+
+  @override
+  String get logOutMessage =>
+      'You can log back in any time with your email and password.';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsAccount => 'Account';
+
+  @override
+  String get settingsNotifications => 'Notifications';
+
+  @override
+  String get settingsPrivacySafety => 'Privacy & safety';
+
+  @override
+  String get settingConnectionRequests => 'Connection requests';
+
+  @override
+  String get settingNewMessages => 'New messages';
+
+  @override
+  String get settingComments => 'Comments on my posts';
+
+  @override
+  String get settingLikes => 'Likes';
+
+  @override
+  String get noBlockedUsersTitle => 'No blocked users';
+
+  @override
+  String get noBlockedUsersMessage =>
+      'If you block someone from a profile, post or chat, they’ll appear here.';
+
+  @override
+  String get unblockAction => 'Unblock';
 }

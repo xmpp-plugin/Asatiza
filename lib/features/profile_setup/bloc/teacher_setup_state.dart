@@ -20,6 +20,9 @@ class TeacherSetupState extends Equatable {
   /// Max bio length (artboard 07c: "142 / 600").
   static const int bioMax = 600;
 
+  /// Longest qualifications text, in characters.
+  static const int qualificationsMax = 300;
+
   final Profile draft;
 
   /// 1-based.

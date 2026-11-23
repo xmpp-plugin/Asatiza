@@ -32,6 +32,12 @@ enum ValidationReason {
   postTagMissing,
   dailyPostLimit,
   commentEmpty,
+  connectNoteTooLong,
+  profileIncomplete,
+  alreadyConnected,
+  notConnected,
+  messageEmpty,
+  passwordUnchanged,
 }
 
 /// The requested record does not exist or is not visible.

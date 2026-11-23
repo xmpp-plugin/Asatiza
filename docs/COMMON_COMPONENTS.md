@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-23 (`PHASE_003`) — new in `lib/core/widgets/`: `AppSegmentedControl`, `AppOptionTile`, `AppSwitch`, `AppInfoNote` (promoted from part 1 screens; `InfoNote` removed), `SearchField` (list and pill styles), `CountBadge` (gold filter count / red unread), `InfoRow`, `ProfileHeader`, `TeacherCardSkeleton`, `ChatRowSkeleton`, `SettingsTile`, `AppSwitchTile`, `ConfirmSheet`. Feature widgets: `TeacherCard`, `StudentCard`, `FilterChipsBar`, `FeeRangeSlider`, `PersonRow` (discover); `RequestTile` (connections); `ConversationTile`, `ChatBubble`, `ChatImageBubble`, `DayDivider`, `MessageComposer`, `ChatHeader` (chat); `NotificationTile`, `RequestNotificationTile` (notifications); `CertificateRow` (profile). A 24 px detail chip is still private in 4 screens (candidate for a shared widget, needs approval).
+
 VERIFIED 2026-11-19 (`PHASE_002`) — `lib/core/widgets/`: `AppIcon` (design SVG icons, stroke/fill variants), `AppButton` (primary/secondary/danger, 48 px / 36 px), `AppTextField`, `AppTextArea` (counter), `AppChip`, `TagChip`, `AppAvatar` (initials + verified), `VerifiedBadge`, `AppCheckbox`, `SectionLabel`, `BackHeader`, `AppBottomSheet`, `StepProgressHeader`, `NumberedStepper`, `OtpInput`, `ProfileStrengthCard`, `PostCard`, `EmptyStateView`, `SkeletonBox`, `PostCardSkeleton`. Feature widgets: `RoleCard`, `InfoNote` (auth); `WelcomeSlide`, `PageDots` (onboarding); `WeekdayPicker`, `PhotoPickerTile`, `UploadTile` (profile_setup); `HomeTopBar`, `CommentTile`, `CommentComposer` (feed). Private, screen-local for now (promote in part 2 with approval): segmented control, radio option tile, age-group card, design switch.
 
 VERIFIED 2026-11-19 (`PHASE_001`):

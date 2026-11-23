@@ -77,7 +77,8 @@ class ProfileStrengthCalculator {
       ProfileStrengthItem.teachingLanguages ||
       ProfileStrengthItem.studentLanguages => p.languages.isNotEmpty,
       ProfileStrengthItem.bio => has(p.bio),
-      ProfileStrengthItem.experience => t?.experienceYears != null,
+      ProfileStrengthItem.experience =>
+        t?.experienceYears != null && has(t?.qualifications),
       ProfileStrengthItem.feeAndAvailability =>
         t?.feeAmount != null && (t?.availableDays ?? const {}).isNotEmpty,
       ProfileStrengthItem.certificate =>

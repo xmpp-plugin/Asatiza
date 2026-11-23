@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-23 (`PHASE_003`): 15 new cubits — `DiscoverCubit`, `PublicProfileCubit`, `SearchCubit` (discover); `ConnectRequestCubit`, `ConnectionsCubit` (connections); `ChatsCubit`, `ChatCubit` (chat); `NotificationsCubit`; `MyProfileCubit`, `EditProfileCubit` (profile); `SettingsCubit`, `ChangePasswordCubit`, `BlockedUsersCubit`, `DeleteAccountCubit` (settings); `ShellBadgesCubit` (`lib/core/session/`, provided by `MainShell` per signed-in user). Filters, visibility and note limits live in pure-Dart logic classes (`TeacherFilter`, `StudentFilter`, `DiscoverVisibilityRules`, `ConnectNoteRules`).
+
 VERIFIED 2026-11-19 (`PHASE_002`): `flutter_bloc ^9.1.1` and `equatable ^3.0.0` added. `SessionCubit` (signed in/out, `needsSetup`) is provided above `MaterialApp.router`; screen cubits are created per route with `BlocProvider` and get repositories via `context.read<XRepository>()` in `create`. States are immutable `Equatable` classes with an explicit status enum. Stream subscriptions are cancelled in `close()`; the OTP countdown timer is cancelled in `OtpCubit.close()`.
 
 No state-management package; `MyHomePage` uses `setState` (starter code). VERIFIED

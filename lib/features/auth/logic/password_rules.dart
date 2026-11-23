@@ -12,4 +12,8 @@ class PasswordRules {
       password.isNotEmpty && password == confirmation;
 
   bool isValidEmail(String email) => _email.hasMatch(email.trim());
+
+  /// A new password must differ from the current one.
+  bool differs(String current, String next) =>
+      next.isNotEmpty && current != next;
 }

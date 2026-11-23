@@ -76,11 +76,8 @@ class _HomeView extends StatelessWidget {
             children: <Widget>[
               HomeTopBar(
                 user: user,
-                // My profile and search results arrive with part 2. Until then
-                // the avatar opens profile setup (where the profile is edited)
-                // and search opens the Teachers tab.
-                onAvatarTap: () => context.push(AppRoutes.setupFor(user.role)),
-                onSearchTap: () => context.go(AppRoutes.teachers),
+                onAvatarTap: () => context.push(AppRoutes.myProfile),
+                onSearchTap: () => context.push(AppRoutes.search),
               ),
               Expanded(
                 child: BlocBuilder<FeedCubit, FeedState>(
@@ -94,8 +91,7 @@ class _HomeView extends StatelessWidget {
                       if (showStrength)
                         ProfileStrengthCard(
                           profile: user,
-                          onComplete: () =>
-                              context.push(AppRoutes.setupFor(user.role)),
+                          onComplete: () => context.push(AppRoutes.editProfile),
                           onDismiss: cubit.dismissStrengthCard,
                         ),
                       if (state.status == FeedStatus.loading) ...const <Widget>[

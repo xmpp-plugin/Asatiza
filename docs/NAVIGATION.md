@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-23 (`PHASE_003`): added `/home/search` (inside the Home tab, keeps the bar), `/profile/:id` (public profile), `/connections`, `/chat/:userId` (chat with one connection), `/me` (My profile) and `/me/edit`, `/settings`, `/settings/password`, `/settings/blocked`, `/policy/:page` (`content` / `privacy` / `terms`; open signed in or out, used by the sign-up consent links). The second tab reads "Teachers" for students and "Students" for teachers; Chats and Alerts show unread badges (`ShellBadgesCubit`). Home avatar → My profile; Home search → results; strength card "Complete profile" → Edit profile. Filter, Connect, Log out and Delete account are bottom sheets.
+
 VERIFIED 2026-11-19 (`PHASE_002`): routes `/` (Splash) · `/welcome` · `/sign-up` · `/sign-up/code` · `/log-in` · `/forgot-password` (email + code steps) · `/forgot-password/new` · `/setup/teacher` · `/setup/student` · shell `/home` `/teachers` `/chats` `/alerts` · `/create-post` (full-screen) · `/post/:id`. Redirect on `SessionCubit`: signed out → Welcome (Splash and sign-in screens allowed); after sign-up → role setup until finished/skipped; signed in → sign-in screens redirect to Home. Report is a modal bottom sheet. Bottom bar uses the design SVG icons.
 
 VERIFIED 2026-11-19 (`PHASE_001`):

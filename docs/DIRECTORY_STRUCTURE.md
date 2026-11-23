@@ -4,6 +4,8 @@
 
 VERIFIED 2026-11-19 (`PHASE_002`): added `assets/icons/` (42), `assets/illustrations/` (6), `assets/images/` (2 logos); `lib/core/{errors,logic,session,utils}/`, 18 new widgets in `lib/core/widgets/`; `lib/data/models/` (+ `enums/`), `lib/data/repositories/` (+ `mock/`), `lib/data/mock/`; features `onboarding`, `auth`, `profile_setup`, `feed`, `post`, `safety` with `bloc/`, `logic/`, `presentation/` (+ `widgets/`). Mock folders hold UI-phase stand-ins only; screens and cubits never import them.
 
+VERIFIED 2026-11-23 (`PHASE_003`): new features `lib/features/{connections,profile,settings}/`; `discover`, `chat`, `notifications` filled in (`bloc/`, `logic/`, `presentation/widgets/`); `lib/data/mock/{mock_connections,mock_chats,mock_notifications}.dart`; 13 new widgets in `lib/core/widgets/`; `lib/core/session/shell_badges_*`.
+
 ```
 asatiza/
   .claude/skills/asatiza-docs-and-phases/   project skill (this workflow)

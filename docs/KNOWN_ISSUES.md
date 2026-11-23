@@ -2,6 +2,9 @@
 
 ## Verified From Repository (audit 2026-11-18)
 
+- 2026-11-23: both mock login emails (`MockAccounts`) are the same address by developer decision — logging in always opens Qari Ahmed (teacher); the student account Ayesha cannot be reached through the log-in screen.
+- 2026-11-23 (`PHASE_003`): every artboard is built on mock data. Still mock-only: changes reset on restart; "Change photo", chat photos and certificate uploads attach samples (no picker); chat links copy instead of opening (no URL-launcher package); "Share profile" copies text; changing the password does not store it; deleting an account clears it from memory until restart. Fees are US dollars per month (owner decision; the canvas shows PKR). Content / Privacy / Terms texts came from the design tool — owner / legal review needed before launch. Seed has no blocked users (the canvas shows three). Design gaps kept: 18 px verified badge on large avatars (design 26 px), student initials use the avatar tint (design grey).
+
 - 2026-11-19 (`PHASE_002`): the app runs on mock data only — every launch starts signed out and all changes reset on restart; any valid email + 8-character password signs in; any 6 digits pass the code step. Teachers, Chats and Alerts tabs are still placeholders (part 2). Home avatar opens profile setup and Home search opens the Teachers tab until My profile and search results exist (part 2). "Photo", "Add a profile photo" and "Upload certificates" attach sample files (no camera/gallery).
 
 - Updated 2026-11-19 (`PHASE_001`): Git repository on branch `main`. App foundation exists (theme, router, shell, placeholder screens). App ID `com.asatiza.app` on Android and iOS — permanent after the first store upload.

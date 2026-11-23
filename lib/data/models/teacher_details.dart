@@ -12,7 +12,7 @@ class TeacherDetails extends Equatable {
     this.experienceYears,
     this.qualifications,
     this.feeAmount,
-    this.feeCurrency = 'PKR',
+    this.feeCurrency = 'USD',
     this.feeUnit,
     this.availableDays = const <Weekday>{},
     this.availableFromMinutes,
@@ -25,7 +25,7 @@ class TeacherDetails extends Equatable {
   final int? experienceYears;
   final String? qualifications;
 
-  /// Whole currency units (e.g. 6000 = PKR 6,000).
+  /// Whole currency units (e.g. 40 = USD 40).
   final int? feeAmount;
   final String feeCurrency;
   final FeeUnit? feeUnit;

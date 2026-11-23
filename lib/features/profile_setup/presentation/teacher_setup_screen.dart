@@ -14,6 +14,7 @@ import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_chip.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/widgets/app_segmented_control.dart';
 import '../../../core/widgets/app_text_area.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/section_label.dart';
@@ -31,7 +32,8 @@ import 'widgets/upload_tile.dart';
 import 'widgets/weekday_picker.dart';
 
 /// Countries and time zones offered by the pickers (UI-only phase).
-const List<String> _countries = <String>[
+/// Countries offered in profile pickers (setup and Edit profile).
+const List<String> profileCountries = <String>[
   'Pakistan',
   'India',
   'United Kingdom',
@@ -41,7 +43,9 @@ const List<String> _countries = <String>[
   'Saudi Arabia',
   'Australia',
 ];
-const List<String> _timeZones = <String>[
+
+/// Time zones offered in profile pickers (setup and Edit profile).
+const List<String> profileTimeZones = <String>[
   'GMT−5',
   'GMT+0',
   'GMT+1',
@@ -314,7 +318,7 @@ class _StepTwo extends StatelessWidget {
           const SizedBox(height: AppSpacing.space5),
           SectionLabel(l10n.genderLabel),
           const SizedBox(height: AppSpacing.gap10),
-          _SegmentedControl<Gender>(
+          AppSegmentedControl<Gender>(
             values: Gender.values,
             selected: state.draft.gender,
             label: (g) => g.label(l10n),
@@ -333,7 +337,7 @@ class _StepTwo extends StatelessWidget {
                   onTap: () => _pick(
                     context,
                     title: l10n.countryLabel,
-                    options: _countries,
+                    options: profileCountries,
                     current: state.draft.country,
                     onSelected: cubit.countryChanged,
                   ),
@@ -350,7 +354,7 @@ class _StepTwo extends StatelessWidget {
                   onTap: () => _pick(
                     context,
                     title: l10n.timeZoneLabel,
-                    options: _timeZones,
+                    options: profileTimeZones,
                     current: state.draft.timeZone,
                     onSelected: cubit.timeZoneChanged,
                   ),
@@ -379,6 +383,7 @@ class _StepThree extends StatefulWidget {
 
 class _StepThreeState extends State<_StepThree> {
   late final TextEditingController _bio;
+  late final TextEditingController _qualifications;
 
   @override
   void initState() {
@@ -386,11 +391,16 @@ class _StepThreeState extends State<_StepThree> {
     _bio = TextEditingController(
       text: context.read<TeacherSetupCubit>().state.draft.bio ?? '',
     );
+    _qualifications = TextEditingController(
+      text:
+          context.read<TeacherSetupCubit>().state.details.qualifications ?? '',
+    );
   }
 
   @override
   void dispose() {
     _bio.dispose();
+    _qualifications.dispose();
     super.dispose();
   }
 
@@ -451,11 +461,20 @@ class _StepThreeState extends State<_StepThree> {
               ],
             ),
             const SizedBox(height: AppSpacing.space4),
-            _SegmentedControl<FeeUnit>(
+            AppSegmentedControl<FeeUnit>(
               values: FeeUnit.values,
               selected: d.feeUnit,
               label: (u) => u.label(l10n),
               onChanged: cubit.feeUnitChanged,
+            ),
+            const SizedBox(height: AppSpacing.space4),
+            AppTextArea(
+              label: l10n.qualificationsLabel,
+              controller: _qualifications,
+              maxLength: TeacherSetupState.qualificationsMax,
+              height: 80,
+              placeholder: l10n.qualificationsPlaceholder,
+              onChanged: cubit.qualificationsChanged,
             ),
             const SizedBox(height: AppSpacing.space4),
             SectionLabel(
@@ -485,76 +504,6 @@ class _StepThreeState extends State<_StepThree> {
           ],
         );
       },
-    );
-  }
-}
-
-/// Segmented control from the artboards: surface-200 track (12 px radius,
-/// 4 px padding); the selected segment is white with a brand label.
-class _SegmentedControl<T> extends StatelessWidget {
-  const _SegmentedControl({
-    required this.values,
-    required this.selected,
-    required this.label,
-    required this.onChanged,
-  });
-
-  final List<T> values;
-  final T? selected;
-  final String Function(T value) label;
-  final ValueChanged<T> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.space1),
-      decoration: BoxDecoration(
-        color: colors.surface200,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-      ),
-      child: Row(
-        children: <Widget>[
-          for (final value in values) ...<Widget>[
-            if (value != values.first) const SizedBox(width: AppSpacing.space1),
-            Expanded(
-              child: Semantics(
-                button: true,
-                selected: value == selected,
-                child: GestureDetector(
-                  onTap: () => onChanged(value),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    height: 36,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: value == selected ? colors.surface000 : null,
-                      borderRadius: BorderRadius.circular(AppRadius.segment),
-                      boxShadow: value == selected
-                          ? <BoxShadow>[
-                              BoxShadow(
-                                color: colors.ink.withValues(alpha: 0.12),
-                                offset: const Offset(0, 1),
-                                blurRadius: 2,
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      label(value),
-                      style: AppTextStyles.label.copyWith(
-                        color: value == selected
-                            ? colors.brand700
-                            : colors.inkMuted,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
     );
   }
 }

@@ -73,6 +73,9 @@ class TeacherSetupCubit extends Cubit<TeacherSetupState> {
     }
   }
 
+  void qualificationsChanged(String value) =>
+      _details((d) => d.copyWith(qualifications: value));
+
   void feeChanged(String value) {
     final amount = int.tryParse(value.replaceAll(RegExp(r'[^0-9]'), ''));
     if (amount != null) {

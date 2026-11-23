@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-23 (`PHASE_003`, provisional mock contracts): `DiscoverRepository` (`watchTeachers`, `watchStudents` — visibility rules applied), `ConnectionRepository` (`watchConnections`, `sendRequest`, `respond`, `remove`), `ChatRepository` (`watchConversations`, `openConversation`, `watchMessages`, `sendMessage`, `markRead`; chat only between accepted connections), `NotificationRepository` (`watchNotifications`, `markRead`, `markAllRead`, `watchSettings`, `updateSettings`). `AuthRepository` gained `changePassword`, `deleteAccount`; `SafetyRepository` gained `watchBlockedUsers` (`BlockedUser` record with date), `unblockUser`. New `ValidationReason`s: `connectNoteTooLong`, `profileIncomplete`, `alreadyConnected`, `notConnected`, `messageEmpty`, `passwordUnchanged`. All registered by interface in `lib/main.dart` with in-memory mocks; the backend phases may refine them.
+
 VERIFIED 2026-11-19 (`PHASE_002`): the 4 interfaces above exist in `lib/data/repositories/` with method contracts in Dart doc comments; status **provisional** until each backend phase confirms it. Only mock implementations exist (`lib/data/repositories/mock/`); no Supabase or Dio code yet.
 
 No backend client, repository, Supabase project files, Edge Functions or API calls exist in the repository (audit 2026-11-18). VERIFIED

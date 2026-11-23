@@ -185,17 +185,37 @@ class _SignUpView extends StatelessWidget {
                                     ),
                                     children: <InlineSpan>[
                                       TextSpan(text: l10n.consentPrefix),
-                                      TextSpan(
-                                        text: l10n.termsLink,
-                                        style: TextStyle(
-                                          color: colors.brand700,
+                                      WidgetSpan(
+                                        alignment:
+                                            PlaceholderAlignment.baseline,
+                                        baseline: TextBaseline.alphabetic,
+                                        child: GestureDetector(
+                                          onTap: () => context.push(
+                                            AppRoutes.policy('terms'),
+                                          ),
+                                          child: Text(
+                                            l10n.termsLink,
+                                            style: AppTextStyles.body.copyWith(
+                                              color: colors.brand700,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                       TextSpan(text: l10n.consentAnd),
-                                      TextSpan(
-                                        text: l10n.privacyLink,
-                                        style: TextStyle(
-                                          color: colors.brand700,
+                                      WidgetSpan(
+                                        alignment:
+                                            PlaceholderAlignment.baseline,
+                                        baseline: TextBaseline.alphabetic,
+                                        child: GestureDetector(
+                                          onTap: () => context.push(
+                                            AppRoutes.policy('privacy'),
+                                          ),
+                                          child: Text(
+                                            l10n.privacyLink,
+                                            style: AppTextStyles.body.copyWith(
+                                              color: colors.brand700,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                       TextSpan(text: l10n.consentSuffix),

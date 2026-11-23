@@ -9,13 +9,13 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/widgets/app_info_note.dart';
 import '../../../core/widgets/back_header.dart';
 import '../../../core/widgets/otp_input.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../bloc/otp_cubit.dart';
 import '../bloc/otp_state.dart';
-import 'widgets/info_note.dart';
 
 /// 04 Email code after sign-up: 6 boxes (auto-verify), resend timer,
 /// "Wrong email? Change it" and the spam-folder note.
@@ -147,7 +147,7 @@ class _EmailCodeView extends StatelessWidget {
                                     : context.go(AppRoutes.signUp),
                               ),
                               const SizedBox(height: AppSpacing.space5),
-                              InfoNote(text: l10n.spamFolderNote),
+                              AppInfoNote(text: l10n.spamFolderNote),
                               const Spacer(),
                               const SizedBox(height: AppSpacing.space5),
                               AppButton(

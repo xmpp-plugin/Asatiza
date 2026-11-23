@@ -6,9 +6,17 @@ import 'package:asatiza/core/widgets/app_text_field.dart';
 import 'package:asatiza/core/widgets/otp_input.dart';
 import 'package:asatiza/data/mock/mock_profiles.dart';
 import 'package:asatiza/data/repositories/auth_repository.dart';
+import 'package:asatiza/data/repositories/chat_repository.dart';
+import 'package:asatiza/data/repositories/connection_repository.dart';
+import 'package:asatiza/data/repositories/discover_repository.dart';
 import 'package:asatiza/data/repositories/feed_repository.dart';
+import 'package:asatiza/data/repositories/notification_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_auth_repository.dart';
+import 'package:asatiza/data/repositories/mock/mock_chat_repository.dart';
+import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
+import 'package:asatiza/data/repositories/mock/mock_discover_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
+import 'package:asatiza/data/repositories/mock/mock_notification_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
 import 'package:asatiza/data/repositories/profile_repository.dart';
@@ -24,7 +32,20 @@ class TestApp {
     : profiles = MockProfileRepository(),
       feed = MockFeedRepository(),
       safety = MockSafetyRepository() {
-    auth = MockAuthRepository(profiles);
+    discover = MockDiscoverRepository(profiles, safety);
+    connections = MockConnectionRepository(profiles);
+    chats = MockChatRepository(connections);
+    notifications = MockNotificationRepository();
+    auth = MockAuthRepository(
+      profiles,
+      onDelete: (userId) {
+        feed.removeUser(userId);
+        chats.removeUser(userId);
+        connections.removeUser(userId);
+        notifications.removeUser(userId);
+        safety.removeUser(userId);
+      },
+    );
     session = SessionCubit(auth, profiles);
   }
 
@@ -32,6 +53,10 @@ class TestApp {
   final MockFeedRepository feed;
   final MockSafetyRepository safety;
   late final MockAuthRepository auth;
+  late final MockDiscoverRepository discover;
+  late final MockConnectionRepository connections;
+  late final MockChatRepository chats;
+  late final MockNotificationRepository notifications;
   late final SessionCubit session;
 
   Widget build() => MultiRepositoryProvider(
@@ -40,6 +65,10 @@ class TestApp {
       RepositoryProvider<ProfileRepository>.value(value: profiles),
       RepositoryProvider<FeedRepository>.value(value: feed),
       RepositoryProvider<SafetyRepository>.value(value: safety),
+      RepositoryProvider<DiscoverRepository>.value(value: discover),
+      RepositoryProvider<ConnectionRepository>.value(value: connections),
+      RepositoryProvider<ChatRepository>.value(value: chats),
+      RepositoryProvider<NotificationRepository>.value(value: notifications),
     ],
     child: BlocProvider<SessionCubit>.value(
       value: session,
@@ -64,9 +93,10 @@ class TestApp {
     bool teacher = false,
   }) async {
     await start(tester);
-    final user = await auth.logIn(
-      email: teacher ? MockAccounts.teacherEmail : MockAccounts.studentEmail,
-      password: 'tajweed2026',
+    // Signs in by profile id so screen tests do not depend on the mock
+    // login emails.
+    final user = await profiles.getProfile(
+      teacher ? MockIds.ahmed : MockIds.ayesha,
     );
     session.signedIn(user);
     await tester.pumpAndSettle();

@@ -128,7 +128,7 @@ void main() {
       expect(step3.state.canSave, isFalse);
       step3.confirmationChanged('newpass2026');
       await step3.savePassword();
-      expect(step3.state.user!.id, MockIds.ayesha);
+      expect(step3.state.user!.id, MockIds.ahmed);
       await step1.close();
       await step3.close();
     },

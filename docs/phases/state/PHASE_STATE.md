@@ -8,13 +8,13 @@ Manually maintained operational record for approvals, handoffs, manual-test evid
 - Active phase: None
 - Next approved phase: None
 - Planned phases: None
-- Closed phases: `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` (`COMPLETED` 2026-11-19), `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` (`COMPLETED` 2026-11-23)
+- Closed phases: `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` (`COMPLETED` 2026-11-19), `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` (`COMPLETED` 2026-11-23), `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` (`COMPLETED` 2026-11-23)
 - Blocked phases: None
 - Temporary pauses: None
 
 ## Recommended Next Operation
 
-No active phase. Next: `CREATE PHASE` for part 2 of the full app design (find & connect, chats & notifications, me & settings) when the developer asks. Closure doc updates are uncommitted.
+No active phase. Developer decides on the uncommitted `splash_screen.dart` edit and whether to commit PHASE_003 (all changes are uncommitted on `PHASE_002_UI_ADD_FULL_APP_DESIGN`). Next phase when the developer asks (backend).
 
 ## Log
 
@@ -38,3 +38,12 @@ No active phase. Next: `CREATE PHASE` for part 2 of the full app design (find & 
 | 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Execute Phase (start) | Readiness OK; no other active phase. Git baseline: branch `PHASE_002_UI_ADD_FULL_APP_DESIGN` at `b5b53e6` (developer commit), clean tree. Status `ACTIVE`, step `EXECUTION`. |
 | 2026-11-19 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Execute Phase | Part 1 implemented: 50 SVG assets, 3 dependencies, data layer + mocks, session, 30 widgets, 11 cubits, 13 screens, 231 strings. `flutter analyze` clean; `flutter test` 57/57. Status `ACTIVE`, step `MANUAL_TEST`. Nothing committed. |
 | 2026-11-23 | `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` | Close Phase | Developer: "tested and working fine". Implementation already committed by the developer (`faa7b13`). Execute evidence reused (no implementation change after Execute). Status `CLOSED`, step `CLOSURE`, outcome `COMPLETED`. |
+| 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Create Phase | Read-only analysis of the 29 remaining artboards (canvas `1795151725-6615`, sizes unchanged) and current code. Phase created `PLANNED` / `ANALYSIS` / `PENDING`; ≈ 125 new files, 2 interface changes, strength-calculator fix; 6 missing-information items. No production code changed. |
+| 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Create Phase (update) | Developer answers recorded: qualifications text field (certificate stays separate), USD-only fees (filter $10 – $100/month, approved design deviation), Message disabled until connected, promote 4 part 1 widgets, mock delete account as recommended, one phase with 3 stop-and-report checkpoints. Adds `TeacherDetails.qualifications`. Step moved to `APPROVAL`, approval `PENDING`. |
+| 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Approve Phase | Explicit developer approval ("APPROVE PHASE: PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO"). Readiness 21/21. Status `APPROVED`, step `APPROVAL`, approval `APPROVED`, outcome `NONE`. Covers part 2 scope: 29 artboards, 4 new provisional interfaces + mocks, `AuthRepository`/`SafetyRepository` additions, `TeacherDetails.qualifications` + USD default, strength-calculator fix, seed changes, 13 shared widgets (4 promoted), cubits, screens, tests, docs; 3 checkpoints. Not executed. |
+| 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Execute Phase (start) | Readiness OK; no other active phase. Git baseline: branch `PHASE_002_UI_ADD_FULL_APP_DESIGN` at `d55b393` (no new branch created by the developer); pre-existing uncommitted changes: phase docs only. Status `ACTIVE`, step `EXECUTION`; checkpoint 1 started. |
+| 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Execute Phase (checkpoint 1) | Find & connect implemented; `flutter analyze` clean, `flutter test` 77/77. Stopped for the developer; status `ACTIVE` / `EXECUTION`. |
+| 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Execute Phase (checkpoint 2) | Developer: "Continue". Chats & notifications implemented; `flutter analyze` clean, `flutter test` 88/88. Stopped for the developer; status `ACTIVE` / `EXECUTION`. |
+| 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Execute Phase (checkpoint 3) | Developer: "Continue". Me & settings implemented; docs updated. `flutter analyze` clean; `flutter test` 98/101 (3 failures from the developer's uncommitted `MockAccounts` email edit). Status `ACTIVE`, step `MANUAL_TEST`. |
+| 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Close Phase | Developer: "Tested and working fine". Checks rerun (files touched after Execute): analyze clean; tests 98/101 (3 failures from the developer's `MockAccounts` email edit); format only flags the developer's `splash_screen.dart` edit. Status `CLOSED`, step `CLOSURE`, outcome `COMPLETED`. No commit requested. |
+| 2026-11-23 | `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` | Post-closure test fix | Developer keeps the shared `MockAccounts` email. 3 email-based tests updated to expect Qari Ahmed; `flutter test` 101/101. Phase stays `CLOSED` / `COMPLETED`. |

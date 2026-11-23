@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_radius.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/app_icon.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_radius.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_text_styles.dart';
+import 'app_icon.dart';
 
 /// Quiet surface-200 note with an 18 px icon, e.g. "Can’t find it? Check
 /// your Spam folder…" on the email-code screen.
-class InfoNote extends StatelessWidget {
-  const InfoNote({required this.text, super.key, this.icon = AppIcon.info});
+class AppInfoNote extends StatelessWidget {
+  const AppInfoNote({required this.text, super.key, this.icon = AppIcon.info});
 
   final String text;
   final String icon;

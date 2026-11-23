@@ -12,6 +12,9 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_chip.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/widgets/app_option_tile.dart';
+import '../../../core/widgets/app_segmented_control.dart';
+import '../../../core/widgets/app_switch.dart';
 import '../../../core/widgets/app_text_area.dart';
 import '../../../core/widgets/section_label.dart';
 import '../../../core/widgets/step_progress_header.dart';
@@ -261,7 +264,7 @@ class _StepTwo extends StatelessWidget {
           for (final level in LearnerLevel.values) ...<Widget>[
             if (level != LearnerLevel.values.first)
               const SizedBox(height: AppSpacing.gap10),
-            _OptionTile(
+            AppOptionTile(
               title: level.label(l10n),
               subtitle: level.description(l10n),
               selected: state.details.level == level,
@@ -338,7 +341,7 @@ class _StepThreeState extends State<_StepThree> {
           const SizedBox(height: AppSpacing.gap22),
           SectionLabel(l10n.preferredTeacherGenderLabel),
           const SizedBox(height: AppSpacing.gap10),
-          _SegmentedControl<TeacherGenderPreference>(
+          AppSegmentedControl<TeacherGenderPreference>(
             values: TeacherGenderPreference.values,
             selected: state.details.preferredTeacherGender,
             label: (p) => p.label(l10n),
@@ -376,7 +379,7 @@ class _StepThreeState extends State<_StepThree> {
                     ),
                   ),
                   const SizedBox(width: AppSpacing.space3),
-                  _DesignSwitch(
+                  AppSwitch(
                     value: state.details.lookingForTeacher,
                     onChanged: cubit.lookingChanged,
                   ),
@@ -460,212 +463,6 @@ class _AgeGroupCard extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// Radio option card: 22 px ring, title and description.
-class _OptionTile extends StatelessWidget {
-  const _OptionTile({
-    required this.title,
-    required this.subtitle,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
-    return Semantics(
-      inMutuallyExclusiveGroup: true,
-      checked: selected,
-      child: Material(
-        color: selected ? colors.brand100 : colors.surface000,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          side: BorderSide(
-            color: selected ? colors.brand600 : colors.line,
-            width: selected ? 2 : 1,
-          ),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: AppSpacing.gap14,
-              vertical: AppSpacing.space3,
-            ),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: 22,
-                  height: 22,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: selected ? colors.brand600 : colors.inkMuted,
-                      width: 2,
-                    ),
-                  ),
-                  child: selected
-                      ? Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            color: colors.brand600,
-                            shape: BoxShape.circle,
-                          ),
-                        )
-                      : null,
-                ),
-                const SizedBox(width: AppSpacing.space3),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        title,
-                        style: AppTextStyles.nameMd.copyWith(color: colors.ink),
-                      ),
-                      const SizedBox(height: AppSpacing.gap2),
-                      Text(
-                        subtitle,
-                        style: AppTextStyles.helper.copyWith(
-                          color: colors.inkMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// 48×28 switch from the artboards (brand track when on).
-class _DesignSwitch extends StatelessWidget {
-  const _DesignSwitch({required this.value, required this.onChanged});
-
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
-    return Semantics(
-      toggled: value,
-      child: GestureDetector(
-        onTap: () => onChanged(!value),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          width: 48,
-          height: 28,
-          padding: const EdgeInsets.all(2),
-          alignment: value
-              ? AlignmentDirectional.centerEnd
-              : AlignmentDirectional.centerStart,
-          decoration: BoxDecoration(
-            color: value ? colors.brand600 : colors.surface200,
-            borderRadius: BorderRadius.circular(AppRadius.pill),
-            border: Border.all(color: value ? colors.brand600 : colors.line),
-          ),
-          child: Container(
-            width: 22,
-            height: 22,
-            decoration: BoxDecoration(
-              color: colors.surface000,
-              shape: BoxShape.circle,
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: colors.ink.withValues(alpha: 0.2),
-                  offset: const Offset(0, 1),
-                  blurRadius: 2,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Segmented control from the artboards (see teacher setup).
-class _SegmentedControl<T> extends StatelessWidget {
-  const _SegmentedControl({
-    required this.values,
-    required this.selected,
-    required this.label,
-    required this.onChanged,
-  });
-
-  final List<T> values;
-  final T? selected;
-  final String Function(T value) label;
-  final ValueChanged<T> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.space1),
-      decoration: BoxDecoration(
-        color: colors.surface200,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-      ),
-      child: Row(
-        children: <Widget>[
-          for (final value in values) ...<Widget>[
-            if (value != values.first) const SizedBox(width: AppSpacing.space1),
-            Expanded(
-              child: Semantics(
-                button: true,
-                selected: value == selected,
-                child: GestureDetector(
-                  onTap: () => onChanged(value),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    height: 36,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: value == selected ? colors.surface000 : null,
-                      borderRadius: BorderRadius.circular(AppRadius.segment),
-                      boxShadow: value == selected
-                          ? <BoxShadow>[
-                              BoxShadow(
-                                color: colors.ink.withValues(alpha: 0.12),
-                                offset: const Offset(0, 1),
-                                blurRadius: 2,
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      label(value),
-                      style: AppTextStyles.label.copyWith(
-                        color: value == selected
-                            ? colors.brand700
-                            : colors.inkMuted,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ],
       ),
     );
   }

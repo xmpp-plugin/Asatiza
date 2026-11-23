@@ -8,16 +8,26 @@ import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/log_in_screen.dart';
 import '../../features/auth/presentation/new_password_screen.dart';
 import '../../features/auth/presentation/sign_up_screen.dart';
+import '../../features/chat/presentation/chat_screen.dart';
 import '../../features/chat/presentation/chats_screen.dart';
+import '../../features/connections/presentation/connections_screen.dart';
 import '../../features/discover/presentation/discover_screen.dart';
+import '../../features/discover/presentation/public_profile_screen.dart';
+import '../../features/discover/presentation/search_results_screen.dart';
 import '../../features/feed/presentation/home_screen.dart';
 import '../../features/feed/presentation/post_detail_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/onboarding/presentation/splash_screen.dart';
 import '../../features/onboarding/presentation/welcome_screen.dart';
 import '../../features/post/presentation/create_post_screen.dart';
+import '../../features/profile/presentation/edit_profile_screen.dart';
+import '../../features/profile/presentation/my_profile_screen.dart';
 import '../../features/profile_setup/presentation/student_setup_screen.dart';
 import '../../features/profile_setup/presentation/teacher_setup_screen.dart';
+import '../../features/settings/presentation/blocked_users_screen.dart';
+import '../../features/settings/presentation/change_password_screen.dart';
+import '../../features/settings/presentation/policy_screen.dart';
+import '../../features/settings/presentation/settings_screen.dart';
 import '../session/session_cubit.dart';
 import '../widgets/main_shell.dart';
 import 'app_routes.dart';
@@ -32,7 +42,7 @@ GoRouter createAppRouter(SessionCubit session) {
     refreshListenable: _SessionListenable(session),
     redirect: (context, state) {
       final location = state.matchedLocation;
-      if (location == AppRoutes.splash) {
+      if (location == AppRoutes.splash || AppRoutes.isPolicy(location)) {
         return null;
       }
       final current = session.state;
@@ -87,6 +97,12 @@ GoRouter createAppRouter(SessionCubit session) {
               GoRoute(
                 path: AppRoutes.home,
                 builder: (_, _) => const HomeScreen(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'search',
+                    builder: (_, _) => const SearchResultsScreen(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -128,6 +144,50 @@ GoRouter createAppRouter(SessionCubit session) {
         path: AppRoutes.postPattern,
         builder: (_, state) =>
             PostDetailScreen(postId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: AppRoutes.profilePattern,
+        builder: (_, state) =>
+            PublicProfileScreen(profileId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: AppRoutes.chatPattern,
+        builder: (_, state) =>
+            ChatScreen(otherId: state.pathParameters['userId']!),
+      ),
+      GoRoute(
+        path: AppRoutes.connections,
+        builder: (_, _) => const ConnectionsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.myProfile,
+        builder: (_, _) => const MyProfileScreen(),
+        routes: <RouteBase>[
+          GoRoute(path: 'edit', builder: (_, _) => const EditProfileScreen()),
+        ],
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        builder: (_, _) => const SettingsScreen(),
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'password',
+            builder: (_, _) => const ChangePasswordScreen(),
+          ),
+          GoRoute(
+            path: 'blocked',
+            builder: (_, _) => const BlockedUsersScreen(),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: AppRoutes.policyPattern,
+        builder: (_, state) => PolicyScreen(
+          page: PolicyPage.values.firstWhere(
+            (p) => p.name == state.pathParameters['page'],
+            orElse: () => PolicyPage.terms,
+          ),
+        ),
       ),
     ],
   );

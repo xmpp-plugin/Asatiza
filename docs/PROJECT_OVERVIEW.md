@@ -6,6 +6,8 @@ Labels: **VERIFIED** = seen in this repo · **DECIDED** = owner-approved in `doc
 
 - 2026-11-19 (`PHASE_002`, part 1): UI for onboarding, sign-in, profile setup, home feed, post detail, create post and report built from the design canvas with in-memory mock data; dependencies `flutter_bloc ^9.1.1`, `flutter_svg ^2.3.4`, `equatable ^3.0.0` added. VERIFIED
 
+- 2026-11-23 (`PHASE_003`, part 2): the rest of the design — Teachers / Students lists with search and filters, public profiles, connect requests, My connections, search results, chats, notifications with unread badges, My profile, Edit profile, Settings (change password, blocked users, policies, log out, delete account) — on in-memory mock data; no new dependencies. VERIFIED
+
 - Package name: `asatiza` (`pubspec.yaml`), version `1.0.0+1`, description "Asatiza — Quran teacher & student network". VERIFIED
 - Dart SDK constraint: `^3.11.0`. VERIFIED
 - Dependencies: `flutter`, `cupertino_icons ^1.0.8`, `go_router ^17.5.0`, `flutter_localizations` (SDK), `intl` (SDK-pinned); dev: `flutter_test`, `flutter_lints ^6.0.0`. Fonts bundled: Fraunces, Plus Jakarta Sans, Amiri (OFL). VERIFIED

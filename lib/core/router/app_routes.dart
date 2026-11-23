@@ -26,6 +26,29 @@ abstract final class AppRoutes {
   static const String postPattern = '/post/:id';
   static String post(String id) => '/post/$id';
 
+  /// Home search results (inside the Home tab, keeps the bottom bar).
+  static const String search = '/home/search';
+
+  static const String profilePattern = '/profile/:id';
+  static String profile(String id) => '/profile/$id';
+
+  static const String connections = '/connections';
+
+  static const String myProfile = '/me';
+  static const String editProfile = '/me/edit';
+  static const String settings = '/settings';
+  static const String changePassword = '/settings/password';
+  static const String blockedUsers = '/settings/blocked';
+
+  /// Content / privacy / terms pages; open while signed in or out.
+  static const String policyPattern = '/policy/:page';
+  static String policy(String page) => '/policy/$page';
+  static bool isPolicy(String location) => location.startsWith('/policy/');
+
+  /// Chat with one connection, by the other person's id.
+  static const String chatPattern = '/chat/:userId';
+  static String chat(String userId) => '/chat/$userId';
+
   /// Screens reachable while signed out.
   static const Set<String> signedOut = <String>{
     welcome,

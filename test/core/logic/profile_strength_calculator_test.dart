@@ -48,7 +48,8 @@ void main() {
           details: const TeacherDetails(
             subjects: [Subject.tajweed],
             experienceYears: 8,
-            feeAmount: 6000,
+            qualifications: 'Ijazah in Hafs an Asim',
+            feeAmount: 40,
             feeUnit: FeeUnit.perMonth,
             availableDays: {Weekday.monday},
             certificatePaths: ['certificates/t/1.pdf'],
@@ -61,6 +62,36 @@ void main() {
         );
     expect(calculator.percent(full), 100);
     expect(calculator.missing(full), isEmpty);
+  });
+
+  test('experience counts only with qualifications (plan section 7)', () {
+    final yearsOnly = teacher(
+      details: const TeacherDetails(experienceYears: 8),
+    );
+    expect(
+      calculator.missing(yearsOnly),
+      contains(ProfileStrengthItem.experience),
+    );
+    final both = teacher(
+      details: const TeacherDetails(
+        experienceYears: 8,
+        qualifications: 'Hafiz',
+      ),
+    );
+    expect(
+      calculator.missing(both),
+      isNot(contains(ProfileStrengthItem.experience)),
+    );
+  });
+
+  test('Qari Ahmed (mock) is 90%, missing only qualifications (20c)', () {
+    final ahmed = buildMockProfiles(
+      DateTime(2026),
+    ).firstWhere((p) => p.id == MockIds.ahmed);
+    expect(calculator.percent(ahmed), 90);
+    expect(calculator.missing(ahmed), <ProfileStrengthItem>[
+      ProfileStrengthItem.experience,
+    ]);
   });
 
   test('fee without days does not count fee + availability', () {
