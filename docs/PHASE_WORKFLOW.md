@@ -237,6 +237,7 @@ When testing failed, do not close. Keep status `ACTIVE`, set step to `MANUAL_TES
 record the failed test, and prepare only an in-scope correction.
 ```
 
+
 ### Create Planned Phase While Another Is Active
 
 ```text

@@ -8,15 +8,15 @@
 - Module: UI
 - Priority: High
 - Risk level: High (3 production dependencies, ≈ 135 new Dart/test files + 50 SVG assets, new `mock/` data layer, first models and repository interfaces, shared core widgets and theme constants, router rewrite)
-- Current status: ACTIVE
-- Current step: MANUAL_TEST
+- Current status: CLOSED
+- Current step: CLOSURE
 - Approval: APPROVED
-- Outcome: NONE
+- Outcome: COMPLETED
 - Version: 1.0
 - Created date: 2026-11-19
-- Last updated date: 2026-11-19 (implemented; waiting for developer manual test)
+- Last updated date: 2026-11-23 (closed)
 - Started date: 2026-11-19
-- Completed date: Not completed
+- Completed date: 2026-11-23
 - Developer owner: Repository owner (developer) — owner and manual tester
 - Dependency phases: PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION
 
@@ -257,18 +257,25 @@ For every changed file, record:
 ## Manual Testing
 
 - Ready for developer manual testing: Yes (2026-11-19): `flutter run` on Android (and iOS on a Mac). Mock accounts: `ayesha.khan@gmail.com` (student) and `ahmed.khan@gmail.com` (teacher), any 8+ character password; any 6 digits for codes. Every launch starts signed out.
-- Developer manual-test confirmation: Not provided
+- Developer manual-test confirmation: "tested and working fine" (2026-11-23).
 - Manual-test notes requested by developer: None
 
 ## Closure
 
-- Developer manual-test confirmation: Not provided
-- Tested platforms: Not provided
-- Tested devices: Not provided
-- Failed and retested cases: None recorded
-- Known limitations: None recorded
-- Follow-up phases: Part 2 (find & connect, chats & notifications, me & settings) — created after this phase closes.
-- Reused Execute technical evidence at closure: Not evaluated
-- Rollback guidance: See Rollback Plan
-- Final status: Not closed
-- Completion date: Not completed
+- Developer manual-test confirmation: "tested and working fine" — developer, 2026-11-23 (explicit `CLOSE PHASE` request).
+- Tested platforms: Not provided.
+- Tested devices: Not provided.
+- Failed and retested cases: None reported.
+- Final changed files: the 32 modified and 155 added paths in the Change Log, all in approved groups. The developer committed them as `faa7b13` ("PHASE 2-UI PART 1", 188 files) on branch `PHASE_002_UI_ADD_FULL_APP_DESIGN`. At closure `git status` shows only `pubspec.yaml` as modified with no content difference (timestamp / line-ending touch from a local run).
+- Reused Execute technical evidence at closure: Yes — no implementation file changed after Execute. Reused: `flutter analyze` no issues; `flutter test` 57/57 passed; `dart format --set-exit-if-changed` 0 changed; source assertions (no mock imports in screens/cubits, no hard-coded colors, no Material icons, no placeholder text). No checks rerun.
+- Known limitations:
+  - Mock data only: every launch starts signed out; changes reset on restart; any valid email + 8-character password signs in; any 6 digits pass the code step.
+  - Teachers, Chats and Alerts tabs are placeholders; Home avatar opens profile setup and Home search opens the Teachers tab; Terms / Privacy links are not tappable yet (all part 2).
+  - "Photo", "Add a profile photo" and "Upload certificates" attach sample files (no camera/gallery).
+  - Four screen-local private widgets (segmented control, radio option tile, age-group card, switch) to be promoted to shared widgets in part 2 (needs approval).
+  - Fraunces static 600 instance; seed size 20 teachers / 14 students.
+- Follow-up phases (suggested, not created): **Part 2** — find & connect (Teachers/Students lists, both filter sheets, public profiles, connect sheet, my connections, Home search results), chats & notifications (chats list, chat, notifications, unread badges, role-aware second tab), me & settings (my profile and edit profile for both roles, settings and its sub-screens, log out, delete account), plus their models, repositories, mock data and the remaining empty/loading states. Later: Supabase backend, launcher icons.
+- Rollback guidance: revert commit `faa7b13` (or reset the branch to `b5b53e6`) and run `flutter pub get`; PHASE_001 behaviour returns. No native, data or remote effects.
+- Commit: not requested at closure; implementation already committed by the developer (`faa7b13`). These closure doc updates are uncommitted.
+- Final status: CLOSED / CLOSURE / COMPLETED
+- Completion date: 2026-11-23
