@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-24 (`PHASE_005`): `supabase/migrations/20261124120000_storage_avatars_certificates.sql` — buckets `avatars` (public, `image/jpeg`, 1 MB) and `certificates` (private, `application/pdf`, 3 MB) and owner-folder policies on `storage.objects` (`(storage.foldername(name))[1] = auth.uid()`; certificate insert only for `role = 'teacher'`; no admin policy yet). No table change. One certificate per teacher is an app rule (`CertificateFileRules.maxCertificates = 1`), not a database check. Manual checks: `supabase/tests/storage_policies_checks.sql`. Applied to the remote project: UNVERIFIED — the developer applies it in the SQL editor.
+
 VERIFIED 2026-11-23 (`PHASE_004`): `supabase/migrations/20261123120000_profiles.sql` (tables `profiles` (+ `city`), `teacher_details`, `student_details`; snake_case enum text with `check` constraints; text limits as in the app; `private.profile_strength` + triggers keep `completion_pct` / `is_visible` in step with `ProfileStrengthCalculator` / `DiscoverVisibilityRules`; `private.handle_new_user` creates the profile + detail row from sign-up metadata; RLS + column privileges) and `20261123120100_delete_my_account.sql` (`security definer`, `authenticated` only). Manual checks: `supabase/tests/profiles_rls_checks.sql`. Mapping in `ProfileRowMapper`. Applied to the remote project: UNVERIFIED — the developer applies them in the SQL editor.
 
 VERIFIED 2026-11-19 (`PHASE_002`): Dart models mirror the planned tables — `Profile` (`profiles`), `TeacherDetails` (`teacher_details`), `StudentDetails` (`student_details`), `Post` (`posts`, as seen by a viewer: `likedByMe`), `Comment` (`post_comments`). UUID string ids, storage paths not URLs, `copyWith`, `Equatable`; no JSON mapping yet (added with the Supabase phase). Mock data is in memory and resets on restart.
@@ -41,9 +43,11 @@ No `supabase/` folder, migrations, local database or cache code exists (audit 20
 
 `avatars` (public read) · `post-images` (public read) · `certificates` (private; owner + admin) · `chat-images` (private; conversation members).
 
+VERIFIED 2026-11-24 (`PHASE_005`): `avatars` and `certificates` exist in the migration (admin access to `certificates` comes with the admin phase; until then the dashboard). `post-images` and `chat-images` come with the feed and chat phases.
+
 ## Migrations
 
-`PHASE_004`: `20261123120000_profiles.sql`, `20261123120100_delete_my_account.sql` (applied by the developer in the SQL editor, in order; rollback notes in each file header). One file per change: `supabase/migrations/YYYYMMDDHHMMSS_short_description.sql`. Never edit an applied migration.
+`PHASE_004`: `20261123120000_profiles.sql`, `20261123120100_delete_my_account.sql` (applied by the developer in the SQL editor, in order; rollback notes in each file header). `PHASE_005`: `20261124120000_storage_avatars_certificates.sql`. One file per change: `supabase/migrations/YYYYMMDDHHMMSS_short_description.sql`. Never edit an applied migration.
 
 ## Local Cache (DECIDED)
 

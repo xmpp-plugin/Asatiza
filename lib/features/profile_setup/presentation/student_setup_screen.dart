@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/app_routes.dart';
+import '../../../core/errors/failures.dart';
+import '../../../core/services/image_compressor.dart';
+import '../../../core/services/image_picker_service.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -23,6 +26,8 @@ import '../../../data/models/enums/learner_level.dart';
 import '../../../data/models/enums/subject.dart';
 import '../../../data/models/enums/teacher_gender_preference.dart';
 import '../../../data/models/enums/teaching_language.dart';
+import '../../../core/widgets/photo_source_sheet.dart';
+import '../../../data/repositories/media_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../bloc/student_setup_cubit.dart';
@@ -55,51 +60,82 @@ class StudentSetupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.read<SessionCubit>().state.user!;
     return BlocProvider<StudentSetupCubit>(
-      create: (context) =>
-          StudentSetupCubit(context.read<ProfileRepository>(), user),
-      child: BlocConsumer<StudentSetupCubit, StudentSetupState>(
-        listenWhen: (a, b) => !a.done && b.done,
-        listener: (context, _) {
-          context.read<SessionCubit>().completeSetup();
-          context.go(AppRoutes.home);
-        },
-        buildWhen: (a, b) => a.step != b.step,
-        builder: (context, state) {
-          final cubit = context.read<StudentSetupCubit>();
-          return PopScope(
-            canPop: state.step == 1,
-            onPopInvokedWithResult: (didPop, _) {
-              if (!didPop) {
-                cubit.back();
-              }
-            },
-            child: Scaffold(
-              body: SafeArea(
-                child: Column(
-                  children: <Widget>[
-                    StepProgressHeader(
-                      step: state.step,
-                      total: StudentSetupState.totalSteps,
-                      onSkip: cubit.skip,
-                      onBack: state.step > 1 ? cubit.back : null,
-                    ),
-                    Expanded(
-                      child: switch (state.step) {
-                        1 => const _StepOne(key: ValueKey<int>(1)),
-                        2 => const _StepTwo(key: ValueKey<int>(2)),
-                        _ => const _StepThree(key: ValueKey<int>(3)),
-                      },
-                    ),
-                  ],
+      create: (context) => StudentSetupCubit(
+        context.read<ProfileRepository>(),
+        user,
+        media: context.read<MediaRepository>(),
+        picker: context.read<ImagePickerService>(),
+        compressor: context.read<ImageCompressor>(),
+      ),
+      child: BlocListener<StudentSetupCubit, StudentSetupState>(
+        listenWhen: (a, b) =>
+            b.mediaError != null && a.mediaError != b.mediaError,
+        listener: (context, state) =>
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  _mediaErrorText(
+                    state.mediaError!,
+                    AppLocalizations.of(context),
+                  ),
                 ),
               ),
             ),
-          );
-        },
+        child: BlocConsumer<StudentSetupCubit, StudentSetupState>(
+          listenWhen: (a, b) => !a.done && b.done,
+          listener: (context, _) {
+            context.read<SessionCubit>().completeSetup();
+            context.go(AppRoutes.home);
+          },
+          buildWhen: (a, b) => a.step != b.step,
+          builder: (context, state) {
+            final cubit = context.read<StudentSetupCubit>();
+            return PopScope(
+              canPop: state.step == 1,
+              onPopInvokedWithResult: (didPop, _) {
+                if (!didPop) {
+                  cubit.back();
+                }
+              },
+              child: Scaffold(
+                body: SafeArea(
+                  child: Column(
+                    children: <Widget>[
+                      StepProgressHeader(
+                        step: state.step,
+                        total: StudentSetupState.totalSteps,
+                        onSkip: cubit.skip,
+                        onBack: state.step > 1 ? cubit.back : null,
+                      ),
+                      Expanded(
+                        child: switch (state.step) {
+                          1 => const _StepOne(key: ValueKey<int>(1)),
+                          2 => const _StepTwo(key: ValueKey<int>(2)),
+                          _ => const _StepThree(key: ValueKey<int>(3)),
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 }
+
+/// Message for a refused or failed photo / certificate upload.
+String _mediaErrorText(ValidationReason reason, AppLocalizations l10n) =>
+    switch (reason) {
+      ValidationReason.fileTooLarge => l10n.uploadErrorTooLarge,
+      ValidationReason.fileTypeNotAllowed => l10n.uploadErrorNotPdf,
+      ValidationReason.certificateLimitReached =>
+        l10n.uploadErrorCertificateLimit,
+      ValidationReason.network => l10n.errorNoConnection,
+      _ => l10n.uploadErrorFailed,
+    };
 
 class _StepBody extends StatelessWidget {
   const _StepBody({required this.padding, required this.children});
@@ -169,7 +205,14 @@ class _StepOne extends StatelessWidget {
             title: l10n.addPhotoOptional,
             message: l10n.studentPhotoHint,
             semanticLabel: l10n.addProfilePhoto,
-            onTap: cubit.photoAdded,
+            preview: state.photoPreview,
+            loading: state.uploadingPhoto,
+            onTap: () async {
+              final source = await PhotoSourceSheet.show(context);
+              if (source != null) {
+                await cubit.photoPicked(source);
+              }
+            },
           ),
           const SizedBox(height: AppSpacing.space6),
           SectionLabel(l10n.learnerAgeGroupLabel),

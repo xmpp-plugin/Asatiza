@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/errors/failures.dart';
 
-/// Turns Supabase Auth / PostgREST / network errors into [Failure]s so no
+/// Turns Supabase Auth / PostgREST / Storage / network errors into [Failure]s so no
 /// raw exception leaves a repository. Pure mapping, no calls.
 class SupabaseFailureMapper {
   const SupabaseFailureMapper();
@@ -16,6 +16,7 @@ class SupabaseFailureMapper {
       AuthRetryableFetchException() => const NetworkFailure(),
       AuthException() => _auth(error),
       PostgrestException() => _postgrest(error),
+      StorageException() => _storage(error),
       SocketException() || TimeoutException() => const NetworkFailure(),
       // `package:http` ClientException (not a direct dependency).
       _ when error.toString().startsWith('ClientException') =>
@@ -66,4 +67,30 @@ class SupabaseFailureMapper {
     'PGRST116' || '42501' => const NotFoundFailure(),
     _ => const UnexpectedFailure(),
   };
+
+  /// Storage answers with an HTTP status and an error name; bucket limits
+  /// (size, MIME type) and policies are enforced on the server.
+  Failure _storage(StorageException error) {
+    final status = error.statusCode ?? '';
+    final text = '${error.error ?? ''} ${error.message}'.toLowerCase();
+    if (status == '413' ||
+        text.contains('payload too large') ||
+        text.contains('maximum allowed size') ||
+        text.contains('entitytoolarge')) {
+      return const ValidationFailure(ValidationReason.fileTooLarge);
+    }
+    if (status == '415' ||
+        text.contains('invalid_mime_type') ||
+        text.contains('mime type')) {
+      return const ValidationFailure(ValidationReason.fileTypeNotAllowed);
+    }
+    if (status == '401' ||
+        status == '403' ||
+        status == '404' ||
+        text.contains('not found') ||
+        text.contains('row-level security')) {
+      return const NotFoundFailure();
+    }
+    return const UnexpectedFailure();
+  }
 }

@@ -64,7 +64,12 @@ class StudentCard extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    AppAvatar(profile: profile, size: 48),
+                    AppAvatar(
+                      profile: profile,
+                      size: 48,
+                      // Plan section 16: never in the Students list.
+                      showPhoto: false,
+                    ),
                     const SizedBox(width: AppSpacing.space3),
                     Expanded(
                       child: Column(

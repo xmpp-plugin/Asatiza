@@ -8,12 +8,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/config/app_config.dart';
+import 'core/services/document_picker_service.dart';
+import 'core/services/file_picker_document_picker_service.dart';
+import 'core/services/flutter_image_compress_image_compressor.dart';
+import 'core/services/image_compressor.dart';
+import 'core/services/image_picker_image_picker_service.dart';
+import 'core/services/image_picker_service.dart';
 import 'core/session/session_cubit.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/chat_repository.dart';
 import 'data/repositories/connection_repository.dart';
 import 'data/repositories/discover_repository.dart';
 import 'data/repositories/feed_repository.dart';
+import 'data/repositories/media_repository.dart';
 import 'data/repositories/notification_repository.dart';
 import 'data/repositories/mock/mock_chat_repository.dart';
 import 'data/repositories/mock/mock_connection_repository.dart';
@@ -25,12 +32,14 @@ import 'data/repositories/mock/mock_safety_repository.dart';
 import 'data/repositories/profile_repository.dart';
 import 'data/repositories/safety_repository.dart';
 import 'data/repositories/supabase/supabase_auth_repository.dart';
+import 'data/repositories/supabase/supabase_media_repository.dart';
 import 'data/repositories/supabase/supabase_profile_repository.dart';
 
 /// Composition root: the only place concrete repositories are created.
 ///
 /// Each repository is either real (Supabase) or mock, never both:
-/// - real: accounts ([AuthRepository]) and profiles ([ProfileRepository]);
+/// - real: accounts ([AuthRepository]), profiles ([ProfileRepository]) and
+///   Storage uploads ([MediaRepository]);
 /// - mock until their phases: feed, discover, connections, chat,
 ///   notifications and safety (in-memory sample people, reset on restart).
 /// When a feature becomes real, replace only its mock line below.
@@ -62,7 +71,18 @@ Future<void> main() async {
   // Real.
   final supabaseProfiles = SupabaseProfileRepository(client);
   final ProfileRepository userProfiles = supabaseProfiles;
-  final AuthRepository auth = SupabaseAuthRepository(client, supabaseProfiles);
+  final MediaRepository media = SupabaseMediaRepository(client);
+  final AuthRepository auth = SupabaseAuthRepository(
+    client,
+    supabaseProfiles,
+    media,
+  );
+
+  // Platform services (plugins live only in their implementations).
+  final ImagePickerService imagePicker = ImagePickerImagePickerService();
+  const ImageCompressor imageCompressor = FlutterImageCompressImageCompressor();
+  const DocumentPickerService documentPicker =
+      FilePickerDocumentPickerService();
 
   // Mock until their phases. `sampleProfiles` is only the source of the
   // sample people these mocks show; it is not registered as the app's
@@ -80,6 +100,10 @@ Future<void> main() async {
       providers: <RepositoryProvider<Object>>[
         RepositoryProvider<AuthRepository>.value(value: auth),
         RepositoryProvider<ProfileRepository>.value(value: userProfiles),
+        RepositoryProvider<MediaRepository>.value(value: media),
+        RepositoryProvider<ImagePickerService>.value(value: imagePicker),
+        RepositoryProvider<ImageCompressor>.value(value: imageCompressor),
+        RepositoryProvider<DocumentPickerService>.value(value: documentPicker),
         RepositoryProvider<FeedRepository>.value(value: feed),
         RepositoryProvider<SafetyRepository>.value(value: safety),
         RepositoryProvider<DiscoverRepository>.value(value: discover),

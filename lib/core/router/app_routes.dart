@@ -38,6 +38,14 @@ abstract final class AppRoutes {
   static const String editProfile = '/me/edit';
   static const String settings = '/settings';
   static const String changePassword = '/settings/password';
+
+  /// The signed-in teacher's own certificate in the in-app PDF viewer
+  /// (PHASE_005): `/certificate?path=<storage path>`.
+  static const String certificateViewer = '/certificate';
+  static String certificate(String path) => Uri(
+    path: certificateViewer,
+    queryParameters: <String, String>{'path': path},
+  ).toString();
   static const String blockedUsers = '/settings/blocked';
 
   /// Content / privacy / terms pages; open while signed in or out.

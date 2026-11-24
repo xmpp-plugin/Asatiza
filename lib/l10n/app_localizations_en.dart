@@ -321,10 +321,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get availableDaysLabel => 'Available days';
 
   @override
-  String get uploadCertificatesAction => 'Upload certificates';
+  String get uploadCertificatesAction => 'Upload certificate';
 
   @override
-  String get uploadCertificatesHint => 'JPG or PDF';
+  String get uploadCertificatesHint => 'PDF';
 
   @override
   String certificatesAdded(int count) {
@@ -1712,4 +1712,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unblockAction => 'Unblock';
+
+  @override
+  String get photoSourceTitle => 'Profile photo';
+
+  @override
+  String get photoSourceCamera => 'Take a photo';
+
+  @override
+  String get photoSourceGallery => 'Choose from gallery';
+
+  @override
+  String get certificateInstructions =>
+      'Upload one certificate (ijazah, sanad or diploma) as a PDF, up to 3 MB. Make sure your name and the issuing institute are clear. Only our review team can see it.';
+
+  @override
+  String get uploadErrorTooLarge =>
+      'This file is too large. A certificate PDF can be up to 3 MB.';
+
+  @override
+  String get uploadErrorNotPdf => 'Only PDF files can be uploaded.';
+
+  @override
+  String get uploadErrorCertificateLimit =>
+      'You can upload one certificate. Remove it to upload a different one.';
+
+  @override
+  String get uploadErrorFailed => 'Upload failed. Please try again.';
+
+  @override
+  String get openCertificateAction => 'Open certificate';
+
+  @override
+  String get certificateViewerTitle => 'Certificate';
+
+  @override
+  String get certificateOpenFailedTitle => 'Couldn’t open the certificate';
+
+  @override
+  String get certificateOpenFailedMessage =>
+      'Check your connection and try again.';
+
+  @override
+  String get retryAction => 'Try again';
+
+  @override
+  String certificatePageIndicator(int page, int total) {
+    return '$page / $total';
+  }
 }

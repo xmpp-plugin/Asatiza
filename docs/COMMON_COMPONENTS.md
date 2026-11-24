@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-24 (`PHASE_005`): `AppAvatar` shows `Profile.photoUrl` (or an unsaved `preview`) clipped to a circle, with the initials while loading and on error; `showPhoto: false` keeps initials (student photos in discover lists). `PhotoSourceSheet` (Take a photo / Choose from gallery on `AppBottomSheet`). Feature widgets: `PhotoPickerTile` (`preview`, `loading`), `UploadTile` (`loading`), `CertificateRow` (original file name, `onTap` opens the viewer; reused by teacher setup), `PersonRow.showPhoto`.
+
 VERIFIED 2026-11-24 (`PHASE_004` fix): `AppButton.loading` (spinner left of the label, variant colours kept, taps ignored) and `ConfirmSheet.loading` (spinner on confirm, Cancel disabled). Every button that starts a call passes its cubit's busy flag.
 
 VERIFIED 2026-11-23 (`PHASE_003`) — new in `lib/core/widgets/`: `AppSegmentedControl`, `AppOptionTile`, `AppSwitch`, `AppInfoNote` (promoted from part 1 screens; `InfoNote` removed), `SearchField` (list and pill styles), `CountBadge` (gold filter count / red unread), `InfoRow`, `ProfileHeader`, `TeacherCardSkeleton`, `ChatRowSkeleton`, `SettingsTile`, `AppSwitchTile`, `ConfirmSheet`. Feature widgets: `TeacherCard`, `StudentCard`, `FilterChipsBar`, `FeeRangeSlider`, `PersonRow` (discover); `RequestTile` (connections); `ConversationTile`, `ChatBubble`, `ChatImageBubble`, `DayDivider`, `MessageComposer`, `ChatHeader` (chat); `NotificationTile`, `RequestNotificationTile` (notifications); `CertificateRow` (profile). A 24 px detail chip is still private in 4 screens (candidate for a shared widget, needs approval).

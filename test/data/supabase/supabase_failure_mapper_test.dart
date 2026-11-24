@@ -78,4 +78,40 @@ void main() {
     );
     expect(mapper.map(StateError('x')), const UnexpectedFailure());
   });
+
+  test('Storage errors (PHASE_005)', () {
+    expect(
+      mapper.map(
+        const StorageException('Payload too large', statusCode: '413'),
+      ),
+      v(ValidationReason.fileTooLarge),
+    );
+    expect(
+      mapper.map(
+        const StorageException(
+          'mime type image/png is not supported',
+          error: 'invalid_mime_type',
+          statusCode: '415',
+        ),
+      ),
+      v(ValidationReason.fileTypeNotAllowed),
+    );
+    expect(
+      mapper.map(
+        const StorageException(
+          'new row violates row-level security policy',
+          statusCode: '403',
+        ),
+      ),
+      const NotFoundFailure(),
+    );
+    expect(
+      mapper.map(const StorageException('Object not found', statusCode: '404')),
+      const NotFoundFailure(),
+    );
+    expect(
+      mapper.map(const StorageException('Internal', statusCode: '500')),
+      const UnexpectedFailure(),
+    );
+  });
 }

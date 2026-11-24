@@ -3,6 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/errors/failures.dart';
+import '../../../core/logic/certificate_file_rules.dart';
+import '../../../core/router/app_routes.dart';
+import '../../../core/services/document_picker_service.dart';
+import '../../../core/services/image_compressor.dart';
+import '../../../core/services/image_picker_service.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -12,18 +18,23 @@ import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_chip.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/widgets/app_info_note.dart';
 import '../../../core/widgets/app_segmented_control.dart';
 import '../../../core/widgets/app_text_area.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/back_header.dart';
+import '../../../core/widgets/photo_source_sheet.dart';
 import '../../../core/widgets/section_label.dart';
 import '../../../data/models/enums/fee_unit.dart';
 import '../../../data/models/enums/gender.dart';
 import '../../../data/models/enums/learner_age_group.dart';
+import '../../../data/models/enums/learner_level.dart';
 import '../../../data/models/enums/subject.dart';
+import '../../../data/models/enums/teacher_gender_preference.dart';
 import '../../../data/models/enums/teaches_audience.dart';
 import '../../../data/models/enums/teaching_language.dart';
 import '../../../data/models/profile.dart';
+import '../../../data/repositories/media_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../profile_setup/presentation/teacher_setup_screen.dart'
@@ -45,8 +56,14 @@ class EditProfileScreen extends StatelessWidget {
       return const SizedBox.shrink();
     }
     return BlocProvider<EditProfileCubit>(
-      create: (context) =>
-          EditProfileCubit(context.read<ProfileRepository>(), user),
+      create: (context) => EditProfileCubit(
+        context.read<ProfileRepository>(),
+        user,
+        media: context.read<MediaRepository>(),
+        picker: context.read<ImagePickerService>(),
+        compressor: context.read<ImageCompressor>(),
+        documents: context.read<DocumentPickerService>(),
+      ),
       child: const _EditProfileView(),
     );
   }
@@ -183,8 +200,17 @@ class _EditProfileViewState extends State<_EditProfileView> {
     final l10n = AppLocalizations.of(context);
     final colors = Theme.of(context).extension<AppColors>()!;
     return BlocConsumer<EditProfileCubit, EditProfileState>(
-      listenWhen: (a, b) => !a.saved && b.saved,
-      listener: (context, _) {
+      listenWhen: (a, b) =>
+          (!a.saved && b.saved) ||
+          (b.mediaError != null && a.mediaError != b.mediaError),
+      listener: (context, state) {
+        final error = state.mediaError;
+        if (!state.saved && error != null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(_mediaErrorText(error, l10n))));
+          return;
+        }
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(l10n.profileSavedMessage)));
@@ -234,6 +260,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
 
   Widget _photo(
     Profile p,
+    EditProfileState state,
     EditProfileCubit cubit,
     AppLocalizations l10n,
     AppColors colors, {
@@ -243,7 +270,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
     final avatar = Stack(
       clipBehavior: Clip.none,
       children: <Widget>[
-        AppAvatar(profile: p, size: size),
+        AppAvatar(profile: p, size: size, preview: state.photoPreview),
         PositionedDirectional(
           end: -2,
           bottom: -2,
@@ -263,12 +290,28 @@ class _EditProfileViewState extends State<_EditProfileView> {
       ],
     );
     final button = TextButton(
-      onPressed: cubit.photoChanged,
+      onPressed: state.uploadingPhoto
+          ? null
+          : () async {
+              final source = await PhotoSourceSheet.show(context);
+              if (source != null) {
+                await cubit.photoPicked(source);
+              }
+            },
       style: TextButton.styleFrom(
         foregroundColor: colors.brand700,
         textStyle: AppTextStyles.label,
       ),
-      child: Text(l10n.changePhotoAction),
+      child: state.uploadingPhoto
+          ? SizedBox.square(
+              dimension: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: colors.brand700,
+                semanticsLabel: l10n.changePhotoAction,
+              ),
+            )
+          : Text(l10n.changePhotoAction),
     );
     return row
         ? Row(
@@ -318,7 +361,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
     final s = p.studentDetails;
     const gap = SizedBox(height: AppSpacing.gap18);
     return <Widget>[
-      _photo(p, cubit, l10n, colors, size: 88, row: false),
+      _photo(p, state, cubit, l10n, colors, size: 88, row: false),
       gap,
       _name(p, state, cubit, l10n),
       gap,
@@ -371,6 +414,39 @@ class _EditProfileViewState extends State<_EditProfileView> {
         cubit.goalToggled,
       ),
       gap,
+      // Level, languages and preferred teacher gender count 40 % of the
+      // student strength; before they could only be set in setup.
+      _select<LearnerLevel>(
+        label: l10n.currentLevelLabel,
+        value: s?.level,
+        options: LearnerLevel.values,
+        text: (level) => level.label(l10n),
+        onSelected: cubit.levelChanged,
+      ),
+      gap,
+      SectionLabel(l10n.languagesLabel),
+      const SizedBox(height: AppSpacing.gap10),
+      _chips<TeachingLanguage>(
+        const <TeachingLanguage>[
+          TeachingLanguage.urdu,
+          TeachingLanguage.english,
+          TeachingLanguage.arabic,
+          TeachingLanguage.punjabi,
+        ],
+        (lang) => p.languages.contains(lang),
+        (lang) => lang.label(l10n),
+        cubit.languageToggled,
+      ),
+      gap,
+      SectionLabel(l10n.preferredTeacherGenderLabel),
+      const SizedBox(height: AppSpacing.gap10),
+      AppSegmentedControl<TeacherGenderPreference>(
+        values: TeacherGenderPreference.values,
+        selected: s?.preferredTeacherGender,
+        label: (pref) => pref.label(l10n),
+        onChanged: cubit.preferenceChanged,
+      ),
+      gap,
       AppTextArea(
         label: l10n.shortNoteLabel,
         controller: _note,
@@ -396,7 +472,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
     final certificates = t?.certificatePaths ?? const <String>[];
     const gap = SizedBox(height: AppSpacing.gap18);
     return <Widget>[
-      _photo(p, cubit, l10n, colors, size: 72, row: true),
+      _photo(p, state, cubit, l10n, colors, size: 72, row: true),
       gap,
       _name(p, state, cubit, l10n),
       gap,
@@ -553,15 +629,33 @@ class _EditProfileViewState extends State<_EditProfileView> {
       for (final path in certificates) ...<Widget>[
         CertificateRow(
           path: path,
+          onTap: () => context.push(AppRoutes.certificate(path)),
           onRemove: () => cubit.certificateRemoved(path),
         ),
         const SizedBox(height: AppSpacing.space2),
       ],
-      UploadTile(
-        label: l10n.uploadCertificateAction,
-        hint: l10n.uploadCertificatesHint,
-        onTap: cubit.certificateAdded,
-      ),
+      // Decision 2: one certificate; the tile hides at the limit.
+      if (const CertificateFileRules().canAdd(certificates.length)) ...<Widget>[
+        UploadTile(
+          label: l10n.uploadCertificateAction,
+          hint: l10n.uploadCertificatesHint,
+          loading: state.uploadingCertificate,
+          onTap: cubit.certificatePicked,
+        ),
+        const SizedBox(height: AppSpacing.space2),
+      ],
+      AppInfoNote(text: l10n.certificateInstructions),
     ];
   }
 }
+
+/// Message for a refused or failed photo / certificate upload.
+String _mediaErrorText(ValidationReason reason, AppLocalizations l10n) =>
+    switch (reason) {
+      ValidationReason.fileTooLarge => l10n.uploadErrorTooLarge,
+      ValidationReason.fileTypeNotAllowed => l10n.uploadErrorNotPdf,
+      ValidationReason.certificateLimitReached =>
+        l10n.uploadErrorCertificateLimit,
+      ValidationReason.network => l10n.errorNoConnection,
+      _ => l10n.uploadErrorFailed,
+    };

@@ -17,6 +17,7 @@ class PersonRow extends StatelessWidget {
     this.detail,
     this.trailing,
     this.onTap,
+    this.showPhoto = true,
   });
 
   final Profile profile;
@@ -24,6 +25,10 @@ class PersonRow extends StatelessWidget {
   final String? detail;
   final Widget? trailing;
   final VoidCallback? onTap;
+
+  /// False shows initials instead of the photo (students in search
+  /// results, PHASE_005 decision 5).
+  final bool showPhoto;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +42,12 @@ class PersonRow extends StatelessWidget {
         ),
         child: Row(
           children: <Widget>[
-            AppAvatar(profile: profile, size: 48, showVerified: true),
+            AppAvatar(
+              profile: profile,
+              size: 48,
+              showVerified: true,
+              showPhoto: showPhoto,
+            ),
             const SizedBox(width: AppSpacing.space3),
             Expanded(
               child: Column(

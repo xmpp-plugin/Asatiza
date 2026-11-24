@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/errors/failures.dart';
+import '../../models/enums/media_bucket.dart';
 import '../../models/profile.dart';
 import '../profile_repository.dart';
 import 'profile_row_mapper.dart';
@@ -41,8 +42,19 @@ class SupabaseProfileRepository implements ProfileRepository {
 
   Profile _profile(Map<String, dynamic> row) {
     final me = _me;
-    return _rows.fromRow(row, email: row['id'] == me?.id ? me?.email : null);
+    final profile = _rows.fromRow(
+      row,
+      email: row['id'] == me?.id ? me?.email : null,
+    );
+    final path = profile.photoPath;
+    return path == null
+        ? profile
+        : profile.copyWith(photoUrl: _avatarUrl(path));
   }
+
+  /// Public URL of a photo in the `avatars` bucket (PHASE_005, decision 4).
+  String _avatarUrl(String path) =>
+      _client.storage.from(MediaBucket.avatars.id).getPublicUrl(path);
 
   @override
   Future<Profile> getProfile(String id) => _guard(() async {

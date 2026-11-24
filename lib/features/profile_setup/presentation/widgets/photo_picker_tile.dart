@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
@@ -10,8 +11,8 @@ import '../../../../core/widgets/app_icon.dart';
 import '../../../../data/models/profile.dart';
 
 /// 96 px dashed brand circle with a camera, beside a title and hint. Once
-/// a photo is attached it shows the user's avatar with a check badge.
-/// (Mock phase: no camera or gallery access.)
+/// a photo is attached it shows the user's photo with a check badge; a
+/// spinner covers the circle while the photo uploads.
 class PhotoPickerTile extends StatelessWidget {
   const PhotoPickerTile({
     required this.profile,
@@ -21,6 +22,8 @@ class PhotoPickerTile extends StatelessWidget {
     required this.semanticLabel,
     required this.onTap,
     super.key,
+    this.preview,
+    this.loading = false,
   });
 
   final Profile profile;
@@ -29,6 +32,12 @@ class PhotoPickerTile extends StatelessWidget {
   final String message;
   final String semanticLabel;
   final VoidCallback onTap;
+
+  /// The just-uploaded photo, shown before the profile is saved.
+  final Uint8List? preview;
+
+  /// The photo is uploading: spinner over the circle, taps ignored.
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +49,29 @@ class PhotoPickerTile extends StatelessWidget {
           label: semanticLabel,
           excludeSemantics: true,
           child: GestureDetector(
-            onTap: onTap,
-            child: hasPhoto
+            onTap: loading ? null : onTap,
+            child: loading
+                ? Container(
+                    width: 96,
+                    height: 96,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: colors.brand100,
+                      shape: BoxShape.circle,
+                    ),
+                    child: SizedBox.square(
+                      dimension: 28,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        color: colors.brand600,
+                      ),
+                    ),
+                  )
+                : hasPhoto
                 ? Stack(
                     clipBehavior: Clip.none,
                     children: <Widget>[
-                      AppAvatar(profile: profile, size: 96),
+                      AppAvatar(profile: profile, size: 96, preview: preview),
                       PositionedDirectional(
                         end: 2,
                         bottom: 2,

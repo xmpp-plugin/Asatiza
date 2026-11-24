@@ -17,6 +17,7 @@ class Profile extends Equatable {
     this.email,
     this.headline,
     this.photoPath,
+    this.photoUrl,
     this.gender,
     this.country,
     this.city,
@@ -40,6 +41,11 @@ class Profile extends Equatable {
 
   /// Storage path, never a full URL.
   final String? photoPath;
+
+  /// Display URL of [photoPath] (public `avatars` bucket), filled by the
+  /// repository when reading; never written to the database. Null for
+  /// mock data and when there is no photo.
+  final String? photoUrl;
   final Gender? gender;
   final String? country;
   final String? city;
@@ -86,6 +92,7 @@ class Profile extends Equatable {
     String? email,
     String? headline,
     String? photoPath,
+    String? photoUrl,
     Gender? gender,
     String? country,
     String? city,
@@ -103,6 +110,7 @@ class Profile extends Equatable {
       email: email ?? this.email,
       headline: headline ?? this.headline,
       photoPath: photoPath ?? this.photoPath,
+      photoUrl: photoUrl ?? this.photoUrl,
       gender: gender ?? this.gender,
       country: country ?? this.country,
       city: city ?? this.city,
@@ -124,6 +132,7 @@ class Profile extends Equatable {
     email,
     headline,
     photoPath,
+    photoUrl,
     gender,
     country,
     city,

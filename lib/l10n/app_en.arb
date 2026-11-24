@@ -131,8 +131,8 @@
     }
   },
   "availableDaysLabel": "Available days",
-  "uploadCertificatesAction": "Upload certificates",
-  "uploadCertificatesHint": "JPG or PDF",
+  "uploadCertificatesAction": "Upload certificate",
+  "uploadCertificatesHint": "PDF",
   "certificatesAdded": "{count, plural, =1{1 certificate added} other{{count} certificates added}}",
   "@certificatesAdded": {
     "placeholders": {
@@ -939,5 +939,29 @@
   "settingLikes": "Likes",
   "noBlockedUsersTitle": "No blocked users",
   "noBlockedUsersMessage": "If you block someone from a profile, post or chat, they’ll appear here.",
-  "unblockAction": "Unblock"
+  "unblockAction": "Unblock",
+  "photoSourceTitle": "Profile photo",
+  "photoSourceCamera": "Take a photo",
+  "photoSourceGallery": "Choose from gallery",
+  "certificateInstructions": "Upload one certificate (ijazah, sanad or diploma) as a PDF, up to 3 MB. Make sure your name and the issuing institute are clear. Only our review team can see it.",
+  "uploadErrorTooLarge": "This file is too large. A certificate PDF can be up to 3 MB.",
+  "uploadErrorNotPdf": "Only PDF files can be uploaded.",
+  "uploadErrorCertificateLimit": "You can upload one certificate. Remove it to upload a different one.",
+  "uploadErrorFailed": "Upload failed. Please try again.",
+  "openCertificateAction": "Open certificate",
+  "certificateViewerTitle": "Certificate",
+  "certificateOpenFailedTitle": "Couldn’t open the certificate",
+  "certificateOpenFailedMessage": "Check your connection and try again.",
+  "retryAction": "Try again",
+  "certificatePageIndicator": "{page} / {total}",
+  "@certificatePageIndicator": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }

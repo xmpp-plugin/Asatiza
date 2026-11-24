@@ -1,0 +1,40 @@
+import 'dart:typed_data';
+
+import '../models/enums/media_bucket.dart';
+
+/// Uploads and removals in Supabase Storage (PHASE_005: avatars and
+/// certificates; later phases add post and chat images).
+///
+/// Paths are relative to the bucket (`<user-id>/<file>`), are built by the
+/// implementation from [userId] (never from user input) and are what
+/// `ProfileRepository` stores. Throws only `Failure` subtypes.
+abstract interface class MediaRepository {
+  /// Uploads a compressed JPEG profile photo for [userId] (the signed-in
+  /// user) under a new file name and returns its path.
+  /// Throws `NotFoundFailure` (not the signed-in user / refused),
+  /// `ValidationFailure(fileTooLarge | fileTypeNotAllowed)`, `NetworkFailure`,
+  /// `UnexpectedFailure`.
+  Future<String> uploadAvatar(String userId, Uint8List jpegBytes);
+
+  /// Uploads a PDF certificate for [userId] (a teacher) and returns its
+  /// path; the original [fileName] stays readable in the path.
+  /// Throws as [uploadAvatar].
+  Future<String> uploadCertificate(
+    String userId,
+    Uint8List pdfBytes,
+    String fileName,
+  );
+
+  /// Downloads the signed-in user's own certificate at [path].
+  /// Throws `NotFoundFailure` (missing or not allowed), `NetworkFailure`,
+  /// `UnexpectedFailure`.
+  Future<Uint8List> downloadCertificate(String path);
+
+  /// Removes [paths] from [bucket]; missing files are ignored.
+  /// Throws `NetworkFailure`, `UnexpectedFailure`.
+  Future<void> deleteFiles(MediaBucket bucket, List<String> paths);
+
+  /// Removes every file of [userId] in every bucket (account deletion).
+  /// Throws `NetworkFailure`, `UnexpectedFailure`.
+  Future<void> deleteAllUserFiles(String userId);
+}

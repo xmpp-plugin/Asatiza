@@ -6,6 +6,7 @@ import '../../../features/auth/logic/password_rules.dart';
 import '../../models/enums/user_role.dart';
 import '../../models/profile.dart';
 import '../auth_repository.dart';
+import '../media_repository.dart';
 import '../profile_repository.dart';
 import 'supabase_failure_mapper.dart';
 
@@ -14,16 +15,20 @@ import 'supabase_failure_mapper.dart';
 ///
 /// Sign-up stores `full_name` and `role` in the user metadata; the
 /// `handle_new_user` trigger creates the profile rows from them. Account
-/// deletion calls the `delete_my_account()` database function.
+/// deletion first removes the user's Storage files through [MediaRepository]
+/// (SQL cannot delete Storage objects), then calls the
+/// `delete_my_account()` database function.
 class SupabaseAuthRepository implements AuthRepository {
   SupabaseAuthRepository(
     this._client,
-    this._profiles, {
+    this._profiles,
+    this._media, {
     SupabaseFailureMapper failures = const SupabaseFailureMapper(),
   }) : _failures = failures;
 
   final SupabaseClient _client;
   final ProfileRepository _profiles;
+  final MediaRepository _media;
   final SupabaseFailureMapper _failures;
 
   /// Emails with a password reset in progress, so [resendCode] sends the
@@ -221,6 +226,9 @@ class SupabaseAuthRepository implements AuthRepository {
     if (_auth.currentUser?.id != userId) {
       throw const NotFoundFailure();
     }
+    // Files first: if this fails the account stays and the error is shown,
+    // so an account is never deleted while its files silently stay behind.
+    await _media.deleteAllUserFiles(userId);
     await _client.rpc<void>('delete_my_account');
     await _signOutQuietly();
   });

@@ -2,6 +2,8 @@
 
 ## Verified Architecture (updated 2026-11-19, `PHASE_001`)
 
+VERIFIED 2026-11-24 (`PHASE_005`): `MediaRepository` is real (Supabase Storage) and registered by interface in `lib/main.dart`, with the first platform services in `lib/core/services/` (`ImagePickerService`, `ImageCompressor`, `DocumentPickerService`; each plugin imported only by its implementation). `pdfrx` (PDF viewer widget) is imported only by `CertificateViewerScreen`. Profile setup and Edit profile cubits receive `MediaRepository` and the services by constructor.
+
 VERIFIED 2026-11-24 (`PHASE_004` fix): one run mode. Each repository is either real or mock, never both: Auth + Profile are always Supabase; feed, discover, connections, chat, notifications and safety are mock until their phases (each phase replaces only its own line in `lib/main.dart`). Settings come from defines when given, else from the bundled git-ignored `env/supabase.json` (public URL + key only; `AppConfig.fromJson` refuses any other key). Without them `main` throws a clear `StateError`; the full-mock app mode was removed. Mock classes stay for tests and as the source of the sample people.
 
 VERIFIED 2026-11-23 (`PHASE_004`, superseded 2026-11-24): two run modes chosen in `lib/main.dart` by `AppConfig` (`lib/core/config/`): mock (no settings; tests) and backend (Auth + Profile on Supabase, other repositories still mock). `Supabase.initialize` and the only `Supabase.instance` read are in `lib/main.dart`; the `SupabaseClient` is passed by constructor to `lib/data/repositories/supabase/`. Pure helpers `ProfileRowMapper` and `SupabaseFailureMapper`. `SessionCubit.restore()` runs from Splash.

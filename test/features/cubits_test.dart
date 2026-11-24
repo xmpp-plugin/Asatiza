@@ -9,7 +9,9 @@ import 'package:asatiza/data/models/enums/user_role.dart';
 import 'package:asatiza/data/models/enums/weekday.dart';
 import 'package:asatiza/data/models/profile.dart';
 import 'package:asatiza/data/repositories/mock/mock_auth_repository.dart';
+import 'package:asatiza/core/services/image_source_kind.dart';
 import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
+import 'package:asatiza/data/repositories/mock/mock_media_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
 import 'package:asatiza/features/auth/bloc/login_cubit.dart';
@@ -30,6 +32,8 @@ import 'package:asatiza/features/profile_setup/bloc/teacher_setup_cubit.dart';
 import 'package:asatiza/features/safety/bloc/report_cubit.dart';
 import 'package:asatiza/features/safety/bloc/report_state.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../helpers/test_app.dart';
 
 /// Lets stream listeners and async cubit work run.
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));
@@ -227,10 +231,22 @@ void main() {
         email: 'usman.ali@gmail.com',
         code: '123456',
       );
-      final cubit = TeacherSetupCubit(profiles, user)
-        ..photoAdded()
-        ..headlineChanged('Hifz teacher for boys, 6 years');
+      final media = MockMediaRepository();
+      final cubit = TeacherSetupCubit(
+        profiles,
+        user,
+        media: media,
+        picker: FakeImagePicker(),
+        compressor: const FakeImageCompressor(),
+        documents: FakeDocumentPicker(),
+      )..headlineChanged('Hifz teacher for boys, 6 years');
+      await cubit.photoPicked(ImageSourceKind.gallery);
+      expect(cubit.state.draft.photoPath, startsWith('${user.id}/avatar-'));
       await cubit.next();
+      expect(
+        (await profiles.getProfile(user.id)).photoPath,
+        cubit.state.draft.photoPath,
+      );
       expect(cubit.state.step, 2);
       expect(
         (await profiles.getProfile(user.id)).headline,
@@ -258,8 +274,13 @@ void main() {
 
   test('StudentSetupCubit: back and skip', () async {
     final ayesha = await profiles.getProfile(MockIds.ayesha);
-    final cubit = StudentSetupCubit(profiles, ayesha)
-      ..ageGroupChanged(LearnerAgeGroup.teen);
+    final cubit = StudentSetupCubit(
+      profiles,
+      ayesha,
+      media: MockMediaRepository(),
+      picker: FakeImagePicker(),
+      compressor: const FakeImageCompressor(),
+    )..ageGroupChanged(LearnerAgeGroup.teen);
     await cubit.next();
     cubit.back();
     expect(cubit.state.step, 1);

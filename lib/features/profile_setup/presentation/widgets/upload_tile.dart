@@ -7,18 +7,21 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_icon.dart';
 
 /// Dashed brand row: upload icon, label and a hint on the end side
-/// ("Upload certificates · JPG or PDF"). (Mock phase: attaches a sample file.)
+/// ("Upload certificate · PDF"). [loading] shows a spinner instead of the
+/// icon and ignores taps.
 class UploadTile extends StatelessWidget {
   const UploadTile({
     required this.label,
     required this.hint,
     required this.onTap,
     super.key,
+    this.loading = false,
   });
 
   final String label;
   final String hint;
   final VoidCallback onTap;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,7 @@ class UploadTile extends StatelessWidget {
           color: colors.surface000,
           borderRadius: BorderRadius.circular(AppRadius.md),
           child: InkWell(
-            onTap: onTap,
+            onTap: loading ? null : onTap,
             borderRadius: BorderRadius.circular(AppRadius.md),
             child: Padding(
               padding: const EdgeInsetsDirectional.symmetric(
@@ -40,7 +43,16 @@ class UploadTile extends StatelessWidget {
               ),
               child: Row(
                 children: <Widget>[
-                  AppIcon(AppIcon.upload, size: 20, color: colors.brand700),
+                  if (loading)
+                    SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: colors.brand700,
+                      ),
+                    )
+                  else
+                    AppIcon(AppIcon.upload, size: 20, color: colors.brand700),
                   const SizedBox(width: AppSpacing.space3),
                   Expanded(
                     child: Text(

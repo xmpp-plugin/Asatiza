@@ -20,6 +20,7 @@ import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/onboarding/presentation/splash_screen.dart';
 import '../../features/onboarding/presentation/welcome_screen.dart';
 import '../../features/post/presentation/create_post_screen.dart';
+import '../../features/profile/presentation/certificate_viewer_screen.dart';
 import '../../features/profile/presentation/edit_profile_screen.dart';
 import '../../features/profile/presentation/my_profile_screen.dart';
 import '../../features/profile_setup/presentation/student_setup_screen.dart';
@@ -158,6 +159,12 @@ GoRouter createAppRouter(SessionCubit session) {
       GoRoute(
         path: AppRoutes.connections,
         builder: (_, _) => const ConnectionsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.certificateViewer,
+        builder: (_, state) => CertificateViewerScreen(
+          path: state.uri.queryParameters['path'] ?? '',
+        ),
       ),
       GoRoute(
         path: AppRoutes.myProfile,

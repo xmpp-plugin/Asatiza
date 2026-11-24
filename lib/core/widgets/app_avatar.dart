@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import '../../data/models/profile.dart';
@@ -5,15 +7,19 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import 'verified_badge.dart';
 
-/// Initials avatar on a token tint (the design shows no photos). The tint
-/// is picked from the profile id so a person keeps the same colour
-/// everywhere. Optionally shows the verified badge on the bottom-end edge.
+/// Round avatar: the profile photo when there is one (PHASE_005), else the
+/// initials on a token tint picked from the profile id so a person keeps
+/// the same colour everywhere. The initials also show while the photo
+/// loads and when it fails. Optionally shows the verified badge on the
+/// bottom-end edge.
 class AppAvatar extends StatelessWidget {
   const AppAvatar({
     required this.profile,
     super.key,
     this.size = 44,
     this.showVerified = false,
+    this.showPhoto = true,
+    this.preview,
   });
 
   final Profile profile;
@@ -21,6 +27,13 @@ class AppAvatar extends StatelessWidget {
   /// 36 (comments), 40 (top bar / composer), 44 (posts), 52 (lists).
   final double size;
   final bool showVerified;
+
+  /// False hides the photo (student photos in discover lists, plan
+  /// section 16).
+  final bool showPhoto;
+
+  /// A just-picked photo not saved yet; shown instead of the stored one.
+  final Uint8List? preview;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +48,7 @@ class AppAvatar extends StatelessWidget {
         tints[profile.id.codeUnits.fold(0, (a, b) => a + b) % tints.length];
     final fontSize = (size * 0.36).roundToDouble();
 
-    final circle = Container(
+    final initials = Container(
       width: size,
       height: size,
       alignment: Alignment.center,
@@ -49,6 +62,7 @@ class AppAvatar extends StatelessWidget {
         ),
       ),
     );
+    final circle = _photo(initials) ?? initials;
 
     return Semantics(
       label: profile.fullName,
@@ -73,6 +87,42 @@ class AppAvatar extends StatelessWidget {
                 ),
               ],
             ),
+    );
+  }
+
+  /// The photo clipped to a circle over [initials], or null when none.
+  Widget? _photo(Widget initials) {
+    if (!showPhoto) {
+      return null;
+    }
+    final bytes = preview;
+    final url = profile.photoUrl;
+    final Widget image;
+    if (bytes != null) {
+      image = Image.memory(
+        bytes,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        gaplessPlayback: true,
+        errorBuilder: (_, _, _) => initials,
+      );
+    } else if (url != null && url.isNotEmpty) {
+      image = Image.network(
+        url,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        gaplessPlayback: true,
+        frameBuilder: (_, child, frame, loaded) =>
+            loaded || frame != null ? child : initials,
+        errorBuilder: (_, _, _) => initials,
+      );
+    } else {
+      return null;
+    }
+    return ClipOval(
+      child: SizedBox(width: size, height: size, child: image),
     );
   }
 }

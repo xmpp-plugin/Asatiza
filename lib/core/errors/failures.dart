@@ -44,6 +44,15 @@ enum ValidationReason {
   /// Log-in with an email whose sign-up code was never entered.
   emailNotConfirmed,
 
+  /// A photo or certificate is larger than allowed (PHASE_005).
+  fileTooLarge,
+
+  /// The file is not of the allowed type (certificates: PDF only).
+  fileTypeNotAllowed,
+
+  /// The teacher already has the maximum number of certificates.
+  certificateLimitReached,
+
   /// No connection (from [NetworkFailure]).
   network,
 

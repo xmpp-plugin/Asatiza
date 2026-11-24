@@ -2,17 +2,25 @@
 
 Every project-owned file under `lib/` and `test/`. Generated and tool files are not catalogued (`lib/l10n/app_localizations*.dart` come from `flutter gen-l10n`). Assets: `assets/fonts/` (PHASE_001), `assets/icons/` (42 design icons), `assets/illustrations/` (6), `assets/images/` (2 logos) — PHASE_002.
 
-Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows added 2026-11-23 (`PHASE_004`). Outside `lib/` and `test/`: `supabase/migrations/*.sql`, `supabase/tests/profiles_rls_checks.sql`, `env/supabase.example.json` (`PHASE_004`; template for the git-ignored, bundled `env/supabase.json`).
+Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows added 2026-11-23 (`PHASE_004`) and 2026-11-24 (`PHASE_005`). Outside `lib/` and `test/`: `supabase/migrations/*.sql`, `supabase/tests/profiles_rls_checks.sql`, `supabase/tests/storage_policies_checks.sql` (`PHASE_005`), `env/supabase.example.json` (`PHASE_004`; template for the git-ignored, bundled `env/supabase.json`).
 
 | Path | Purpose | Layer | Public types / functions |
 |---|---|---|---|
 | `lib/app.dart` | Root widget: light/dark theme from the design tokens (following the phone setting), English localization and the session-aware router.… | App | `AsatizaApp` |
 | `lib/core/config/app_config.dart` | Run-time settings (`SUPABASE_URL`, `SUPABASE_ANON_KEY`) from defines or the bundled `env/supabase.json` (only those two keys allowed); both are required. | Core config | `AppConfig` |
 | `lib/core/errors/failures.dart` | Base type for every error a repository may throw. No raw exception (Postgrest, Auth, Dio…) leaves a repository. | Core errors | `Failure`, `ValidationFailure`, `ValidationReason`, `NotFoundFailure`, `NetworkFailure`, `UnexpectedFailure` |
+| `lib/core/logic/certificate_file_rules.dart` | Certificate rules: PDF only (`%PDF-` header), 3 MB, one per teacher, safe file name and display name. Pure. | Core logic | `CertificateFileRules` |
 | `lib/core/logic/discover_visibility_rules.dart` | Who appears on the Teachers / Students tabs and who may send a request (plan section 7). The backend phase mirrors these rules in RLS. | Core logic | `DiscoverVisibilityRules` |
 | `lib/core/logic/profile_strength_calculator.dart` | Checklist items behind the profile-strength %, in the order the strength card suggests them. | Core logic | `ProfileStrengthItem`, `ProfileStrengthCalculator` |
 | `lib/core/router/app_router.dart` | Builds the app's route table, redirecting on the [session]: - signed out → only Splash and the sign-in screens; - signed in right after… | Core router | `createAppRouter` |
 | `lib/core/router/app_routes.dart` | — | Core router | `AppRoutes` |
+| `lib/core/services/document_picker_service.dart` | Lets the user choose a PDF (wraps `file_picker`). | Core service interface | `DocumentPickerService` |
+| `lib/core/services/file_picker_document_picker_service.dart` | `DocumentPickerService` on `file_picker` (`.pdf` filter; larger files are not read). | Core service | `FilePickerDocumentPickerService` |
+| `lib/core/services/flutter_image_compress_image_compressor.dart` | `ImageCompressor` on `flutter_image_compress` (JPEG, 512 px, quality 80). | Core service | `FlutterImageCompressImageCompressor` |
+| `lib/core/services/image_compressor.dart` | Shrinks a picked photo to an avatar JPEG. | Core service interface | `ImageCompressor` |
+| `lib/core/services/image_picker_image_picker_service.dart` | `ImagePickerService` on `image_picker` (camera / gallery, 1600 px max). | Core service | `ImagePickerImagePickerService` |
+| `lib/core/services/image_picker_service.dart` | Lets the user take or choose a photo. | Core service interface | `ImagePickerService` |
+| `lib/core/services/image_source_kind.dart` | Camera or gallery. | Core service | `ImageSourceKind` |
 | `lib/core/session/session_cubit.dart` | App-wide session. Starts signed out; `restore` signs back in with a kept session (backend mode). Keeps the signed-in user's profile fresh after edits. | Core session | `SessionCubit` |
 | `lib/core/session/session_state.dart` | Who is signed in, and whether they still see profile setup. | Core session | `SessionState` |
 | `lib/core/session/shell_badges_cubit.dart` | Combines unread chat messages and unread notifications for the bottom bar badges. | Core session | `ShellBadgesCubit` |
@@ -24,7 +32,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/core/theme/app_text_styles.dart` | — | Core theme | `AppTextStyles` |
 | `lib/core/theme/app_theme.dart` | — | Core theme | `AppTheme` |
 | `lib/core/utils/relative_time_formatter.dart` | Short relative times as in the design: "now", "20m", "2h", "Yesterday", "Mon", "12 Nov". | Core utils | `RelativeTimeFormatter` |
-| `lib/core/widgets/app_avatar.dart` | Initials avatar on a token tint (the design shows no photos). The tint is picked from the profile id so a person keeps the same colour… | Core widgets | `AppAvatar` |
+| `lib/core/widgets/app_avatar.dart` | Round avatar: the profile photo (or an unsaved preview) when there is one, else initials on a token tint from the profile id; `showPhoto: false` keeps initials. | Core widgets | `AppAvatar` |
 | `lib/core/widgets/app_bottom_sheet.dart` | The design's bottom sheet: white, 24 px top corners, raised shadow, 40×4 grabber, 20 px side padding, over the scrim colour. | Core widgets | `AppBottomSheet` |
 | `lib/core/widgets/app_button.dart` | The design's buttons: primary (brand fill), secondary (white with brand outline) and danger. A null [onPressed] shows the disabled style… | Core widgets | `AppButtonVariant`, `AppButtonSize`, `AppButton` |
 | `lib/core/widgets/app_checkbox.dart` | 22 px checkbox (6 px radius) with a label beside it; the whole row is tappable. Checked = brand fill with a white check. | Core widgets | `AppCheckbox` |
@@ -46,6 +54,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/core/widgets/main_shell.dart` | App shell with the designed bottom bar: Home · Teachers · raised centre "+" · Chats · Alerts. Tab screens are the [navigationShell]… | Core widgets | `MainShell` |
 | `lib/core/widgets/numbered_stepper.dart` | "① Email — ② Code — ③ New password": done and current steps are brand filled circles, later steps are outlined. | Core widgets | `NumberedStepper` |
 | `lib/core/widgets/otp_input.dart` | Six 48×58 digit boxes (10 px radius). One hidden text field takes the input, so paste and SMS/email autofill work; the next empty box… | Core widgets | `OtpInput` |
+| `lib/core/widgets/photo_source_sheet.dart` | "Profile photo" sheet: Take a photo / Choose from gallery. | Core widgets | `PhotoSourceSheet` |
 | `lib/core/widgets/post_card.dart` | Feed post card: author row, text (4 lines in the feed), optional Arabic verse and photo, tag + counts, and Like / Comment / Report actions. | Core widgets | `PostCard` |
 | `lib/core/widgets/post_card_skeleton.dart` | Loading version of a post card (artboard "24 Loading states"). | Core widgets | `PostCardSkeleton` |
 | `lib/core/widgets/profile_header.dart` | Centred profile header: 88 px avatar, 26 px display name, muted subtitle and an optional pill — gold "Verified teacher" ([goldBadge]) or… | Core widgets | `ProfileHeader` |
@@ -74,6 +83,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/data/models/enums/gender.dart` | — | Model / enum | `Gender`, `GenderLabel` |
 | `lib/data/models/enums/learner_age_group.dart` | Age group of the learner on a student account. | Model / enum | `LearnerAgeGroup`, `LearnerAgeGroupLabel` |
 | `lib/data/models/enums/learner_level.dart` | Current reading level of a learner. | Model / enum | `LearnerLevel`, `LearnerLevelLabel` |
+| `lib/data/models/enums/media_bucket.dart` | Storage buckets used by the app (`avatars`, `certificates`). | Model enum | `MediaBucket` |
 | `lib/data/models/enums/notification_type.dart` | Kinds of in-app notification (plan section 9). | Model / enum | `NotificationType` |
 | `lib/data/models/enums/post_tag.dart` | The one tag every post carries (plan section 4). | Model / enum | `PostTag`, `PostTagLabel` |
 | `lib/data/models/enums/report_reason.dart` | Report reasons (plan section 9). | Model / enum | `ReportReason`, `ReportReasonLabel` |
@@ -85,6 +95,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/data/models/enums/weekday.dart` | Days of the week, Monday first, as in the availability picker. | Model / enum | `Weekday`, `WeekdayLabel` |
 | `lib/data/models/message.dart` | One chat message: text, an image, or both (mirrors the planned `messages` table, plan section 12). | Model / enum | `Message` |
 | `lib/data/models/notification_settings.dart` | Which notifications a user wants (Settings → Notifications). | Model / enum | `NotificationSettings` |
+| `lib/data/models/picked_document.dart` | A file chosen with the document picker (name, size, bytes). | Model | `PickedDocument` |
 | `lib/data/models/post.dart` | A feed post (plan table `posts`), as seen by one viewer. | Model / enum | `Post` |
 | `lib/data/models/profile.dart` | A user's public profile (plan table `profiles`). Exactly one of [teacherDetails] / [studentDetails] matches [role]. | Model / enum | `Profile`, `on` |
 | `lib/data/models/student_details.dart` | Student-only profile data (plan table `student_details`). | Model / enum | `StudentDetails` |
@@ -94,11 +105,13 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/data/repositories/connection_repository.dart` | — | Repository interface | `ConnectionRepository` |
 | `lib/data/repositories/discover_repository.dart` | — | Repository interface | `DiscoverRepository` |
 | `lib/data/repositories/feed_repository.dart` | — | Repository interface | `FeedRepository` |
+| `lib/data/repositories/media_repository.dart` | Storage uploads, download of the own certificate, removals. | Repository interface | `MediaRepository` |
 | `lib/data/repositories/mock/mock_auth_repository.dart` | In-memory [AuthRepository]. Any valid email + 8-character password signs in; any 6 digits are a valid code. Known emails (the two mock… | Mock data | `MockAuthRepository` |
 | `lib/data/repositories/mock/mock_chat_repository.dart` | In-memory [ChatRepository] (resets on restart). Chat is allowed only between accepted connections of [MockConnectionRepository]. | Mock data | `MockChatRepository` |
 | `lib/data/repositories/mock/mock_connection_repository.dart` | In-memory [ConnectionRepository] (resets on restart). | Mock data | `MockConnectionRepository` |
 | `lib/data/repositories/mock/mock_discover_repository.dart` | In-memory [DiscoverRepository] over the mock profiles and blocks. | Mock data | `MockDiscoverRepository` |
 | `lib/data/repositories/mock/mock_feed_repository.dart` | In-memory [FeedRepository] seeded with [buildMockPosts] and [buildMockComments]. State resets when the app restarts. | Mock data | `MockFeedRepository` |
+| `lib/data/repositories/mock/mock_media_repository.dart` | In-memory [MediaRepository] for tests (`failNext`, `deleted`). | Mock data | `MockMediaRepository` |
 | `lib/data/repositories/mock/mock_notification_repository.dart` | In-memory [NotificationRepository] (resets on restart). | Mock data | `MockNotificationRepository` |
 | `lib/data/repositories/mock/mock_profile_repository.dart` | In-memory [ProfileRepository] seeded with [buildMockProfiles]. State resets when the app restarts. | Mock data | `MockProfileRepository` |
 | `lib/data/repositories/mock/mock_safety_repository.dart` | In-memory [SafetyRepository]. Reports are kept for the session only. | Mock data | `MockSafetyRepository` |
@@ -107,7 +120,8 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/data/repositories/safety_repository.dart` | — | Repository interface | `BlockedUser`, `SafetyRepository` |
 | `lib/data/repositories/supabase/profile_row_mapper.dart` | Converts profile / detail rows to `Profile` and back (snake_case enum text). Pure. | Repository (Supabase) | `ProfileRowMapper` |
 | `lib/data/repositories/supabase/supabase_auth_repository.dart` | `AuthRepository` on Supabase Auth with 6-digit email codes; deletion via `delete_my_account()`. | Repository (Supabase) | `SupabaseAuthRepository` |
-| `lib/data/repositories/supabase/supabase_failure_mapper.dart` | Maps Supabase Auth / PostgREST / network errors to `Failure`s. Pure. | Repository (Supabase) | `SupabaseFailureMapper` |
+| `lib/data/repositories/supabase/supabase_failure_mapper.dart` | Maps Supabase Auth / PostgREST / Storage / network errors to `Failure`s. Pure. | Repository (Supabase) | `SupabaseFailureMapper` |
+| `lib/data/repositories/supabase/supabase_media_repository.dart` | `MediaRepository` on Supabase Storage (owner folders; authenticated certificate download). | Repository (Supabase) | `SupabaseMediaRepository` |
 | `lib/data/repositories/supabase/supabase_profile_repository.dart` | `ProfileRepository` on `profiles`, `teacher_details`, `student_details` (RLS). | Repository (Supabase) | `SupabaseProfileRepository` |
 | `lib/features/auth/bloc/login_cubit.dart` | Email + password log-in (no code at log-in, plan section 4). | Feature auth · bloc | `LoginCubit` |
 | `lib/features/auth/bloc/login_state.dart` | — | Feature auth · bloc | `LoginStatus`, `LoginState` |
@@ -188,13 +202,16 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/features/post/bloc/create_post_state.dart` | — | Feature post · bloc | `CreatePostStatus`, `CreatePostState` |
 | `lib/features/post/logic/post_rules.dart` | Post limits (plan section 9). | Feature post · logic | `PostRules` |
 | `lib/features/post/presentation/create_post_screen.dart` | 10 Create post: text (max 1,500), one photo, one required tag and the content-policy note. | Feature post · presentation | `CreatePostScreen` |
+| `lib/features/profile/bloc/certificate_viewer_cubit.dart` | Downloads the own certificate for the viewer; `retry`. | Feature profile · bloc | `CertificateViewerCubit` |
+| `lib/features/profile/bloc/certificate_viewer_state.dart` | Loading / loaded (bytes in memory) / failure. | Feature profile · bloc | `CertificateViewerStatus`, `CertificateViewerState` |
 | `lib/features/profile/bloc/edit_profile_cubit.dart` | Edits a draft of the user's profile; [save] writes it through [ProfileRepository] (role, verification and id are never changed). | Feature profile · bloc | `EditProfileCubit` |
 | `lib/features/profile/bloc/edit_profile_state.dart` | 20b / 20d Edit profile: a draft copy saved on "Save". | Feature profile · bloc | `EditProfileState` |
 | `lib/features/profile/bloc/my_profile_cubit.dart` | The signed-in user's own profile, posts and connection count; the "Looking for a teacher" switch saves straight away. | Feature profile · bloc | `MyProfileCubit` |
 | `lib/features/profile/bloc/my_profile_state.dart` | 20a / 20c My profile. | Feature profile · bloc | `MyProfileState` |
+| `lib/features/profile/presentation/certificate_viewer_screen.dart` | In-app PDF viewer for the own certificate (`pdfrx`), page indicator, error + Try again. | Feature profile · presentation | `CertificateViewerScreen` |
 | `lib/features/profile/presentation/edit_profile_screen.dart` | 20b Edit profile (student) / 20d Edit profile (teacher). | Feature profile · presentation | `EditProfileScreen` |
 | `lib/features/profile/presentation/my_profile_screen.dart` | 20a My profile (student) / 20c My profile (teacher). | Feature profile · presentation | `MyProfileScreen` |
-| `lib/features/profile/presentation/widgets/certificate_row.dart` | Uploaded certificate in Edit profile (artboard 20d): document icon, file name and a remove button. | Feature profile · presentation | `CertificateRow` |
+| `lib/features/profile/presentation/widgets/certificate_row.dart` | Uploaded certificate (Edit profile, teacher setup): document icon, original file name, remove; tap opens the viewer. | Feature profile · presentation | `CertificateRow` |
 | `lib/features/profile_setup/bloc/student_setup_cubit.dart` | Student setup (artboards 07e, 07d, 07f). Each step is saved when the user continues or skips. | Feature profile_setup · bloc | `StudentSetupCubit` |
 | `lib/features/profile_setup/bloc/student_setup_state.dart` | Three-step student setup over a draft copy of the user's profile. | Feature profile_setup · bloc | `StudentSetupState` |
 | `lib/features/profile_setup/bloc/teacher_setup_cubit.dart` | Teacher setup (artboards 07a–07c). Every step is saved when the user continues or skips, so the strength % reflects it immediately. | Feature profile_setup · bloc | `TeacherSetupCubit` |
@@ -224,9 +241,11 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/main.dart` | Composition root: the only place concrete repositories are created; Auth + Profile real, other repositories mock until their phases; the only `Supabase.instance` read. | App | `main` |
 | `test/app_test.dart` | Tests | Test | `main` |
 | `test/core/config/app_config_test.dart` | Tests | Test | `main` |
+| `test/core/logic/certificate_file_rules_test.dart` | `CertificateFileRules` tests. | Test | — |
 | `test/core/logic/profile_strength_calculator_test.dart` | Tests | Test | `main` |
 | `test/core/router/app_router_test.dart` | Tests | Test | `tapTab`, `main` |
 | `test/core/theme/app_theme_test.dart` | Pins the theme to the Asatiza design-system tokens (tokens.json), so a drift between design and code shows up as a failing test. | Test | `main` |
+| `test/core/widgets/app_avatar_test.dart` | `AppAvatar` photo, fallback, `showPhoto`, preview. | Test | — |
 | `test/data/mock_data_test.dart` | Tests | Test | `main` |
 | `test/data/supabase/profile_row_mapper_test.dart` | Tests | Test | `main` |
 | `test/data/supabase/supabase_failure_mapper_test.dart` | Tests | Test | `main` |
@@ -234,6 +253,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `test/features/cubits_test.dart` | Lets stream listeners and async cubit work run. | Test | `settle`, `main` |
 | `test/features/discover_connect_test.dart` | Tests | Test | `settle`, `main` |
 | `test/features/logic_rules_test.dart` | Tests | Test | `main` |
+| `test/features/media_upload_cubits_test.dart` | Photo / certificate uploads in setup and Edit profile cubits; certificate viewer cubit. | Test | — |
 | `test/features/profile_settings_test.dart` | Tests | Test | `settle`, `main` |
 | `test/features/screens_test.dart` | Tests | Test | `main` |
 | `test/helpers/test_app.dart` | The app wired with fresh mock repositories, as in `main.dart`. | Test | `TestApp`, `enterField`, `enterCode`, `tapText`, `loadDesignFonts` |

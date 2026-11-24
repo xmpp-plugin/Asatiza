@@ -1,7 +1,13 @@
 import 'package:asatiza/core/errors/failures.dart';
 import 'package:asatiza/core/logic/profile_strength_calculator.dart';
 import 'package:asatiza/data/mock/mock_profiles.dart';
+import 'package:asatiza/data/models/enums/gender.dart';
+import 'package:asatiza/data/models/enums/learner_age_group.dart';
+import 'package:asatiza/data/models/enums/learner_level.dart';
 import 'package:asatiza/data/models/enums/subject.dart';
+import 'package:asatiza/data/models/enums/teacher_gender_preference.dart';
+import 'package:asatiza/data/models/enums/teaching_language.dart';
+import 'package:asatiza/data/models/student_details.dart';
 import 'package:asatiza/data/repositories/mock/mock_chat_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
@@ -19,6 +25,7 @@ import 'package:asatiza/features/settings/bloc/settings_cubit.dart';
 import 'package:asatiza/features/settings/presentation/blocked_users_screen.dart';
 import 'package:asatiza/features/settings/presentation/policy_screen.dart';
 import 'package:asatiza/features/settings/presentation/settings_screen.dart';
+import 'package:asatiza/data/repositories/mock/mock_media_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -131,19 +138,71 @@ void main() {
     test('edit profile: teacher qualifications reach 100 %', () async {
       final ahmed = await profiles.getProfile(MockIds.ahmed);
       expect(const ProfileStrengthCalculator().percent(ahmed), 90);
-      final cubit = EditProfileCubit(profiles, ahmed)
-        ..qualificationsChanged('Ijazah in Hafs an Asim');
+      final cubit = EditProfileCubit(
+        profiles,
+        ahmed,
+        media: MockMediaRepository(),
+        picker: FakeImagePicker(),
+        compressor: const FakeImageCompressor(),
+        documents: FakeDocumentPicker(),
+      )..qualificationsChanged('Ijazah in Hafs an Asim');
       await cubit.save();
       expect(cubit.state.saved, isTrue);
       final saved = await profiles.getProfile(MockIds.ahmed);
       expect(const ProfileStrengthCalculator().percent(saved), 100);
     });
 
+    test('edit profile: a student can reach 100 % without setup', () async {
+      final ayesha = await profiles.getProfile(MockIds.ayesha);
+      // As after skipping setup: no details, languages or location.
+      final bare = await profiles.updateProfile(
+        ayesha.copyWith(
+          languages: const <TeachingLanguage>[],
+          country: '',
+          timeZone: '',
+          studentDetails: const StudentDetails(),
+        ),
+      );
+      const strength = ProfileStrengthCalculator();
+      final cubit =
+          EditProfileCubit(
+              profiles,
+              bare,
+              media: MockMediaRepository(),
+              picker: FakeImagePicker(),
+              compressor: const FakeImageCompressor(),
+              documents: FakeDocumentPicker(),
+            )
+            ..genderChanged(Gender.female)
+            ..ageGroupChanged(LearnerAgeGroup.adult)
+            ..countryChanged('Pakistan')
+            ..goalToggled(Subject.tajweed)
+            ..noteChanged('Evenings please');
+      expect(strength.percent(cubit.state.draft), 60);
+      cubit
+        ..levelChanged(LearnerLevel.values.first)
+        ..languageToggled(TeachingLanguage.urdu)
+        ..preferenceChanged(TeacherGenderPreference.values.first);
+      expect(strength.percent(cubit.state.draft), 100);
+      await cubit.save();
+      final saved = await profiles.getProfile(MockIds.ayesha);
+      expect(strength.percent(saved), 100);
+      await cubit.close();
+    });
+
     test('edit profile: empty name is refused', () async {
       final ayesha = await profiles.getProfile(MockIds.ayesha);
-      final cubit = EditProfileCubit(profiles, ayesha)
-        ..nameChanged('  ')
-        ..goalToggled(Subject.tajweed);
+      final cubit =
+          EditProfileCubit(
+              profiles,
+              ayesha,
+              media: MockMediaRepository(),
+              picker: FakeImagePicker(),
+              compressor: const FakeImageCompressor(),
+              documents: FakeDocumentPicker(),
+            )
+            ..nameChanged('  ')
+            ..goalToggled(Subject.tajweed);
       await cubit.save();
       expect(cubit.state.nameMissing, isTrue);
       expect(cubit.state.saved, isFalse);

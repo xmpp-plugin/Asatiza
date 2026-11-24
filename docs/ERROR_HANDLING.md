@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-24 (`PHASE_005`): `ValidationReason.fileTooLarge`, `fileTypeNotAllowed`, `certificateLimitReached`. Storage errors: status 413 / "payload too large" → `fileTooLarge`; 415 / `invalid_mime_type` → `fileTypeNotAllowed`; 401 / 403 / 404 / row-level security → `NotFoundFailure`; others → `UnexpectedFailure`. Services throw `UnexpectedFailure` when a plugin fails. Setup and Edit profile show upload problems in a SnackBar ("too large", "only PDF", "one certificate", "No internet connection", "Upload failed"). The certificate viewer shows "Couldn't open the certificate" with Try again.
+
 VERIFIED 2026-11-23 (`PHASE_004`): `SupabaseFailureMapper` maps Supabase errors — Auth codes `invalid_credentials` → `wrongCredentials`, `email_not_confirmed` → `emailNotConfirmed`, `user_already_exists` / `email_exists` → `emailAlreadyRegistered`, `otp_expired` → `invalidCode` (Supabase uses one code for wrong and expired), `weak_password` → `passwordTooShort`, `same_password` → `passwordUnchanged`, `email_address_invalid` → `invalidEmail`; `AuthRetryableFetchException`, `SocketException`, `TimeoutException`, http `ClientException` → `NetworkFailure`; PostgREST `PGRST116` / `42501` → `NotFoundFailure`; anything else → `UnexpectedFailure`. Screens show them since 2026-11-24: auth cubits and `ChangePasswordCubit` set `failure.displayReason` (`ValidationReason.network` / `unexpected`, never thrown) and the screens show "No internet connection…" or "Something went wrong…" above the button (code screens: in place of the code error). My profile shows "Couldn't load your profile" when loading fails.
 
 No error handling, logging or crash reporting yet. VERIFIED

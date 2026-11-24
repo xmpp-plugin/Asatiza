@@ -221,6 +221,8 @@ class _SearchViewState extends State<_SearchView> {
         for (final p in people)
           PersonRow(
             profile: p,
+            // Student photos never show in discover lists (decision 5).
+            showPhoto: p.isTeacher,
             subtitle: _personSubtitle(p, l10n),
             detail: _fee(p, l10n),
             onTap: () => context.push(AppRoutes.profile(p.id)),

@@ -6,6 +6,7 @@
 
 - 2026-11-23 (`PHASE_003`): 101 tests (44 new: discover/connect, chat/notifications, profile/settings — logic, mocks, cubits, screen flows for both roles). `TestApp.startSignedIn` signs in by profile id (independent of the mock login emails). Both `MockAccounts` emails are the same address (developer decision), so logging in opens Qari Ahmed; the email-based tests expect that. 101/101 passing.
 
+- 2026-11-24 (`PHASE_005`): 145 tests (24 new: `CertificateFileRules`, Storage error mapping, `AppAvatar` photo / fallback / `showPhoto`, upload cubits with `MockMediaRepository` and fakes, certificate viewer cubit). `test/helpers/test_app.dart` registers `MockMediaRepository` and `FakeImagePicker` / `FakeImageCompressor` / `FakeDocumentPicker`; `tapText` now pumps after `ensureVisible` (taller step 3). Plugins are never called in tests. Storage policies are checked with `supabase/tests/storage_policies_checks.sql`.
 - 2026-11-23 (`PHASE_004`): 115 tests (14 new: `ProfileRowMapper`, `SupabaseFailureMapper`, `AppConfig`, `LoginCubit` unconfirmed email, `SessionCubit.restore`; a test checks the SQL strength weights match `ProfileStrengthCalculator`). `flutter test` uses the mock repositories directly and never calls `main` (no network). Supabase repositories are not unit-tested against a server; RLS is checked with `supabase/tests/profiles_rls_checks.sql`.
 
 - 2026-11-19 (`PHASE_001`): `test/app_test.dart` (boot, tabs, light/dark), `test/core/router/app_router_test.dart` (navigation, system back), `test/core/theme/app_theme_test.dart` (design tokens). 12 tests, all passing. The global `appRouter` keeps its location between tests, so each test starts with `appRouter.go(AppRoutes.home)`. VERIFIED
@@ -61,6 +62,7 @@ Run targeted tests when the full suite is not relevant. Reuse recorded passing r
 4. Copy `env/supabase.example.json` to `env/supabase.json` (git-ignored) and fill in the project URL and the publishable / anon key. This file is bundled into the app, so it may hold only these two keys (the app refuses to start otherwise); never the `service_role` key, database password or SMTP key.
 5. Run: `flutter run` (or the IDE Run button). A `--dart-define-from-file=…` flag still works and wins over the file. Without settings the build fails (missing asset) or the app stops with "Supabase settings missing"; there is no full-mock app mode since 2026-11-24.
 6. After two sign-ups, run `supabase/tests/profiles_rls_checks.sql` in the SQL editor: every line must say PASS.
+7. (`PHASE_005`) SQL editor: run `supabase/migrations/20261124120000_storage_avatars_certificates.sql`, then (with at least one teacher and one student) `supabase/tests/storage_policies_checks.sql`: every line must say PASS. Clear old placeholder `photo_path` / `certificate_paths` values of test accounts (decision 8). iOS: the first build after `PHASE_005` installs new pods (`image_picker`, `flutter_image_compress`, `file_picker`, `pdfrx` with PDFium).
 
 Built-in Supabase email only sends to team addresses and a few emails per hour (decision 3).
 

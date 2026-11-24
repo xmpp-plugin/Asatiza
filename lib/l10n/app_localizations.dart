@@ -679,13 +679,13 @@ abstract class AppLocalizations {
   /// No description provided for @uploadCertificatesAction.
   ///
   /// In en, this message translates to:
-  /// **'Upload certificates'**
+  /// **'Upload certificate'**
   String get uploadCertificatesAction;
 
   /// No description provided for @uploadCertificatesHint.
   ///
   /// In en, this message translates to:
-  /// **'JPG or PDF'**
+  /// **'PDF'**
   String get uploadCertificatesHint;
 
   /// No description provided for @certificatesAdded.
@@ -2949,6 +2949,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unblock'**
   String get unblockAction;
+
+  /// No description provided for @photoSourceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo'**
+  String get photoSourceTitle;
+
+  /// No description provided for @photoSourceCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get photoSourceCamera;
+
+  /// No description provided for @photoSourceGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get photoSourceGallery;
+
+  /// No description provided for @certificateInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload one certificate (ijazah, sanad or diploma) as a PDF, up to 3 MB. Make sure your name and the issuing institute are clear. Only our review team can see it.'**
+  String get certificateInstructions;
+
+  /// No description provided for @uploadErrorTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is too large. A certificate PDF can be up to 3 MB.'**
+  String get uploadErrorTooLarge;
+
+  /// No description provided for @uploadErrorNotPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Only PDF files can be uploaded.'**
+  String get uploadErrorNotPdf;
+
+  /// No description provided for @uploadErrorCertificateLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You can upload one certificate. Remove it to upload a different one.'**
+  String get uploadErrorCertificateLimit;
+
+  /// No description provided for @uploadErrorFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed. Please try again.'**
+  String get uploadErrorFailed;
+
+  /// No description provided for @openCertificateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open certificate'**
+  String get openCertificateAction;
+
+  /// No description provided for @certificateViewerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate'**
+  String get certificateViewerTitle;
+
+  /// No description provided for @certificateOpenFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t open the certificate'**
+  String get certificateOpenFailedTitle;
+
+  /// No description provided for @certificateOpenFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get certificateOpenFailedMessage;
+
+  /// No description provided for @retryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get retryAction;
+
+  /// No description provided for @certificatePageIndicator.
+  ///
+  /// In en, this message translates to:
+  /// **'{page} / {total}'**
+  String certificatePageIndicator(int page, int total);
 }
 
 class _AppLocalizationsDelegate

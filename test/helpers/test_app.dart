@@ -1,21 +1,28 @@
 import 'dart:async';
 
 import 'package:asatiza/app.dart';
+import 'package:asatiza/core/services/document_picker_service.dart';
+import 'package:asatiza/core/services/image_compressor.dart';
+import 'package:asatiza/core/services/image_picker_service.dart';
+import 'package:asatiza/core/services/image_source_kind.dart';
 import 'package:asatiza/core/session/session_cubit.dart';
 import 'package:asatiza/core/widgets/app_text_field.dart';
 import 'package:asatiza/core/widgets/otp_input.dart';
 import 'package:asatiza/data/mock/mock_profiles.dart';
+import 'package:asatiza/data/models/picked_document.dart';
 import 'package:asatiza/data/repositories/auth_repository.dart';
 import 'package:asatiza/data/repositories/chat_repository.dart';
 import 'package:asatiza/data/repositories/connection_repository.dart';
 import 'package:asatiza/data/repositories/discover_repository.dart';
 import 'package:asatiza/data/repositories/feed_repository.dart';
+import 'package:asatiza/data/repositories/media_repository.dart';
 import 'package:asatiza/data/repositories/notification_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_auth_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_chat_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_discover_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
+import 'package:asatiza/data/repositories/mock/mock_media_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_notification_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
@@ -51,6 +58,10 @@ class TestApp {
 
   final MockProfileRepository profiles;
   final MockFeedRepository feed;
+  final MockMediaRepository media = MockMediaRepository();
+  final FakeImagePicker imagePicker = FakeImagePicker();
+  final FakeImageCompressor imageCompressor = const FakeImageCompressor();
+  final FakeDocumentPicker documentPicker = FakeDocumentPicker();
   final MockSafetyRepository safety;
   late final MockAuthRepository auth;
   late final MockDiscoverRepository discover;
@@ -63,6 +74,10 @@ class TestApp {
     providers: <RepositoryProvider<Object>>[
       RepositoryProvider<AuthRepository>.value(value: auth),
       RepositoryProvider<ProfileRepository>.value(value: profiles),
+      RepositoryProvider<MediaRepository>.value(value: media),
+      RepositoryProvider<ImagePickerService>.value(value: imagePicker),
+      RepositoryProvider<ImageCompressor>.value(value: imageCompressor),
+      RepositoryProvider<DocumentPickerService>.value(value: documentPicker),
       RepositoryProvider<FeedRepository>.value(value: feed),
       RepositoryProvider<SafetyRepository>.value(value: safety),
       RepositoryProvider<DiscoverRepository>.value(value: discover),
@@ -138,6 +153,9 @@ Future<void> enterCode(WidgetTester tester, String code) async {
 /// Taps the first widget showing [text] and settles.
 Future<void> tapText(WidgetTester tester, String text) async {
   await tester.ensureVisible(find.text(text).first);
+  // Lay out the scrolled position before tapping (taller screens since
+  // PHASE_005, e.g. the certificate instructions on setup step 3).
+  await tester.pump();
   await tester.tap(find.text(text).first);
   await tester.pumpAndSettle();
 }
@@ -167,5 +185,52 @@ Future<void> loadDesignFonts() async {
       loader.addFont(rootBundle.load(asset));
     }
     await loader.load();
+  }
+}
+
+/// A tiny valid-looking PDF (header only) for upload tests.
+Uint8List samplePdf({int size = 64}) {
+  final bytes = Uint8List(size);
+  const header = <int>[0x25, 0x50, 0x44, 0x46, 0x2D, 0x31, 0x2E, 0x37];
+  bytes.setRange(0, header.length, header);
+  return bytes;
+}
+
+/// [ImagePickerService] returning [next] (null = the user cancelled).
+class FakeImagePicker implements ImagePickerService {
+  Uint8List? next = Uint8List.fromList(<int>[1, 2, 3]);
+  ImageSourceKind? lastSource;
+
+  @override
+  Future<Uint8List?> pickImage(ImageSourceKind source) async {
+    lastSource = source;
+    return next;
+  }
+}
+
+/// [ImageCompressor] that returns the bytes with a JPEG marker in front.
+class FakeImageCompressor implements ImageCompressor {
+  const FakeImageCompressor();
+
+  @override
+  Future<Uint8List> compressAvatar(Uint8List bytes) async =>
+      Uint8List.fromList(<int>[0xFF, 0xD8, ...bytes]);
+}
+
+/// [DocumentPickerService] returning [next] (null = the user cancelled).
+class FakeDocumentPicker implements DocumentPickerService {
+  PickedDocument? next;
+
+  @override
+  Future<PickedDocument?> pickPdf({required int maxReadBytes}) async {
+    final doc = next;
+    if (doc == null || doc.sizeBytes <= maxReadBytes) {
+      return doc;
+    }
+    return PickedDocument(
+      name: doc.name,
+      sizeBytes: doc.sizeBytes,
+      bytes: Uint8List(0),
+    );
   }
 }

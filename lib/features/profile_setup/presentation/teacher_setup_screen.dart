@@ -3,8 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/errors/failures.dart';
+import '../../../core/logic/certificate_file_rules.dart';
 import '../../../core/logic/profile_strength_calculator.dart';
 import '../../../core/router/app_routes.dart';
+import '../../../core/services/document_picker_service.dart';
+import '../../../core/services/image_compressor.dart';
+import '../../../core/services/image_picker_service.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -12,19 +17,23 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/app_info_note.dart';
 import '../../../core/widgets/app_chip.dart';
 import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/app_segmented_control.dart';
 import '../../../core/widgets/app_text_area.dart';
 import '../../../core/widgets/app_text_field.dart';
+import '../../../core/widgets/photo_source_sheet.dart';
 import '../../../core/widgets/section_label.dart';
 import '../../../core/widgets/step_progress_header.dart';
 import '../../../data/models/enums/fee_unit.dart';
 import '../../../data/models/enums/gender.dart';
 import '../../../data/models/enums/subject.dart';
 import '../../../data/models/enums/teaching_language.dart';
+import '../../../data/repositories/media_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../profile/presentation/widgets/certificate_row.dart';
 import '../bloc/teacher_setup_cubit.dart';
 import '../bloc/teacher_setup_state.dart';
 import 'widgets/photo_picker_tile.dart';
@@ -66,51 +75,83 @@ class TeacherSetupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.read<SessionCubit>().state.user!;
     return BlocProvider<TeacherSetupCubit>(
-      create: (context) =>
-          TeacherSetupCubit(context.read<ProfileRepository>(), user),
-      child: BlocConsumer<TeacherSetupCubit, TeacherSetupState>(
-        listenWhen: (a, b) => !a.done && b.done,
-        listener: (context, _) {
-          context.read<SessionCubit>().completeSetup();
-          context.go(AppRoutes.home);
-        },
-        buildWhen: (a, b) => a.step != b.step,
-        builder: (context, state) {
-          final cubit = context.read<TeacherSetupCubit>();
-          return PopScope(
-            canPop: state.step == 1,
-            onPopInvokedWithResult: (didPop, _) {
-              if (!didPop) {
-                cubit.back();
-              }
-            },
-            child: Scaffold(
-              body: SafeArea(
-                child: Column(
-                  children: <Widget>[
-                    StepProgressHeader(
-                      step: state.step,
-                      total: TeacherSetupState.totalSteps,
-                      onSkip: cubit.skip,
-                      onBack: state.step > 1 ? cubit.back : null,
-                    ),
-                    Expanded(
-                      child: switch (state.step) {
-                        1 => const _StepOne(key: ValueKey<int>(1)),
-                        2 => const _StepTwo(key: ValueKey<int>(2)),
-                        _ => const _StepThree(key: ValueKey<int>(3)),
-                      },
-                    ),
-                  ],
+      create: (context) => TeacherSetupCubit(
+        context.read<ProfileRepository>(),
+        user,
+        media: context.read<MediaRepository>(),
+        picker: context.read<ImagePickerService>(),
+        compressor: context.read<ImageCompressor>(),
+        documents: context.read<DocumentPickerService>(),
+      ),
+      child: BlocListener<TeacherSetupCubit, TeacherSetupState>(
+        listenWhen: (a, b) =>
+            b.mediaError != null && a.mediaError != b.mediaError,
+        listener: (context, state) =>
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  _mediaErrorText(
+                    state.mediaError!,
+                    AppLocalizations.of(context),
+                  ),
                 ),
               ),
             ),
-          );
-        },
+        child: BlocConsumer<TeacherSetupCubit, TeacherSetupState>(
+          listenWhen: (a, b) => !a.done && b.done,
+          listener: (context, _) {
+            context.read<SessionCubit>().completeSetup();
+            context.go(AppRoutes.home);
+          },
+          buildWhen: (a, b) => a.step != b.step,
+          builder: (context, state) {
+            final cubit = context.read<TeacherSetupCubit>();
+            return PopScope(
+              canPop: state.step == 1,
+              onPopInvokedWithResult: (didPop, _) {
+                if (!didPop) {
+                  cubit.back();
+                }
+              },
+              child: Scaffold(
+                body: SafeArea(
+                  child: Column(
+                    children: <Widget>[
+                      StepProgressHeader(
+                        step: state.step,
+                        total: TeacherSetupState.totalSteps,
+                        onSkip: cubit.skip,
+                        onBack: state.step > 1 ? cubit.back : null,
+                      ),
+                      Expanded(
+                        child: switch (state.step) {
+                          1 => const _StepOne(key: ValueKey<int>(1)),
+                          2 => const _StepTwo(key: ValueKey<int>(2)),
+                          _ => const _StepThree(key: ValueKey<int>(3)),
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 }
+
+/// Message for a refused or failed photo / certificate upload.
+String _mediaErrorText(ValidationReason reason, AppLocalizations l10n) =>
+    switch (reason) {
+      ValidationReason.fileTooLarge => l10n.uploadErrorTooLarge,
+      ValidationReason.fileTypeNotAllowed => l10n.uploadErrorNotPdf,
+      ValidationReason.certificateLimitReached =>
+        l10n.uploadErrorCertificateLimit,
+      ValidationReason.network => l10n.errorNoConnection,
+      _ => l10n.uploadErrorFailed,
+    };
 
 /// Scrollable step body whose last child sits at the bottom.
 class _StepBody extends StatelessWidget {
@@ -186,7 +227,14 @@ class _StepOne extends StatelessWidget {
               title: l10n.addProfilePhoto,
               message: l10n.teacherPhotoHint,
               semanticLabel: l10n.addProfilePhoto,
-              onTap: cubit.photoAdded,
+              preview: state.photoPreview,
+              loading: state.uploadingPhoto,
+              onTap: () async {
+                final source = await PhotoSourceSheet.show(context);
+                if (source != null) {
+                  await cubit.photoPicked(source);
+                }
+              },
             ),
             const SizedBox(height: AppSpacing.space6),
             AppTextField(
@@ -490,13 +538,27 @@ class _StepThreeState extends State<_StepThree> {
               onToggle: cubit.dayToggled,
             ),
             const SizedBox(height: AppSpacing.space4),
-            UploadTile(
-              label: d.certificatePaths.isEmpty
-                  ? l10n.uploadCertificatesAction
-                  : l10n.certificatesAdded(d.certificatePaths.length),
-              hint: l10n.uploadCertificatesHint,
-              onTap: cubit.certificateAdded,
-            ),
+            for (final path in d.certificatePaths) ...<Widget>[
+              CertificateRow(
+                path: path,
+                onTap: () => context.push(AppRoutes.certificate(path)),
+                onRemove: () => cubit.certificateRemoved(path),
+              ),
+              const SizedBox(height: AppSpacing.space2),
+            ],
+            // Decision 2: one certificate; the tile hides at the limit.
+            if (const CertificateFileRules().canAdd(
+              d.certificatePaths.length,
+            )) ...<Widget>[
+              UploadTile(
+                label: l10n.uploadCertificatesAction,
+                hint: l10n.uploadCertificatesHint,
+                loading: state.uploadingCertificate,
+                onTap: cubit.certificatePicked,
+              ),
+              const SizedBox(height: AppSpacing.space2),
+            ],
+            AppInfoNote(text: l10n.certificateInstructions),
             const Spacer(),
             const SizedBox(height: AppSpacing.space4),
             AppButton(
