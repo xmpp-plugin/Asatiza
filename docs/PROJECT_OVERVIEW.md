@@ -4,7 +4,8 @@ Labels: **VERIFIED** = seen in this repo · **DECIDED** = owner-approved in `doc
 
 ## Verified Facts (updated 2026-11-19, `PHASE_001`)
 
-- 2026-11-23 (`PHASE_004`): backend foundation — `supabase_flutter ^2.18.3`; accounts (sign-up with 6-digit email code, log-in, forgot / change password, delete account, stay signed in) and profiles on Supabase in backend mode; migrations + RLS in `supabase/`; Android release manifest gained `INTERNET`. Mock mode remains the default. VERIFIED
+- 2026-11-23 (`PHASE_004`): backend foundation — `supabase_flutter ^2.18.3`; accounts (sign-up with 6-digit email code, log-in, forgot / change password, delete account, stay signed in) and profiles on Supabase in backend mode; migrations + RLS in `supabase/`; Android release manifest gained `INTERNET`. VERIFIED
+- 2026-11-24 (`PHASE_004` fix): the full-mock app mode was removed; every run uses real accounts and profiles (`env/supabase.json` required), other features stay mock until their phases. VERIFIED
 
 - 2026-11-19 (`PHASE_002`, part 1): UI for onboarding, sign-in, profile setup, home feed, post detail, create post and report built from the design canvas with in-memory mock data; dependencies `flutter_bloc ^9.1.1`, `flutter_svg ^2.3.4`, `equatable ^3.0.0` added. VERIFIED
 

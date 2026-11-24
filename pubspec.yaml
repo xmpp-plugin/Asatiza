@@ -76,6 +76,9 @@ flutter:
     - assets/icons/
     - assets/illustrations/
     - assets/images/
+    # Public Supabase settings only (URL + publishable / anon key), git-ignored;
+    # copy env/supabase.example.json. Never put secrets here: it ships in the app.
+    - env/supabase.json
 
   fonts:
     - family: Fraunces

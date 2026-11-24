@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/errors/failures.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
@@ -132,7 +133,13 @@ class _EmailCodeView extends StatelessWidget {
                               if (state.failure != null) ...<Widget>[
                                 const SizedBox(height: AppSpacing.space2),
                                 Text(
-                                  l10n.errorInvalidCode,
+                                  switch (state.failure) {
+                                    ValidationReason.network =>
+                                      l10n.errorNoConnection,
+                                    ValidationReason.unexpected =>
+                                      l10n.errorSomethingWentWrong,
+                                    _ => l10n.errorInvalidCode,
+                                  },
                                   style: AppTextStyles.caption.copyWith(
                                     color: colors.danger,
                                   ),
@@ -152,6 +159,7 @@ class _EmailCodeView extends StatelessWidget {
                               const SizedBox(height: AppSpacing.space5),
                               AppButton(
                                 label: l10n.verifyAction,
+                                loading: state.status == OtpStatus.verifying,
                                 onPressed:
                                     state.isComplete &&
                                         state.status == OtpStatus.entering

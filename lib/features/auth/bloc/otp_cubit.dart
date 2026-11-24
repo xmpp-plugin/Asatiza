@@ -66,9 +66,11 @@ class OtpCubit extends Cubit<OtpState> {
       if (!isClosed) {
         emit(state.copyWith(status: OtpStatus.entering, failure: f.reason));
       }
-    } on Failure {
+    } on Failure catch (f) {
       if (!isClosed) {
-        emit(state.copyWith(status: OtpStatus.entering));
+        emit(
+          state.copyWith(status: OtpStatus.entering, failure: f.displayReason),
+        );
       }
     }
   }
@@ -77,7 +79,16 @@ class OtpCubit extends Cubit<OtpState> {
     if (!state.canResend) {
       return;
     }
-    await _auth.resendCode(email: state.email);
+    emit(state.copyWith(clearFailure: true));
+    try {
+      await _auth.resendCode(email: state.email);
+    } on Failure catch (f) {
+      // E.g. offline or too many emails: show it; the link stays active.
+      if (!isClosed) {
+        emit(state.copyWith(failure: f.displayReason));
+      }
+      return;
+    }
     if (!isClosed) {
       _startCountdown();
     }

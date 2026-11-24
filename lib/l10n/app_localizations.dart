@@ -394,6 +394,18 @@ abstract class AppLocalizations {
   /// **'That code didn’t work. Check it and try again.'**
   String get errorInvalidCode;
 
+  /// No description provided for @errorNoConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Check it and try again.'**
+  String get errorNoConnection;
+
+  /// No description provided for @errorSomethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again in a moment.'**
+  String get errorSomethingWentWrong;
+
   /// No description provided for @checkEmailTitle.
   ///
   /// In en, this message translates to:
@@ -1839,6 +1851,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile not available'**
   String get profileUnavailableTitle;
+
+  /// No description provided for @profileLoadFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load your profile'**
+  String get profileLoadFailedTitle;
 
   /// No description provided for @profileUnavailableMessage.
   ///

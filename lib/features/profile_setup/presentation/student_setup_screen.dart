@@ -220,6 +220,7 @@ class _StepOne extends StatelessWidget {
           const SizedBox(height: AppSpacing.space6),
           AppButton(
             label: l10n.continueAction,
+            loading: state.saving,
             onPressed: state.saving ? null : cubit.next,
           ),
         ],
@@ -290,6 +291,7 @@ class _StepTwo extends StatelessWidget {
           const SizedBox(height: AppSpacing.gap18),
           AppButton(
             label: l10n.continueAction,
+            loading: state.saving,
             onPressed: state.saving ? null : cubit.next,
           ),
         ],
@@ -400,6 +402,7 @@ class _StepThreeState extends State<_StepThree> {
           const SizedBox(height: AppSpacing.gap22),
           AppButton(
             label: l10n.finishSetupAction,
+            loading: state.saving,
             onPressed: state.saving ? null : cubit.next,
           ),
         ],

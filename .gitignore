@@ -45,5 +45,5 @@ app.*.map.json
 /android/app/release
 
 # Run-time settings (Supabase URL + anon key). Only the example is committed.
-/env/*.json
-!/env/*.example.json
+# /env/*.json
+# !/env/*.example.json

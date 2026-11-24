@@ -148,6 +148,7 @@ class _ConnectSheetState extends State<ConnectSheet> {
             const SizedBox(height: AppSpacing.space4),
             AppButton(
               label: l10n.sendRequestAction,
+              loading: state.sending,
               onPressed: state.sending ? null : cubit.send,
               leading: AppIcon(
                 AppIcon.send,

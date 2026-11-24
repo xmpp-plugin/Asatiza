@@ -60,6 +60,8 @@
   "errorEmailRegistered": "This email already has an account. Log in instead.",
   "errorWrongCredentials": "Email or password is not correct",
   "errorInvalidCode": "That code didn’t work. Check it and try again.",
+  "errorNoConnection": "No internet connection. Check it and try again.",
+  "errorSomethingWentWrong": "Something went wrong. Please try again in a moment.",
   "checkEmailTitle": "Check your email",
   "codeSentPrefix": "We sent a 6-digit code to ",
   "codeSentSuffix": ". Enter it below.",
@@ -553,6 +555,7 @@
     }
   },
   "profileUnavailableTitle": "Profile not available",
+  "profileLoadFailedTitle": "Couldn’t load your profile",
   "profileUnavailableMessage": "This account may have been deleted.",
   "learnerLabel": "{ageGroup} learner",
   "@learnerLabel": {

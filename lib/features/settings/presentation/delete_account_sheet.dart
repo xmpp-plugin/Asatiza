@@ -47,6 +47,7 @@ class DeleteAccountSheet extends StatelessWidget {
           message: l10n.deleteAccountMessage,
           confirmLabel: l10n.deleteAccountAction,
           cancelLabel: l10n.cancelAction,
+          loading: state.deleting,
           onConfirm: state.confirmed && !state.deleting ? cubit.delete : null,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

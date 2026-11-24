@@ -38,8 +38,10 @@ class SignUpCubit extends Cubit<SignUpState> {
       emit(state.copyWith(status: SignUpStatus.codeSent));
     } on ValidationFailure catch (f) {
       emit(state.copyWith(status: SignUpStatus.editing, failure: f.reason));
-    } on Failure {
-      emit(state.copyWith(status: SignUpStatus.editing));
+    } on Failure catch (f) {
+      emit(
+        state.copyWith(status: SignUpStatus.editing, failure: f.displayReason),
+      );
     }
   }
 }

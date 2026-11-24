@@ -39,8 +39,13 @@ class PasswordResetCubit extends Cubit<PasswordResetState> {
       emit(
         state.copyWith(status: PasswordResetStatus.editing, failure: f.reason),
       );
-    } on Failure {
-      emit(state.copyWith(status: PasswordResetStatus.editing));
+    } on Failure catch (f) {
+      emit(
+        state.copyWith(
+          status: PasswordResetStatus.editing,
+          failure: f.displayReason,
+        ),
+      );
     }
   }
 
@@ -67,8 +72,13 @@ class PasswordResetCubit extends Cubit<PasswordResetState> {
       emit(
         state.copyWith(status: PasswordResetStatus.editing, failure: f.reason),
       );
-    } on Failure {
-      emit(state.copyWith(status: PasswordResetStatus.editing));
+    } on Failure catch (f) {
+      emit(
+        state.copyWith(
+          status: PasswordResetStatus.editing,
+          failure: f.displayReason,
+        ),
+      );
     }
   }
 }

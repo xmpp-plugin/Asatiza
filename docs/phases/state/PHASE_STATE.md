@@ -4,17 +4,17 @@ Manually maintained operational record for approvals, handoffs, manual-test evid
 
 ## Current Snapshot
 
-- Last updated: 2026-11-23
-- Active phase: `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` (`ACTIVE` / `MANUAL_TEST` / `APPROVED`)
+- Last updated: 2026-11-24
+- Active phase: None
 - Next approved phase: None
 - Planned phases: None
-- Closed phases: `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` (`COMPLETED` 2026-11-19), `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` (`COMPLETED` 2026-11-23), `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` (`COMPLETED` 2026-11-23)
+- Closed phases: `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` (`COMPLETED` 2026-11-19), `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` (`COMPLETED` 2026-11-23), `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` (`COMPLETED` 2026-11-23), `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` (`COMPLETED` 2026-11-24)
 - Blocked phases: None
 - Temporary pauses: None
 
 ## Recommended Next Operation
 
-Developer sets up the Supabase project (`docs/TESTING_GUIDE.md` → Backend Mode Setup), applies the two migrations in the SQL editor, creates `env/dev.json`, runs the manual cases in the phase file on Android and iOS, then `CLOSE PHASE` (or reports failures). Nothing is committed.
+No active phase. Developer: commit the PHASE_004 work when ready and rotate the previously pushed Brevo key and database password. Next phase on request (suggested: Storage for profile photos and certificates, then discover → safety → connections → chat → feed → notifications).
 
 ## Log
 
@@ -52,3 +52,8 @@ Developer sets up the Supabase project (`docs/TESTING_GUIDE.md` → Backend Mode
 | 2026-11-23 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Approve Phase | Developer: "Approve phase". Readiness complete; approved: `supabase_flutter`, `AuthRepository.restoreSession`, new failure reasons + `NetworkFailure`, Android `INTERNET`, ≈ 12 new files, migrations + RLS + `delete_my_account()`. Supabase project existence UNVERIFIED (needed before manual test only). Status `APPROVED`. No code changed. |
 | 2026-11-23 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Execute Phase (start) | Developer: "Execute phase". Readiness OK; no other active phase. Status `ACTIVE`, step `EXECUTION`. |
 | 2026-11-23 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Execute Phase | Implemented: `supabase_flutter ^2.18.3`, `AppConfig`, Supabase Auth + Profile repositories and mappers, `restoreSession`, unconfirmed-email log-in, 2 migrations + RLS checks, Android `INTERNET`, docs. `flutter analyze` clean; `flutter test` 115/115. `codeExpired` / `weakPassword` not needed (mapped to existing reasons). Status `ACTIVE`, step `MANUAL_TEST`. |
+| 2026-11-24 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Fix inside active phase | Developer: loading on buttons and screens, proper auth errors. `AppButton` / `ConfirmSheet` `loading`; network / unexpected errors shown on auth + change password + My profile; failed Resend no longer throws. analyze clean; tests 119/119. Status stays `ACTIVE` / `MANUAL_TEST`. |
+| 2026-11-24 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Fix inside active phase | Developer: real or mock per part, never both. Full-mock app mode removed from `lib/main.dart`; Auth + Profile always Supabase, missing settings → clear error; other repositories mock until their phases. Status stays `ACTIVE` / `MANUAL_TEST`. |
+| 2026-11-24 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Fix inside active phase | Developer: real Supabase by default. Bundled git-ignored `env/supabase.json` (public URL + key only, extra keys refused); defines still win. `pubspec.yaml` asset added. Status stays `ACTIVE` / `MANUAL_TEST`. |
+| 2026-11-24 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Fix inside active phase | Developer: `env/dev.example.json` → `env/supabase.example.json`; local `env/dev.json` deleted; references updated. Status stays `ACTIVE` / `MANUAL_TEST`. |
+| 2026-11-24 | `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` | Close Phase | Developer: "tested and working fine" (platforms not stated). Execute / fix evidence reused (analyze clean; tests 121/121; no implementation change since). Status `CLOSED`, step `CLOSURE`, outcome `COMPLETED`. No commit requested. |

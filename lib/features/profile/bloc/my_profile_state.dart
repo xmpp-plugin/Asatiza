@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../core/errors/failures.dart';
+
 import '../../../data/models/post.dart';
 import '../../../data/models/profile.dart';
 
@@ -10,6 +12,7 @@ class MyProfileState extends Equatable {
     this.posts = const <Post>[],
     this.connectionCount = 0,
     this.strengthCardDismissed = false,
+    this.loadError,
   });
 
   final Profile? profile;
@@ -19,11 +22,15 @@ class MyProfileState extends Equatable {
   final int connectionCount;
   final bool strengthCardDismissed;
 
+  /// Set when the profile could not be loaded (`network` / `unexpected`).
+  final ValidationReason? loadError;
+
   MyProfileState copyWith({
     Profile? profile,
     List<Post>? posts,
     int? connectionCount,
     bool? strengthCardDismissed,
+    ValidationReason? loadError,
   }) {
     return MyProfileState(
       profile: profile ?? this.profile,
@@ -31,6 +38,7 @@ class MyProfileState extends Equatable {
       connectionCount: connectionCount ?? this.connectionCount,
       strengthCardDismissed:
           strengthCardDismissed ?? this.strengthCardDismissed,
+      loadError: loadError ?? this.loadError,
     );
   }
 
@@ -40,5 +48,6 @@ class MyProfileState extends Equatable {
     posts,
     connectionCount,
     strengthCardDismissed,
+    loadError,
   ];
 }

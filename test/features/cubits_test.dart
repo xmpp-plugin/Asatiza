@@ -153,6 +153,48 @@ void main() {
     },
   );
 
+  test('Failure.displayReason: validation, network and anything else', () {
+    expect(
+      const ValidationFailure(ValidationReason.invalidCode).displayReason,
+      ValidationReason.invalidCode,
+    );
+    expect(const NetworkFailure().displayReason, ValidationReason.network);
+    expect(
+      const UnexpectedFailure().displayReason,
+      ValidationReason.unexpected,
+    );
+    expect(ValidationReason.network.isGeneral, isTrue);
+    expect(ValidationReason.wrongCredentials.isGeneral, isFalse);
+  });
+
+  test('LoginCubit: no connection shows the network error', () async {
+    final cubit = LoginCubit(_OfflineAuth(profiles))
+      ..emailChanged(MockAccounts.teacherEmail)
+      ..passwordChanged('tajweed2026');
+    await cubit.submit();
+    expect(cubit.state.status, LoginStatus.editing);
+    expect(cubit.state.failure, ValidationReason.network);
+    cubit.emailChanged('${MockAccounts.teacherEmail} ');
+    expect(cubit.state.failure, isNull);
+    await cubit.close();
+  });
+
+  testWidgets('OtpCubit: a failed resend shows the error instead of throwing', (
+    tester,
+  ) async {
+    final cubit = OtpCubit(
+      _OfflineAuth(profiles),
+      purpose: OtpPurpose.signUp,
+      email: 'new.user@example.com',
+    );
+    await tester.pump(const Duration(seconds: 61));
+    expect(cubit.state.canResend, isTrue);
+    await cubit.resend();
+    expect(cubit.state.failure, ValidationReason.network);
+    expect(cubit.state.canResend, isTrue);
+    await cubit.close();
+  });
+
   test(
     'PasswordResetCubit: send code, then save a matching new password',
     () async {
@@ -341,4 +383,17 @@ class _KeptSessionAuth extends MockAuthRepository {
 
   @override
   Future<Profile?> restoreSession() async => _user;
+}
+
+/// Every call fails as if offline.
+class _OfflineAuth extends MockAuthRepository {
+  _OfflineAuth(super.profiles);
+
+  @override
+  Future<Profile> logIn({required String email, required String password}) =>
+      throw const NetworkFailure();
+
+  @override
+  Future<void> resendCode({required String email}) =>
+      throw const NetworkFailure();
 }

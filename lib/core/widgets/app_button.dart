@@ -17,7 +17,8 @@ enum AppButtonSize {
 
 /// The design's buttons: primary (brand fill), secondary (white with brand
 /// outline) and danger. A null [onPressed] shows the disabled style
-/// (surface-200 fill, muted text).
+/// (surface-200 fill, muted text). [loading] keeps the variant's colours,
+/// shows a small spinner left of the label and ignores taps.
 class AppButton extends StatelessWidget {
   const AppButton({
     required this.label,
@@ -27,6 +28,7 @@ class AppButton extends StatelessWidget {
     this.size = AppButtonSize.large,
     this.expand = true,
     this.leading,
+    this.loading = false,
   });
 
   final String label;
@@ -38,10 +40,13 @@ class AppButton extends StatelessWidget {
   final bool expand;
   final Widget? leading;
 
+  /// A call is running: spinner in place of [leading], taps ignored.
+  final bool loading;
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
-    final enabled = onPressed != null;
+    final enabled = onPressed != null || loading;
     final (Color background, Color foreground, Color border) = !enabled
         ? (colors.surface200, colors.inkMuted, colors.surface200)
         : switch (variant) {
@@ -73,7 +78,17 @@ class AppButton extends StatelessWidget {
       mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        if (leading != null) ...<Widget>[
+        if (loading) ...<Widget>[
+          SizedBox.square(
+            dimension: large ? 18 : 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: foreground,
+              semanticsLabel: label,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.space2),
+        ] else if (leading != null) ...<Widget>[
           IconTheme.merge(
             data: IconThemeData(color: foreground),
             child: DefaultTextStyle.merge(
@@ -96,13 +111,13 @@ class AppButton extends StatelessWidget {
 
     return Semantics(
       button: true,
-      enabled: enabled,
+      enabled: enabled && !loading,
       child: Material(
         color: background,
         shape: shape,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: onPressed,
+          onTap: loading ? null : onPressed,
           child: SizedBox(
             height: large ? 48 : 36,
             width: expand ? double.infinity : null,

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/errors/failures.dart';
 import '../../../data/models/connection.dart';
 import '../../../data/models/enums/connection_status.dart';
 import '../../../data/models/post.dart';
@@ -22,7 +23,16 @@ class MyProfileCubit extends Cubit<MyProfileState> {
   }) : super(const MyProfileState()) {
     _profileSub = _profiles
         .watchProfile(viewerId)
-        .listen((p) => _emit(state.copyWith(profile: p)), onError: (_) {});
+        .listen(
+          (p) => _emit(state.copyWith(profile: p)),
+          onError: (Object e) => _emit(
+            state.copyWith(
+              loadError: e is Failure
+                  ? e.displayReason
+                  : ValidationReason.unexpected,
+            ),
+          ),
+        );
     _postsSub = feed
         .watchPosts(viewerId: viewerId)
         .listen(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/errors/failures.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
@@ -149,8 +150,23 @@ class _NewPasswordView extends StatelessWidget {
                                   ),
                                   const Spacer(),
                                   const SizedBox(height: AppSpacing.space5),
+                                  if (state.failure?.isGeneral ??
+                                      false) ...<Widget>[
+                                    Text(
+                                      state.failure == ValidationReason.network
+                                          ? l10n.errorNoConnection
+                                          : l10n.errorSomethingWentWrong,
+                                      style: AppTextStyles.caption.copyWith(
+                                        color: colors.danger,
+                                      ),
+                                    ),
+                                    const SizedBox(height: AppSpacing.space3),
+                                  ],
                                   AppButton(
                                     label: l10n.saveAndLogInAction,
+                                    loading:
+                                        state.status ==
+                                        PasswordResetStatus.submitting,
                                     onPressed: state.canSave
                                         ? cubit.savePassword
                                         : null,

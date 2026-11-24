@@ -168,6 +168,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'That code didn’t work. Check it and try again.';
 
   @override
+  String get errorNoConnection =>
+      'No internet connection. Check it and try again.';
+
+  @override
+  String get errorSomethingWentWrong =>
+      'Something went wrong. Please try again in a moment.';
+
+  @override
   String get checkEmailTitle => 'Check your email';
 
   @override
@@ -1033,6 +1041,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileUnavailableTitle => 'Profile not available';
+
+  @override
+  String get profileLoadFailedTitle => 'Couldn’t load your profile';
 
   @override
   String get profileUnavailableMessage => 'This account may have been deleted.';

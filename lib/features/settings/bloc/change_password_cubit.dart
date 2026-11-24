@@ -39,8 +39,8 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
       emit(state.copyWith(saving: false, saved: true));
     } on ValidationFailure catch (f) {
       emit(state.copyWith(saving: false, error: () => f.reason));
-    } on Failure {
-      emit(state.copyWith(saving: false));
+    } on Failure catch (f) {
+      emit(state.copyWith(saving: false, error: () => f.displayReason));
     }
   }
 }

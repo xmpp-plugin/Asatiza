@@ -138,8 +138,18 @@ class _EmailStep extends StatelessWidget {
           ),
           const Spacer(),
           const SizedBox(height: AppSpacing.gap22),
+          if (state.failure?.isGeneral ?? false) ...<Widget>[
+            Text(
+              state.failure == ValidationReason.network
+                  ? l10n.errorNoConnection
+                  : l10n.errorSomethingWentWrong,
+              style: AppTextStyles.caption.copyWith(color: colors.danger),
+            ),
+            const SizedBox(height: AppSpacing.space3),
+          ],
           AppButton(
             label: l10n.sendCodeAction,
+            loading: state.status == PasswordResetStatus.submitting,
             onPressed:
                 state.emailValid &&
                     state.status != PasswordResetStatus.submitting
@@ -199,10 +209,11 @@ class _CodeStep extends StatelessWidget {
           OtpInput(onChanged: otp.codeChanged),
           if (state.failure != null) ...<Widget>[
             const SizedBox(height: AppSpacing.space2),
-            Text(
-              l10n.errorInvalidCode,
-              style: AppTextStyles.caption.copyWith(color: colors.danger),
-            ),
+            Text(switch (state.failure) {
+              ValidationReason.network => l10n.errorNoConnection,
+              ValidationReason.unexpected => l10n.errorSomethingWentWrong,
+              _ => l10n.errorInvalidCode,
+            }, style: AppTextStyles.caption.copyWith(color: colors.danger)),
           ],
           const SizedBox(height: AppSpacing.gap22),
           _ResendRow(
@@ -214,6 +225,7 @@ class _CodeStep extends StatelessWidget {
           const SizedBox(height: AppSpacing.gap22),
           AppButton(
             label: l10n.continueAction,
+            loading: state.status == OtpStatus.verifying,
             onPressed: state.isComplete && state.status == OtpStatus.entering
                 ? otp.verify
                 : null,

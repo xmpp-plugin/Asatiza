@@ -8,15 +8,15 @@
 - Module: BACKEND
 - Priority: High
 - Risk level: High (new production dependency, authentication, database schema, RLS, an account-deletion function, 2 interface changes, a native Android change)
-- Current status: ACTIVE
-- Current step: MANUAL_TEST
+- Current status: CLOSED
+- Current step: CLOSURE
 - Approval: APPROVED
-- Outcome: NONE
+- Outcome: COMPLETED
 - Version: 1.0
 - Created date: 2026-11-23 (first recorded as 2026-11-24 by mistake; corrected)
-- Last updated date: 2026-11-23 (implemented; waiting for developer manual test)
+- Last updated date: 2026-11-24 (closed)
 - Started date: 2026-11-23
-- Completed date: Not completed
+- Completed date: 2026-11-24
 - Developer owner: Repository owner (developer) — owner and manual tester
 - Dependency phases: PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO (closed)
 
@@ -181,7 +181,7 @@ App: revert the phase commit (or restore modified files, delete new ones) and ru
   - `android/app/src/main/AndroidManifest.xml` lacks `INTERNET` (included in this phase's scope for approval because the backend needs it in release builds).
   - Git: the old remote branch `PHASE_003_BACKEDN_FOUNDATION` may still exist on GitHub until the developer deletes it.
 - Unexpected risks:
-  - Network and unexpected errors show no message on any screen (pre-existing cubit pattern: `on Failure` returns to editing). Follow-up suggested: a shared error message for `NetworkFailure` / `UnexpectedFailure`.
+  - Network and unexpected errors: fixed 2026-11-24 for the auth flow, change password and My profile (developer fix request); setup, edit profile, post and connection screens still only re-enable the button.
   - A verified reset code signs the user in on Supabase; leaving before saving a new password keeps that session, so the next launch opens signed in.
 
 ## Change Log
@@ -219,6 +219,59 @@ Branch `PHASE_004_BACKEND_FOUNDATION` (base `28c2a7c`). Pre-existing uncommitted
 
 Not changed: `ios/**`, theme, other repository interfaces, ARB / localizations, `docs/product/*`, `CLAUDE.md`, skill files.
 
+### Fix 2026-11-24 — loading and error display (developer request, inside this active phase)
+
+Developer: "show loading on button left side in all place … loading on screen load … error show properly in this auth flow … nothing change in logic". No repository, interface, migration or dependency change. No new production file.
+
+| File | Type | What / why | Preserved / risk |
+|---|---|---|---|
+| `lib/core/widgets/app_button.dart` | modified (shared core, requested) | `loading`: spinner left of the label, colours kept, taps ignored | Default `false`: every existing button unchanged |
+| `lib/core/widgets/confirm_sheet.dart` | modified (shared core, requested) | `loading` → confirm spinner, Cancel disabled | Default `false` |
+| `lib/core/errors/failures.dart` | modified | `ValidationReason.network`, `unexpected` (display only, never thrown); `Failure.displayReason`; `ValidationReason.isGeneral` | Additive |
+| `lib/features/auth/bloc/login_cubit.dart`, `sign_up_cubit.dart`, `password_reset_cubit.dart`, `otp_cubit.dart`; `lib/features/settings/bloc/change_password_cubit.dart` | modified | Non-validation failures now set `failure` / `error` to `network` / `unexpected` instead of nothing. `OtpCubit.resend` catches failures (before: an offline or rate-limited resend threw unhandled) and keeps the link active | Flow and validation results unchanged |
+| `lib/features/auth/presentation/log_in_screen.dart`, `sign_up_screen.dart`, `email_code_screen.dart`, `forgot_password_screen.dart`, `new_password_screen.dart`; `lib/features/settings/presentation/change_password_screen.dart` | modified | Button `loading`; general error text above the button; code screens show network / unexpected instead of "code didn't work" | Layout otherwise unchanged |
+| `lib/features/settings/presentation/delete_account_sheet.dart` | modified | Confirm button `loading` while deleting | Existing failure text kept |
+| `lib/features/profile_setup/presentation/student_setup_screen.dart`, `teacher_setup_screen.dart`, `lib/features/profile/presentation/edit_profile_screen.dart`, `lib/features/post/presentation/create_post_screen.dart`, `lib/features/safety/presentation/report_sheet.dart`, `lib/features/connections/presentation/connect_sheet.dart` | modified | Button `loading` from the existing `saving` / `posting` / `sending` flags | — |
+| `lib/features/profile/bloc/my_profile_state.dart`, `my_profile_cubit.dart`, `presentation/my_profile_screen.dart` | modified | Spinner while the profile loads; `loadError` + "Couldn't load your profile" message when it fails (before: blank forever) | Loaded view unchanged |
+| `lib/features/discover/presentation/public_profile_screen.dart` | modified | Spinner while the profile loads | Not-found view unchanged |
+| `lib/l10n/app_en.arb` (+ generated) | modified | `errorNoConnection`, `errorSomethingWentWrong`, `profileLoadFailedTitle` | — |
+| `test/features/cubits_test.dart`, `test/features/screens_test.dart` | modified | 4 tests: `displayReason`, log-in network error, failed resend, `AppButton.loading` | — |
+| `docs/COMMON_COMPONENTS.md`, `ERROR_HANDLING.md`, `KNOWN_ISSUES.md` | modified | Facts above | — |
+
+Not covered (recorded): per-item buttons in lists (Connect on cards, Accept / Decline, Unblock) have no per-item busy state in their cubits — adding one would change cubit logic; mock calls are instant today. Their phases (discover / connections on Supabase) should add it.
+
+Checks: `flutter gen-l10n` OK; `dart format lib test`; `flutter analyze` — No issues found; `flutter test` — 119 / 119 passed (115 + 4).
+
+### Fix 2026-11-24 — one run mode (developer request, inside this active phase)
+
+Developer: each part should be real or mock, never both; auth real, other data mock until implemented. No new file, dependency or interface change.
+
+| File | Type | What / why | Preserved / risk |
+|---|---|---|---|
+| `lib/main.dart` | modified | Full-mock app mode removed: Auth + Profile always Supabase; missing settings → `StateError` with the run command. Other repositories stay mock; `MockProfileRepository` kept only as the sample-people source for those mocks (not registered). `MockAuthRepository` no longer created here | Backend wiring unchanged; a plain `flutter run` without `env/dev.json` now stops instead of running on mocks |
+| `lib/core/config/app_config.dart` | modified | Doc comments only | — |
+| `test/core/config/app_config_test.dart` | modified | Test name only | — |
+| `docs/ARCHITECTURE.md`, `FILE_CATALOG.md`, `PROJECT_OVERVIEW.md`, `TESTING_GUIDE.md`, `KNOWN_ISSUES.md` | modified | One run mode; dependency order for later phases | — |
+
+Mock classes stay in `lib/data/repositories/mock/` for tests. Checks: `dart format`; `flutter analyze` — No issues found; `flutter test` — 119 / 119 passed. Not done (needs approval: new file): an IDE run configuration that passes `--dart-define-from-file=env/dev.json`.
+
+### Fix 2026-11-24 — default settings file (developer request, inside this active phase)
+
+Developer: run with real Supabase by default, from a separate public file (chosen because `env/dev.json` also holds two non-public keys that must not ship in the app).
+
+| File | Type | What / why | Preserved / risk |
+|---|---|---|---|
+| `env/supabase.json` | added (git-ignored, local only) | URL + public key copied from `env/dev.json` by script (values not shown) | Not committed; `env/dev.json` untouched |
+| `pubspec.yaml` | modified (approved by developer) | Asset `env/supabase.json` | A fresh clone must create the file before building |
+| `lib/core/config/app_config.dart` | modified | `fromJson` (only `SUPABASE_URL`, `SUPABASE_ANON_KEY`; any other key → `StateError`), `assetPath`, `allowedKeys` | `fromEnvironment` unchanged |
+| `lib/main.dart` | modified | `_loadConfig`: defines win, else the bundled file | Repository wiring unchanged |
+| `test/core/config/app_config_test.dart` | modified | 2 tests: file read, extra key refused | — |
+| `docs/TESTING_GUIDE.md`, `ARCHITECTURE.md`, `FILE_CATALOG.md`, `KNOWN_ISSUES.md` | modified | Setup step and facts | — |
+
+Checks: `dart format`; `flutter pub get`; `flutter analyze` — No issues found; `flutter test` — 121 / 121 passed. `git status`: `env/supabase.json` not listed (ignored).
+
+Follow-up (developer: "Yes, do both"): `env/dev.example.json` renamed to `env/supabase.example.json` (`git mv`); local git-ignored `env/dev.json` deleted (no longer read; it held two non-public keys). References updated in `app_config.dart` and `main.dart` (comments / error text), `pubspec.yaml` (comment), `TESTING_GUIDE.md`, `KNOWN_ISSUES.md`, `FILE_CATALOG.md`, `DIRECTORY_STRUCTURE.md`, `PROJECT_OVERVIEW.md`; older log rows keep the old names as history.
+
 ## Execute Technical Checks
 
 2026-11-23:
@@ -232,10 +285,12 @@ Not changed: `ios/**`, theme, other repository interfaces, ARB / localizations, 
 
 ## Manual Testing
 
-- Developer manual-test confirmation: Not provided
+- Developer manual-test confirmation: 2026-11-24 — "tested and working fine" (CLOSE PHASE request).
+- Tested platforms / devices: not stated by the developer.
+- Failed and retested cases: none reported. Developer note during testing: a teacher profile showed 85 % because no photo was attached (photo = 15 %); expected, real photo upload deferred to the Storage phase.
 - Manual-test notes requested by developer: None
-- Needed before manual testing (decision 2): Supabase project with the dashboard settings and steps in `docs/TESTING_GUIDE.md` → "Backend Mode Setup"; migrations applied; `env/dev.json` filled in by the developer.
-- Manual cases (high-risk: auth, RLS, deletion), backend mode `flutter run --dart-define-from-file=env/dev.json`, Android and iOS:
+- Needed before manual testing (decision 2): Supabase project with the dashboard settings and steps in `docs/TESTING_GUIDE.md` → "Backend Mode Setup"; migrations applied; `env/supabase.json` filled in by the developer (from `env/supabase.example.json`).
+- Manual cases (high-risk: auth, RLS, deletion), plain `flutter run` / IDE Run (reads `env/supabase.json`), Android and iOS:
   1. Sign up as a student and as a teacher → 6-digit code email → code screen → setup → Home; rows visible in Table Editor with the right `role`.
   2. Wrong code → error; Resend after 60 s → new code works.
   3. Sign up again with a used email → "already has an account".
@@ -247,8 +302,21 @@ Not changed: `ios/**`, theme, other repository interfaces, ARB / localizations, 
   9. Settings → Change password (wrong current password → error; right → saved).
   10. Settings → Delete account → user gone from Authentication and all three tables.
   11. Run `supabase/tests/profiles_rls_checks.sql` → all PASS.
-  12. Run without `--dart-define-from-file` → mock mode as before.
+  12. Plain `flutter run` / IDE Run (no flag) → real Supabase from `env/supabase.json`; an extra key in that file → the app stops with a clear error (changed 2026-11-24: no full-mock mode).
 
 ## Closure
 
-Not closed.
+- Closed 2026-11-24: status `CLOSED`, step `CLOSURE`, outcome `COMPLETED`.
+- Final changed files: as in the Change Log and the four 2026-11-24 fix sections (loading / error display; one run mode; default settings file; env file rename). No unapproved dependency or architecture change: the only new dependency is the approved `supabase_flutter`; the `pubspec.yaml` asset `env/supabase.json` and the `env/` rename were approved by the developer in chat.
+- Technical evidence reused (no implementation file changed after it): `dart format`; `flutter analyze` — No issues found; `flutter test` — 121 / 121 passed (after the last change on 2026-11-24). Not rerun at closure.
+- Known limitations:
+  - Feed, discover, connections, chat, notifications and safety are still mock and only know the sample people.
+  - Photos and certificates are placeholder paths (no Storage upload).
+  - Per-item list buttons (Connect on cards, Accept / Decline, Unblock) have no busy state; setup, edit profile, post and connection screens show no network / unexpected error text.
+  - After a verified reset code the user stays signed in if they leave before saving a new password.
+  - A fresh clone must create `env/supabase.json` from `env/supabase.example.json` before building.
+  - Remote migrations applied by the developer (confirmed by the successful manual test); not verified by me.
+- Follow-up phases (to be created on request, dependency order): Storage (profile photos, certificates, replacing placeholder paths) → discover → safety → connections → chat → feed → notifications; each replaces only its own mock in `lib/main.dart`.
+- Security follow-up (developer): the Brevo SMTP key and database password that were pushed earlier must be rotated.
+- Rollback: revert the phase commit(s) (or restore modified files and delete new ones) and run `flutter pub get`. Database: migrations are additive; on a project without real users drop the three tables, the trigger and the functions as written in the migration headers — never against production data without explicit approval.
+- Commit: not requested; nothing committed by this closure.

@@ -158,11 +158,29 @@ class _ChangePasswordView extends StatelessWidget {
                     AppSpacing.space5,
                     28,
                   ),
-                  child: AppButton(
-                    label: l10n.savePasswordAction,
-                    onPressed: cubit.canSave && !state.saving
-                        ? cubit.save
-                        : null,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      if (state.error?.isGeneral ?? false) ...<Widget>[
+                        Text(
+                          state.error == ValidationReason.network
+                              ? l10n.errorNoConnection
+                              : l10n.errorSomethingWentWrong,
+                          style: AppTextStyles.caption.copyWith(
+                            color: colors.danger,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.space3),
+                      ],
+                      AppButton(
+                        label: l10n.savePasswordAction,
+                        loading: state.saving,
+                        onPressed: cubit.canSave && !state.saving
+                            ? cubit.save
+                            : null,
+                      ),
+                    ],
                   ),
                 ),
               ],

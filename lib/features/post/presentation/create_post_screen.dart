@@ -73,6 +73,7 @@ class _CreatePostView extends StatelessWidget {
                     label: l10n.postAction,
                     size: AppButtonSize.small,
                     expand: false,
+                    loading: state.status == CreatePostStatus.posting,
                     onPressed: state.canPost ? cubit.submit : null,
                   ),
                 ],

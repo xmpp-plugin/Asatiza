@@ -188,7 +188,12 @@ class _PublicProfileView extends StatelessWidget {
                           ),
                         )
                       : p == null
-                      ? const SizedBox.shrink()
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: colors.brand600,
+                            semanticsLabel: l10n.loadingLabel,
+                          ),
+                        )
                       : ListView(
                           padding: const EdgeInsetsDirectional.fromSTEB(
                             AppSpacing.space4,

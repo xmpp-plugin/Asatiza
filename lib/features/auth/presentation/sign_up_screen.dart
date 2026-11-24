@@ -225,8 +225,22 @@ class _SignUpView extends StatelessWidget {
                               ),
                               const Spacer(),
                               const SizedBox(height: AppSpacing.gap18),
+                              if (state.failure?.isGeneral ??
+                                  false) ...<Widget>[
+                                Text(
+                                  state.failure == ValidationReason.network
+                                      ? l10n.errorNoConnection
+                                      : l10n.errorSomethingWentWrong,
+                                  style: AppTextStyles.caption.copyWith(
+                                    color: colors.danger,
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.space3),
+                              ],
                               AppButton(
                                 label: l10n.createAccountAction,
+                                loading:
+                                    state.status == SignUpStatus.submitting,
                                 onPressed: state.canSubmit
                                     ? cubit.submit
                                     : null,

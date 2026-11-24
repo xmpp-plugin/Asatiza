@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/errors/failures.dart';
+import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/logic/profile_strength_calculator.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/session/session_cubit.dart';
@@ -92,8 +94,23 @@ class _MyProfileView extends StatelessWidget {
                   ],
                 ),
                 Expanded(
-                  child: p == null
-                      ? const SizedBox.shrink()
+                  child: p == null && state.loadError != null
+                      ? Center(
+                          child: EmptyStateView(
+                            icon: AppIcon.user,
+                            title: l10n.profileLoadFailedTitle,
+                            message: state.loadError == ValidationReason.network
+                                ? l10n.errorNoConnection
+                                : l10n.errorSomethingWentWrong,
+                          ),
+                        )
+                      : p == null
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: colors.brand600,
+                            semanticsLabel: l10n.loadingLabel,
+                          ),
+                        )
                       : ListView(
                           padding: const EdgeInsetsDirectional.fromSTEB(
                             AppSpacing.space4,

@@ -2,12 +2,12 @@
 
 Every project-owned file under `lib/` and `test/`. Generated and tool files are not catalogued (`lib/l10n/app_localizations*.dart` come from `flutter gen-l10n`). Assets: `assets/fonts/` (PHASE_001), `assets/icons/` (42 design icons), `assets/illustrations/` (6), `assets/images/` (2 logos) — PHASE_002.
 
-Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows added 2026-11-23 (`PHASE_004`). Outside `lib/` and `test/`: `supabase/migrations/*.sql`, `supabase/tests/profiles_rls_checks.sql`, `env/dev.example.json` (`PHASE_004`).
+Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows added 2026-11-23 (`PHASE_004`). Outside `lib/` and `test/`: `supabase/migrations/*.sql`, `supabase/tests/profiles_rls_checks.sql`, `env/supabase.example.json` (`PHASE_004`; template for the git-ignored, bundled `env/supabase.json`).
 
 | Path | Purpose | Layer | Public types / functions |
 |---|---|---|---|
 | `lib/app.dart` | Root widget: light/dark theme from the design tokens (following the phone setting), English localization and the session-aware router.… | App | `AsatizaApp` |
-| `lib/core/config/app_config.dart` | Run-time settings (`SUPABASE_URL`, `SUPABASE_ANON_KEY` defines); without both the app runs on mocks. | Core config | `AppConfig` |
+| `lib/core/config/app_config.dart` | Run-time settings (`SUPABASE_URL`, `SUPABASE_ANON_KEY`) from defines or the bundled `env/supabase.json` (only those two keys allowed); both are required. | Core config | `AppConfig` |
 | `lib/core/errors/failures.dart` | Base type for every error a repository may throw. No raw exception (Postgrest, Auth, Dio…) leaves a repository. | Core errors | `Failure`, `ValidationFailure`, `ValidationReason`, `NotFoundFailure`, `NetworkFailure`, `UnexpectedFailure` |
 | `lib/core/logic/discover_visibility_rules.dart` | Who appears on the Teachers / Students tabs and who may send a request (plan section 7). The backend phase mirrors these rules in RLS. | Core logic | `DiscoverVisibilityRules` |
 | `lib/core/logic/profile_strength_calculator.dart` | Checklist items behind the profile-strength %, in the order the strength card suggests them. | Core logic | `ProfileStrengthItem`, `ProfileStrengthCalculator` |
@@ -221,7 +221,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/features/settings/presentation/log_out_sheet.dart` | — | Feature settings · presentation | `LogOutSheet` |
 | `lib/features/settings/presentation/policy_screen.dart` | The three policy pages (artboards 21c / 21d / 21e). | Feature settings · presentation | `PolicyPage`, `PolicyScreen` |
 | `lib/features/settings/presentation/settings_screen.dart` | 21 Settings: account, notification switches, privacy & safety, log out and delete account. | Feature settings · presentation | `SettingsScreen` |
-| `lib/main.dart` | Composition root: the only place concrete repositories are created; mock or backend mode from `AppConfig`; the only `Supabase.instance` read. | App | `main` |
+| `lib/main.dart` | Composition root: the only place concrete repositories are created; Auth + Profile real, other repositories mock until their phases; the only `Supabase.instance` read. | App | `main` |
 | `test/app_test.dart` | Tests | Test | `main` |
 | `test/core/config/app_config_test.dart` | Tests | Test | `main` |
 | `test/core/logic/profile_strength_calculator_test.dart` | Tests | Test | `main` |

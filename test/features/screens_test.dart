@@ -1,4 +1,6 @@
 import 'package:asatiza/data/mock/mock_profiles.dart';
+import 'package:asatiza/core/theme/app_theme.dart';
+import 'package:asatiza/core/widgets/app_button.dart';
 import 'package:asatiza/core/widgets/app_checkbox.dart';
 import 'package:asatiza/core/widgets/post_card.dart';
 import 'package:asatiza/core/widgets/profile_strength_card.dart';
@@ -17,6 +19,32 @@ import 'package:flutter_test/flutter_test.dart';
 import '../helpers/test_app.dart';
 
 void main() {
+  testWidgets('AppButton: loading shows a spinner and ignores taps', (
+    tester,
+  ) async {
+    var taps = 0;
+    Widget button({required bool loading}) => MaterialApp(
+      theme: AppTheme.light(),
+      home: Scaffold(
+        body: AppButton(
+          label: 'Save',
+          loading: loading,
+          onPressed: () => taps++,
+        ),
+      ),
+    );
+    await tester.pumpWidget(button(loading: true));
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('Save'), findsOneWidget);
+    await tester.tap(find.byType(AppButton));
+    expect(taps, 0);
+
+    await tester.pumpWidget(button(loading: false));
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    await tester.tap(find.byType(AppButton));
+    expect(taps, 1);
+  });
+
   testWidgets('Welcome: swipe slides, Skip opens Sign up', (tester) async {
     final app = TestApp();
     await app.start(tester);

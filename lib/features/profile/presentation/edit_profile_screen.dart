@@ -204,6 +204,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
                   trailing: <Widget>[
                     AppButton(
                       label: l10n.saveAction,
+                      loading: state.saving,
                       onPressed: state.saving ? null : cubit.save,
                       size: AppButtonSize.small,
                       expand: false,
@@ -493,7 +494,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
           ),
           const SizedBox(width: AppSpacing.space3),
           Expanded(
-            flex: 13,
+            flex: 2,
             child: AppSegmentedControl<FeeUnit>(
               values: FeeUnit.values,
               selected: t?.feeUnit,

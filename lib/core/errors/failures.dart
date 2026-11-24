@@ -20,6 +20,8 @@ final class ValidationFailure extends Failure {
 }
 
 /// What a [ValidationFailure] rejected; screens map it to a message.
+/// [network] and [unexpected] are never thrown: cubits set them from
+/// [FailureReason.displayReason] so screens can show a general error.
 enum ValidationReason {
   invalidEmail,
   passwordTooShort,
@@ -41,6 +43,27 @@ enum ValidationReason {
 
   /// Log-in with an email whose sign-up code was never entered.
   emailNotConfirmed,
+
+  /// No connection (from [NetworkFailure]).
+  network,
+
+  /// Anything else that went wrong (e.g. too many emails, server error).
+  unexpected,
+}
+
+/// The message reason a screen shows for any [Failure].
+extension FailureReason on Failure {
+  ValidationReason get displayReason => switch (this) {
+    ValidationFailure(:final reason) => reason,
+    NetworkFailure() => ValidationReason.network,
+    _ => ValidationReason.unexpected,
+  };
+}
+
+/// Reasons shown as a general message, not under a field.
+extension GeneralReason on ValidationReason {
+  bool get isGeneral =>
+      this == ValidationReason.network || this == ValidationReason.unexpected;
 }
 
 /// The requested record does not exist or is not visible.

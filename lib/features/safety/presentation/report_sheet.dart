@@ -120,6 +120,7 @@ class ReportSheet extends StatelessWidget {
                 child: AppButton(
                   label: l10n.reportAction,
                   variant: AppButtonVariant.danger,
+                  loading: state.status == ReportStatus.sending,
                   onPressed: state.canSend ? cubit.submit : null,
                 ),
               ),

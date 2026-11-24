@@ -21,6 +21,7 @@ class ConfirmSheet extends StatelessWidget {
     this.icon,
     this.danger = false,
     this.body,
+    this.loading = false,
   });
 
   final String title;
@@ -33,6 +34,10 @@ class ConfirmSheet extends StatelessWidget {
   final String? icon;
   final bool danger;
   final Widget? body;
+
+  /// The confirmed action is running: spinner on the confirm button and
+  /// Cancel disabled.
+  final bool loading;
 
   /// Shows a simple sheet; true when confirmed.
   static Future<bool> show(
@@ -109,7 +114,9 @@ class ConfirmSheet extends StatelessWidget {
               child: AppButton(
                 label: cancelLabel,
                 variant: AppButtonVariant.secondary,
-                onPressed: () => Navigator.of(context).pop(false),
+                onPressed: loading
+                    ? null
+                    : () => Navigator.of(context).pop(false),
               ),
             ),
             const SizedBox(width: AppSpacing.gap10),
@@ -119,6 +126,7 @@ class ConfirmSheet extends StatelessWidget {
                 variant: danger
                     ? AppButtonVariant.danger
                     : AppButtonVariant.primary,
+                loading: loading,
                 onPressed: onConfirm,
               ),
             ),
