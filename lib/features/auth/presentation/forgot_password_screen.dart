@@ -193,7 +193,9 @@ class _CodeStep extends StatelessWidget {
             TextSpan(
               style: AppTextStyles.bodyMd.copyWith(color: colors.inkMuted),
               children: <InlineSpan>[
-                TextSpan(text: l10n.codeSentPrefix),
+                // Never confirms that the email has an account (Supabase
+                // sends no code for unknown emails but reports success).
+                TextSpan(text: l10n.resetCodeSentPrefix),
                 TextSpan(
                   text: state.email,
                   style: TextStyle(
@@ -201,7 +203,7 @@ class _CodeStep extends StatelessWidget {
                     color: colors.ink,
                   ),
                 ),
-                const TextSpan(text: '.'),
+                TextSpan(text: l10n.resetCodeSentSuffix),
               ],
             ),
           ),

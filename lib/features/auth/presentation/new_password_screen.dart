@@ -150,12 +150,22 @@ class _NewPasswordView extends StatelessWidget {
                                   ),
                                   const Spacer(),
                                   const SizedBox(height: AppSpacing.space5),
-                                  if (state.failure?.isGeneral ??
-                                      false) ...<Widget>[
+                                  // Every refusal is shown: before, only
+                                  // network / unexpected errors were, so a
+                                  // reused or too-weak password (refused
+                                  // by Supabase) left the screen silent.
+                                  if (state.failure
+                                      case final failure?) ...<Widget>[
                                     Text(
-                                      state.failure == ValidationReason.network
-                                          ? l10n.errorNoConnection
-                                          : l10n.errorSomethingWentWrong,
+                                      switch (failure) {
+                                        ValidationReason.network =>
+                                          l10n.errorNoConnection,
+                                        ValidationReason.passwordUnchanged =>
+                                          l10n.errorSamePassword,
+                                        ValidationReason.passwordTooShort =>
+                                          l10n.errorWeakPassword,
+                                        _ => l10n.errorSomethingWentWrong,
+                                      },
                                       style: AppTextStyles.caption.copyWith(
                                         color: colors.danger,
                                       ),

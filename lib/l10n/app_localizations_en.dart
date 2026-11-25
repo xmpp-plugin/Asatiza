@@ -176,6 +176,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Something went wrong. Please try again in a moment.';
 
   @override
+  String get errorSamePassword =>
+      'Choose a new password, not the one you used before.';
+
+  @override
+  String get errorWeakPassword =>
+      'This password is too weak. Try a longer one with letters and numbers.';
+
+  @override
   String get checkEmailTitle => 'Check your email';
 
   @override
@@ -183,6 +191,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get codeSentSuffix => '. Enter it below.';
+
+  @override
+  String get resetCodeSentPrefix => 'If an account exists for ';
+
+  @override
+  String get resetCodeSentSuffix =>
+      ', we’ve sent a 6-digit code. Check your Spam folder too.';
 
   @override
   String get codeFieldLabel => '6-digit code';

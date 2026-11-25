@@ -1,4 +1,10 @@
+import 'package:asatiza/core/errors/failures.dart';
 import 'package:asatiza/data/mock/mock_profiles.dart';
+import 'package:asatiza/data/models/profile.dart';
+import 'package:asatiza/data/repositories/auth_repository.dart';
+import 'package:asatiza/data/repositories/mock/mock_auth_repository.dart';
+import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
+import 'package:asatiza/l10n/app_localizations.dart';
 import 'package:asatiza/core/theme/app_theme.dart';
 import 'package:asatiza/core/widgets/app_button.dart';
 import 'package:asatiza/core/widgets/app_checkbox.dart';
@@ -14,6 +20,7 @@ import 'package:asatiza/features/onboarding/presentation/welcome_screen.dart';
 import 'package:asatiza/features/profile_setup/presentation/student_setup_screen.dart';
 import 'package:asatiza/features/profile_setup/presentation/teacher_setup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_app.dart';
@@ -152,6 +159,11 @@ void main() {
     await enterField(tester, 'Email', 'ayesha.khan@gmail.com');
     await tapText(tester, 'Send code');
     expect(find.text('Enter the code'), findsOneWidget);
+    // Never confirms that the email has an account.
+    expect(
+      find.textContaining('If an account exists for', findRichText: true),
+      findsOneWidget,
+    );
     await enterCode(tester, '270593');
     expect(find.byType(NewPasswordScreen), findsOneWidget);
     await enterField(tester, 'New password', 'newpass2026');
@@ -159,6 +171,41 @@ void main() {
     await tapText(tester, 'Save and log in');
     expect(find.byType(HomeScreen), findsOneWidget);
     await app.stop(tester);
+  });
+
+  testWidgets('New password: a refused password shows a message', (
+    tester,
+  ) async {
+    final auth = _RefusingAuth(MockProfileRepository());
+    await tester.pumpWidget(
+      RepositoryProvider<AuthRepository>.value(
+        value: auth,
+        child: MaterialApp(
+          theme: AppTheme.light(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const NewPasswordScreen(email: 'ayesha.khan@gmail.com'),
+        ),
+      ),
+    );
+    await enterField(tester, 'New password', 'samepass2026');
+    await enterField(tester, 'Confirm password', 'samepass2026');
+
+    auth.next = const ValidationFailure(ValidationReason.passwordUnchanged);
+    await tapText(tester, 'Save and log in');
+    expect(
+      find.text('Choose a new password, not the one you used before.'),
+      findsOneWidget,
+    );
+
+    auth.next = const ValidationFailure(ValidationReason.passwordTooShort);
+    await tapText(tester, 'Save and log in');
+    expect(
+      find.text(
+        'This password is too weak. Try a longer one with letters and numbers.',
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Post detail: comments, add a comment, report and block', (
@@ -232,4 +279,19 @@ void main() {
     );
     await app.stop(tester);
   });
+}
+
+/// Mock auth whose password save is refused with [next] (as Supabase does
+/// for a reused or weak password).
+class _RefusingAuth extends MockAuthRepository {
+  _RefusingAuth(super.profiles);
+
+  Failure next = const ValidationFailure(ValidationReason.passwordUnchanged);
+
+  @override
+  Future<Profile> setNewPassword({
+    required String email,
+    required String password,
+    required String confirmation,
+  }) async => throw next;
 }

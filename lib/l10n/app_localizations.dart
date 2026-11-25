@@ -406,6 +406,18 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again in a moment.'**
   String get errorSomethingWentWrong;
 
+  /// No description provided for @errorSamePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a new password, not the one you used before.'**
+  String get errorSamePassword;
+
+  /// No description provided for @errorWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'This password is too weak. Try a longer one with letters and numbers.'**
+  String get errorWeakPassword;
+
   /// No description provided for @checkEmailTitle.
   ///
   /// In en, this message translates to:
@@ -423,6 +435,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'. Enter it below.'**
   String get codeSentSuffix;
+
+  /// No description provided for @resetCodeSentPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'If an account exists for '**
+  String get resetCodeSentPrefix;
+
+  /// No description provided for @resetCodeSentSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **', we’ve sent a 6-digit code. Check your Spam folder too.'**
+  String get resetCodeSentSuffix;
 
   /// No description provided for @codeFieldLabel.
   ///
