@@ -4,8 +4,8 @@ Manually maintained operational record for approvals, handoffs, manual-test evid
 
 ## Current Snapshot
 
-- Last updated: 2026-11-24
-- Active phase: None
+- Last updated: 2026-11-25
+- Active phase: `PHASE_006_BACKEND_ADD_SUPABASE_DISCOVER_TEACHERS_STUDENTS` (`ACTIVE` / `MANUAL_TEST`)
 - Next approved phase: None
 - Planned phases: None
 - Closed phases: `PHASE_001_FOUNDATION_ADD_PROJECT_FOUNDATION` (`COMPLETED` 2026-11-19), `PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA` (`COMPLETED` 2026-11-23), `PHASE_003_UI_ADD_FULL_APP_DESIGN_MOCK_DATA_PART_TWO` (`COMPLETED` 2026-11-23), `PHASE_004_BACKEND_ADD_SUPABASE_AUTH_PROFILES` (`COMPLETED` 2026-11-24), `PHASE_005_BACKEND_ADD_STORAGE_PHOTOS_CERTIFICATES` (`COMPLETED` 2026-11-24)
@@ -14,7 +14,7 @@ Manually maintained operational record for approvals, handoffs, manual-test evid
 
 ## Recommended Next Operation
 
-No active phase. Developer: commit the PHASE_005 work when ready (the launcher-icon changes in the tree are separate developer work). Next phase on request (suggested order: discover → safety → connections → chat → feed → notifications).
+Developer: manual-test PHASE_006 (Teachers / Students tabs on real Supabase data, offline error + Try again, pull-to-refresh) on Android and iOS, then confirm or report failures.
 
 ## Log
 
@@ -66,3 +66,8 @@ No active phase. Developer: commit the PHASE_005 work when ready (the launcher-i
 | 2026-11-24 | `PHASE_005_BACKEND_ADD_STORAGE_PHOTOS_CERTIFICATES` | Execute Phase | Implemented approved scope: 4 packages (`pdfrx` 2.4.7, latest for Flutter 3.41), iOS plist keys, `MediaRepository` + Supabase + mock, 3 services, `CertificateFileRules`, `Profile.photoUrl`, `AppAvatar` photo / `showPhoto` / `preview`, setup + Edit profile uploads (1 PDF, 3 MB, instructions), certificate viewer (`/certificate`), deletion cleanup, Storage migration + checks, docs. `flutter analyze` clean; `flutter test` 145/145. Status `ACTIVE`, step `MANUAL_TEST`. Nothing committed. |
 | 2026-11-24 | `PHASE_005_BACKEND_ADD_STORAGE_PHOTOS_CERTIFICATES` | Fix inside active phase | Developer: student stuck at 60 % → "Fix inside PHASE_005". Student Edit profile gained Level, Languages, Preferred teacher gender (40 % of strength; before only in setup; gap since PHASE_003). `EditProfileCubit.levelChanged` / `preferenceChanged`. analyze clean; tests 146/146. Status stays `ACTIVE` / `MANUAL_TEST`. |
 | 2026-11-24 | `PHASE_005_BACKEND_ADD_STORAGE_PHOTOS_CERTIFICATES` | Close Phase | Developer: "CLOSE PHASE" (sent after the instruction to send it when everything works; platforms and SQL check results not stated). Evidence reused: analyze clean, tests 146/146, no phase code changed since. Unrelated developer launcher-icon changes recorded, not claimed. Status `CLOSED`, step `CLOSURE`, outcome `COMPLETED`. No commit requested. |
+| 2026-11-25 | `PHASE_006_BACKEND_ADD_SUPABASE_DISCOVER_TEACHERS_STUDENTS` | Create Phase | Developer: "Create Discover phase". Read-only analysis: Discover still on `MockDiscoverRepository`; cubits swallow stream errors. Recommended plan: new `SupabaseDiscoverRepository` (query `is_visible`, role, self excluded, 500-row cap, student photos removed), error state + pull-to-refresh, 2 strings; no migration, RLS, dependency or native change. 6 decisions open (blocks gap before Safety, no Realtime, row cap, RLS unchanged, error copy, mock connections). `PLANNED` / `ANALYSIS` / `PENDING`. No code changed. |
+| 2026-11-25 | `PHASE_006_BACKEND_ADD_SUPABASE_DISCOVER_TEACHERS_STUDENTS` | Create Phase (update) | Developer: "Accept recommendations". Decisions 1–6 recorded (Discover before Safety with documented blocks gap; no Realtime, refresh re-subscribes; 500-row cap; RLS unchanged; 2 error strings + `EmptyStateView` deviation; Connect/Message excluded from manual test). Step `APPROVAL`, approval `PENDING`. No code changed. |
+| 2026-11-25 | `PHASE_006_BACKEND_ADD_SUPABASE_DISCOVER_TEACHERS_STUDENTS` | Approve Phase | Explicit developer approval ("Approve phase"). Readiness 21/21. Status `APPROVED`, step `APPROVAL`, approval `APPROVED`, outcome `NONE`. Covers `SupabaseDiscoverRepository` (+ optional test), `main.dart` wiring, `DiscoverStatus.error`, cubit refresh/error handling, error state + pull-to-refresh, 2 strings, contract comment, tests, docs. No migration, RLS, dependency, native or Realtime change. Not executed. |
+| 2026-11-25 | `PHASE_006_BACKEND_ADD_SUPABASE_DISCOVER_TEACHERS_STUDENTS` | Execute Phase (start) | Developer: "Execute phase". Readiness OK; no other active phase. Git baseline: branch `PHASE_004_BACKEND_FOUNDATION` at `c1dc647`; pre-existing uncommitted changes: PHASE_006 docs only. Status `ACTIVE`, step `EXECUTION`. |
+| 2026-11-25 | `PHASE_006_BACKEND_ADD_SUPABASE_DISCOVER_TEACHERS_STUDENTS` | Execute Phase | Implemented approved scope: `SupabaseDiscoverRepository` + wiring, `DiscoverStatus.error` + `refresh()`, error state and pull-to-refresh, 2 strings, contract comment, 4 tests, docs (blocks gap in `KNOWN_ISSUES`). `SearchCubit` unchanged (already ignores errors). `flutter analyze` clean; `flutter test` 151/151. Status `ACTIVE`, step `MANUAL_TEST`. Nothing committed. |

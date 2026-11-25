@@ -24,13 +24,7 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     required String Function(Subject) subjectLabel,
   }) : _subjectLabel = subjectLabel,
        super(DiscoverState(showTeachers: showTeachers)) {
-    final people = showTeachers
-        ? _discover.watchTeachers(viewerId: viewerId)
-        : _discover.watchStudents(viewerId: viewerId);
-    _peopleSub = people.listen(
-      (list) => _emitFiltered(all: list, status: DiscoverStatus.ready),
-      onError: (Object _) {},
-    );
+    unawaited(_listenPeople());
     _connectionsSub = _connections
         .watchConnections(viewerId)
         .listen(
@@ -46,6 +40,46 @@ class DiscoverCubit extends Cubit<DiscoverState> {
 
   StreamSubscription<List<Profile>>? _peopleSub;
   StreamSubscription<List<Connection>>? _connectionsSub;
+
+  /// Subscribes to the visible people. Completes on the first list or
+  /// error (so pull-to-refresh can stop its spinner).
+  Future<void> _listenPeople() {
+    final done = Completer<void>();
+    void finish() {
+      if (!done.isCompleted) done.complete();
+    }
+
+    final people = state.showTeachers
+        ? _discover.watchTeachers(viewerId: viewerId)
+        : _discover.watchStudents(viewerId: viewerId);
+    _peopleSub = people.listen(
+      (list) {
+        _emitFiltered(all: list, status: DiscoverStatus.ready);
+        finish();
+      },
+      onError: (Object _) {
+        if (!isClosed) {
+          emit(state.copyWith(status: DiscoverStatus.error));
+        }
+        finish();
+      },
+      onDone: finish,
+    );
+    return done.future;
+  }
+
+  /// Reloads the list (pull-to-refresh and "Try again"). Search and filters
+  /// are kept. Shows the skeleton only after an error.
+  Future<void> refresh() async {
+    await _peopleSub?.cancel();
+    if (isClosed) {
+      return;
+    }
+    if (state.status == DiscoverStatus.error) {
+      emit(state.copyWith(status: DiscoverStatus.loading));
+    }
+    return _listenPeople();
+  }
 
   void _emitFiltered({
     List<Profile>? all,

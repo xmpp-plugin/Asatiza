@@ -103,7 +103,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/data/repositories/auth_repository.dart` | — | Repository interface | `AuthRepository` |
 | `lib/data/repositories/chat_repository.dart` | — | Repository interface | `ChatRepository` |
 | `lib/data/repositories/connection_repository.dart` | — | Repository interface | `ConnectionRepository` |
-| `lib/data/repositories/discover_repository.dart` | — | Repository interface | `DiscoverRepository` |
+| `lib/data/repositories/discover_repository.dart` | Contract for the Teachers / Students tabs (visible people; reload by re-subscribing). | Repository interface | `DiscoverRepository` |
 | `lib/data/repositories/feed_repository.dart` | — | Repository interface | `FeedRepository` |
 | `lib/data/repositories/media_repository.dart` | Storage uploads, download of the own certificate, removals. | Repository interface | `MediaRepository` |
 | `lib/data/repositories/mock/mock_auth_repository.dart` | In-memory [AuthRepository]. Any valid email + 8-character password signs in; any 6 digits are a valid code. Known emails (the two mock… | Mock data | `MockAuthRepository` |
@@ -120,6 +120,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/data/repositories/safety_repository.dart` | — | Repository interface | `BlockedUser`, `SafetyRepository` |
 | `lib/data/repositories/supabase/profile_row_mapper.dart` | Converts profile / detail rows to `Profile` and back (snake_case enum text). Pure. | Repository (Supabase) | `ProfileRowMapper` |
 | `lib/data/repositories/supabase/supabase_auth_repository.dart` | `AuthRepository` on Supabase Auth with 6-digit email codes; deletion via `delete_my_account()`. | Repository (Supabase) | `SupabaseAuthRepository` |
+| `lib/data/repositories/supabase/supabase_discover_repository.dart` | `DiscoverRepository` on visible `profiles` (+ details); one load per subscription; student photos removed. | Repository (Supabase) | `SupabaseDiscoverRepository` |
 | `lib/data/repositories/supabase/supabase_failure_mapper.dart` | Maps Supabase Auth / PostgREST / Storage / network errors to `Failure`s. Pure. | Repository (Supabase) | `SupabaseFailureMapper` |
 | `lib/data/repositories/supabase/supabase_media_repository.dart` | `MediaRepository` on Supabase Storage (owner folders; authenticated certificate download). | Repository (Supabase) | `SupabaseMediaRepository` |
 | `lib/data/repositories/supabase/supabase_profile_repository.dart` | `ProfileRepository` on `profiles`, `teacher_details`, `student_details` (RLS). | Repository (Supabase) | `SupabaseProfileRepository` |
@@ -248,6 +249,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `test/core/widgets/app_avatar_test.dart` | `AppAvatar` photo, fallback, `showPhoto`, preview. | Test | — |
 | `test/data/mock_data_test.dart` | Tests | Test | `main` |
 | `test/data/supabase/profile_row_mapper_test.dart` | Tests | Test | `main` |
+| `test/data/supabase/supabase_discover_repository_test.dart` | Tests | Test | `main` |
 | `test/data/supabase/supabase_failure_mapper_test.dart` | Tests | Test | `main` |
 | `test/features/chat_notifications_test.dart` | Tests | Test | `settle`, `main` |
 | `test/features/cubits_test.dart` | Lets stream listeners and async cubit work run. | Test | `settle`, `main` |

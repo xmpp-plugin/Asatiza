@@ -10,6 +10,7 @@ import 'package:asatiza/data/models/enums/gender.dart';
 import 'package:asatiza/data/models/enums/learner_age_group.dart';
 import 'package:asatiza/data/models/enums/subject.dart';
 import 'package:asatiza/data/models/profile.dart';
+import 'package:asatiza/data/repositories/discover_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_discover_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
@@ -19,6 +20,7 @@ import 'package:asatiza/features/connections/bloc/connections_cubit.dart';
 import 'package:asatiza/features/connections/logic/connect_note_rules.dart';
 import 'package:asatiza/features/connections/presentation/connections_screen.dart';
 import 'package:asatiza/features/discover/bloc/discover_cubit.dart';
+import 'package:asatiza/features/discover/bloc/discover_state.dart';
 import 'package:asatiza/features/discover/logic/student_filter.dart';
 import 'package:asatiza/features/discover/logic/teacher_filter.dart';
 import 'package:asatiza/features/discover/presentation/discover_screen.dart';
@@ -264,6 +266,30 @@ void main() {
       await cubit.close();
     });
 
+    test('discover cubit shows an error and refresh reloads', () async {
+      final flaky = _FlakyDiscover(discover);
+      final cubit = DiscoverCubit(
+        flaky,
+        connections,
+        viewerId: MockIds.ayesha,
+        showTeachers: true,
+        subjectLabel: subjectName,
+      );
+      await settle();
+      expect(cubit.state.status, DiscoverStatus.error);
+      cubit.teacherFilterChanged(const TeacherFilter(gender: Gender.female));
+      await cubit.refresh();
+      expect(cubit.state.status, DiscoverStatus.ready);
+      expect(cubit.state.all, isNotEmpty);
+      // Filters survive the reload.
+      expect(cubit.state.activeFilterCount, 1);
+      expect(
+        cubit.state.results.every((p) => p.gender == Gender.female),
+        isTrue,
+      );
+      await cubit.close();
+    });
+
     test('connect request cubit sends once and reports errors', () async {
       final cubit = ConnectRequestCubit(
         connections,
@@ -379,4 +405,25 @@ void main() {
       await app.stop(tester);
     });
   });
+}
+
+/// Fails the first teachers load, then delegates to [_inner].
+class _FlakyDiscover implements DiscoverRepository {
+  _FlakyDiscover(this._inner);
+
+  final DiscoverRepository _inner;
+  bool _failed = false;
+
+  @override
+  Stream<List<Profile>> watchTeachers({required String viewerId}) {
+    if (!_failed) {
+      _failed = true;
+      return Stream<List<Profile>>.error(const NetworkFailure());
+    }
+    return _inner.watchTeachers(viewerId: viewerId);
+  }
+
+  @override
+  Stream<List<Profile>> watchStudents({required String viewerId}) =>
+      _inner.watchStudents(viewerId: viewerId);
 }

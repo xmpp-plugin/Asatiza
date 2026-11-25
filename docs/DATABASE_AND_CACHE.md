@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-25 (`PHASE_006`): Teachers / Students lists read `profiles` where `is_visible = true` (set by `private.profile_strength`); no migration, no RLS change, no local cache (loaded on tab open and refresh).
+
 VERIFIED 2026-11-24 (`PHASE_005`): `supabase/migrations/20261124120000_storage_avatars_certificates.sql` — buckets `avatars` (public, `image/jpeg`, 1 MB) and `certificates` (private, `application/pdf`, 3 MB) and owner-folder policies on `storage.objects` (`(storage.foldername(name))[1] = auth.uid()`; certificate insert only for `role = 'teacher'`; no admin policy yet). No table change. One certificate per teacher is an app rule (`CertificateFileRules.maxCertificates = 1`), not a database check. Manual checks: `supabase/tests/storage_policies_checks.sql`. Applied to the remote project: UNVERIFIED — the developer applies it in the SQL editor.
 
 VERIFIED 2026-11-23 (`PHASE_004`): `supabase/migrations/20261123120000_profiles.sql` (tables `profiles` (+ `city`), `teacher_details`, `student_details`; snake_case enum text with `check` constraints; text limits as in the app; `private.profile_strength` + triggers keep `completion_pct` / `is_visible` in step with `ProfileStrengthCalculator` / `DiscoverVisibilityRules`; `private.handle_new_user` creates the profile + detail row from sign-up metadata; RLS + column privileges) and `20261123120100_delete_my_account.sql` (`security definer`, `authenticated` only). Manual checks: `supabase/tests/profiles_rls_checks.sql`. Mapping in `ProfileRowMapper`. Applied to the remote project: UNVERIFIED — the developer applies them in the SQL editor.

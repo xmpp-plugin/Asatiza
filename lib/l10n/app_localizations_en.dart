@@ -1772,6 +1772,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retryAction => 'Try again';
 
   @override
+  String get discoverLoadFailedTitle => 'Couldn’t load people';
+
+  @override
+  String get discoverLoadFailedMessage =>
+      'Check your connection and try again.';
+
+  @override
   String certificatePageIndicator(int page, int total) {
     return '$page / $total';
   }

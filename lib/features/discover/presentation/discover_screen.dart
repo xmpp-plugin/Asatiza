@@ -410,67 +410,96 @@ class _DiscoverViewState extends State<_DiscoverView> {
         itemBuilder: (_, _) => const TeacherCardSkeleton(),
       );
     }
+    if (state.status == DiscoverStatus.error) {
+      return _scrollable(
+        EmptyStateView(
+          icon: AppIcon.people,
+          title: l10n.discoverLoadFailedTitle,
+          message: l10n.discoverLoadFailedMessage,
+          actionLabel: l10n.retryAction,
+          onAction: context.read<DiscoverCubit>().refresh,
+        ),
+      );
+    }
     final results = state.results;
     if (results.isEmpty) {
       final query = state.showTeachers
           ? state.teacherFilter.query
           : state.studentFilter.query;
-      return Padding(
-        padding: const EdgeInsets.all(AppSpacing.space6),
-        child: Align(
-          alignment: const Alignment(0, -0.4),
-          child: EmptyStateView(
-            icon: AppIcon.search,
-            title: query.trim().isEmpty
-                ? l10n.noFilterMatchesTitle
-                : l10n.noResultsTitle(query.trim()),
-            message: l10n.noResultsMessage,
-            actionLabel: l10n.clearFiltersAction,
-            onAction: () => _clearFilters(state),
-          ),
+      return _scrollable(
+        EmptyStateView(
+          icon: AppIcon.search,
+          title: query.trim().isEmpty
+              ? l10n.noFilterMatchesTitle
+              : l10n.noResultsTitle(query.trim()),
+          message: l10n.noResultsMessage,
+          actionLabel: l10n.clearFiltersAction,
+          onAction: () => _clearFilters(state),
         ),
       );
     }
     final countStyle = AppTextStyles.helper.copyWith(color: colors.inkMuted);
-    return ListView.separated(
-      padding: padding,
-      itemCount: results.length + 1,
-      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.space3),
-      itemBuilder: (context, i) {
-        if (i == 0) {
-          return Text.rich(
-            TextSpan(
-              style: countStyle,
-              children: <InlineSpan>[
-                TextSpan(
-                  text: state.showTeachers
-                      ? l10n.verifiedTeacherCount(results.length)
-                      : l10n.studentCount(results.length),
-                  style: countStyle.copyWith(color: colors.ink),
-                ),
-                TextSpan(
-                  text: state.showTeachers
-                      ? l10n.mostCompleteFirstSuffix
-                      : l10n.lookingForTeacherSuffix,
-                ),
-              ],
-            ),
-          );
-        }
-        final p = results[i - 1];
-        void open() => context.push(AppRoutes.profile(p.id));
-        return state.showTeachers
-            ? TeacherCard(
-                profile: p,
-                onOpen: open,
-                connectButton: _connectButton(state, p, l10n, expand: true),
-              )
-            : StudentCard(
-                profile: p,
-                onOpen: open,
-                connectButton: _connectButton(state, p, l10n, expand: false),
-              );
-      },
+    return RefreshIndicator(
+      onRefresh: context.read<DiscoverCubit>().refresh,
+      child: ListView.separated(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: padding,
+        itemCount: results.length + 1,
+        separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.space3),
+        itemBuilder: (context, i) {
+          if (i == 0) {
+            return Text.rich(
+              TextSpan(
+                style: countStyle,
+                children: <InlineSpan>[
+                  TextSpan(
+                    text: state.showTeachers
+                        ? l10n.verifiedTeacherCount(results.length)
+                        : l10n.studentCount(results.length),
+                    style: countStyle.copyWith(color: colors.ink),
+                  ),
+                  TextSpan(
+                    text: state.showTeachers
+                        ? l10n.mostCompleteFirstSuffix
+                        : l10n.lookingForTeacherSuffix,
+                  ),
+                ],
+              ),
+            );
+          }
+          final p = results[i - 1];
+          void open() => context.push(AppRoutes.profile(p.id));
+          return state.showTeachers
+              ? TeacherCard(
+                  profile: p,
+                  onOpen: open,
+                  connectButton: _connectButton(state, p, l10n, expand: true),
+                )
+              : StudentCard(
+                  profile: p,
+                  onOpen: open,
+                  connectButton: _connectButton(state, p, l10n, expand: false),
+                );
+        },
+      ),
     );
   }
+
+  /// [child] centred like before, inside a scroll view so pull-to-refresh
+  /// also works on the empty and error states.
+  Widget _scrollable(Widget child) => RefreshIndicator(
+    onRefresh: context.read<DiscoverCubit>().refresh,
+    child: LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.space6),
+            child: Align(alignment: const Alignment(0, -0.4), child: child),
+          ),
+        ),
+      ),
+    ),
+  );
 }

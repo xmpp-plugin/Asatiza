@@ -957,6 +957,8 @@
   "certificateOpenFailedTitle": "Couldn’t open the certificate",
   "certificateOpenFailedMessage": "Check your connection and try again.",
   "retryAction": "Try again",
+  "discoverLoadFailedTitle": "Couldn’t load people",
+  "discoverLoadFailedMessage": "Check your connection and try again.",
   "certificatePageIndicator": "{page} / {total}",
   "@certificatePageIndicator": {
     "placeholders": {

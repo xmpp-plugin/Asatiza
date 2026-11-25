@@ -3052,6 +3052,18 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get retryAction;
 
+  /// No description provided for @discoverLoadFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load people'**
+  String get discoverLoadFailedTitle;
+
+  /// No description provided for @discoverLoadFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get discoverLoadFailedMessage;
+
   /// No description provided for @certificatePageIndicator.
   ///
   /// In en, this message translates to:

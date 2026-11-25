@@ -18,6 +18,9 @@
 
 ## Plan-vs-Code Gaps
 
+- 2026-11-25 (`PHASE_006`, decision 1A, temporary): the Teachers / Students lists on Supabase do not filter blocked users yet (no `blocks` table). The Safety phase adds the table and the filter in `SupabaseDiscoverRepository`. Blocking a real user currently writes only to `MockSafetyRepository`.
+- 2026-11-25 (`PHASE_006`, out-of-scope): `profiles` has no `is_hidden` column (plan section 12, admin hide); profiles RLS lets any signed-in user read any profile by id. Revisit with moderation.
+
 Everything in `docs/product/VERSION_1_PLAN.md` is not yet implemented. Phases are created one at a time by the developer in `docs/phases/items/`.
 
 ## Owner Decisions That Differ From The PDF Plan

@@ -5,7 +5,8 @@ import '../../../data/models/profile.dart';
 import '../logic/student_filter.dart';
 import '../logic/teacher_filter.dart';
 
-enum DiscoverStatus { loading, ready }
+/// [error]: the list could not be loaded; [DiscoverCubit.refresh] retries.
+enum DiscoverStatus { loading, ready, error }
 
 /// Teachers tab (student viewer) or Students tab (teacher viewer).
 class DiscoverState extends Equatable {

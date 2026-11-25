@@ -24,7 +24,6 @@ import 'data/repositories/media_repository.dart';
 import 'data/repositories/notification_repository.dart';
 import 'data/repositories/mock/mock_chat_repository.dart';
 import 'data/repositories/mock/mock_connection_repository.dart';
-import 'data/repositories/mock/mock_discover_repository.dart';
 import 'data/repositories/mock/mock_feed_repository.dart';
 import 'data/repositories/mock/mock_notification_repository.dart';
 import 'data/repositories/mock/mock_profile_repository.dart';
@@ -32,15 +31,17 @@ import 'data/repositories/mock/mock_safety_repository.dart';
 import 'data/repositories/profile_repository.dart';
 import 'data/repositories/safety_repository.dart';
 import 'data/repositories/supabase/supabase_auth_repository.dart';
+import 'data/repositories/supabase/supabase_discover_repository.dart';
 import 'data/repositories/supabase/supabase_media_repository.dart';
 import 'data/repositories/supabase/supabase_profile_repository.dart';
 
 /// Composition root: the only place concrete repositories are created.
 ///
 /// Each repository is either real (Supabase) or mock, never both:
-/// - real: accounts ([AuthRepository]), profiles ([ProfileRepository]) and
-///   Storage uploads ([MediaRepository]);
-/// - mock until their phases: feed, discover, connections, chat,
+/// - real: accounts ([AuthRepository]), profiles ([ProfileRepository]),
+///   Storage uploads ([MediaRepository]) and the Teachers / Students tabs
+///   ([DiscoverRepository]);
+/// - mock until their phases: feed, connections, chat,
 ///   notifications and safety (in-memory sample people, reset on restart).
 /// When a feature becomes real, replace only its mock line below.
 ///
@@ -72,6 +73,7 @@ Future<void> main() async {
   final supabaseProfiles = SupabaseProfileRepository(client);
   final ProfileRepository userProfiles = supabaseProfiles;
   final MediaRepository media = SupabaseMediaRepository(client);
+  final DiscoverRepository discover = SupabaseDiscoverRepository(client);
   final AuthRepository auth = SupabaseAuthRepository(
     client,
     supabaseProfiles,
@@ -90,7 +92,6 @@ Future<void> main() async {
   final sampleProfiles = MockProfileRepository();
   final feed = MockFeedRepository();
   final safety = MockSafetyRepository();
-  final discover = MockDiscoverRepository(sampleProfiles, safety);
   final connections = MockConnectionRepository(sampleProfiles);
   final chats = MockChatRepository(connections);
   final notifications = MockNotificationRepository();
