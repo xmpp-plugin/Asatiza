@@ -11,18 +11,20 @@ import 'package:asatiza/core/widgets/otp_input.dart';
 import 'package:asatiza/data/mock/mock_profiles.dart';
 import 'package:asatiza/data/models/picked_document.dart';
 import 'package:asatiza/data/repositories/auth_repository.dart';
+import 'package:asatiza/data/repositories/block_repository.dart';
 import 'package:asatiza/data/repositories/chat_repository.dart';
 import 'package:asatiza/data/repositories/connection_repository.dart';
 import 'package:asatiza/data/repositories/discover_repository.dart';
 import 'package:asatiza/data/repositories/feed_repository.dart';
 import 'package:asatiza/data/repositories/media_repository.dart';
 import 'package:asatiza/data/repositories/notification_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_auth_repository.dart';
+import '../fakes/fake_block_repository.dart';
+import '../fakes/mock_auth_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_chat_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_discover_repository.dart';
+import '../fakes/mock_discover_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_media_repository.dart';
+import '../fakes/mock_media_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_notification_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
@@ -38,8 +40,9 @@ class TestApp {
   TestApp()
     : profiles = MockProfileRepository(),
       feed = MockFeedRepository(),
-      safety = MockSafetyRepository() {
-    discover = MockDiscoverRepository(profiles, safety);
+      safety = MockSafetyRepository(),
+      blocks = FakeBlockRepository() {
+    discover = MockDiscoverRepository(profiles, blocks);
     connections = MockConnectionRepository(profiles);
     chats = MockChatRepository(connections);
     notifications = MockNotificationRepository();
@@ -51,6 +54,7 @@ class TestApp {
         connections.removeUser(userId);
         notifications.removeUser(userId);
         safety.removeUser(userId);
+        blocks.removeUser(userId);
       },
     );
     session = SessionCubit(auth, profiles);
@@ -63,6 +67,7 @@ class TestApp {
   final FakeImageCompressor imageCompressor = const FakeImageCompressor();
   final FakeDocumentPicker documentPicker = FakeDocumentPicker();
   final MockSafetyRepository safety;
+  final FakeBlockRepository blocks;
   late final MockAuthRepository auth;
   late final MockDiscoverRepository discover;
   late final MockConnectionRepository connections;
@@ -80,6 +85,7 @@ class TestApp {
       RepositoryProvider<DocumentPickerService>.value(value: documentPicker),
       RepositoryProvider<FeedRepository>.value(value: feed),
       RepositoryProvider<SafetyRepository>.value(value: safety),
+      RepositoryProvider<BlockRepository>.value(value: blocks),
       RepositoryProvider<DiscoverRepository>.value(value: discover),
       RepositoryProvider<ConnectionRepository>.value(value: connections),
       RepositoryProvider<ChatRepository>.value(value: chats),

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../data/models/profile.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 
 /// 21b Blocked users.
 class BlockedUsersState extends Equatable {

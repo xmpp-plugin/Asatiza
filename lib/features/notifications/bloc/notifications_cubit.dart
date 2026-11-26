@@ -9,7 +9,7 @@ import '../../../data/models/profile.dart';
 import '../../../data/repositories/connection_repository.dart';
 import '../../../data/repositories/notification_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 import 'notifications_state.dart';
 
 /// Notifications with Accept / Decline on requests and Mark all read.
@@ -18,7 +18,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     this._notifications,
     this._connections,
     this._profiles,
-    this._safety, {
+    this._blocks, {
     required this.viewerId,
   }) : super(const NotificationsState()) {
     _itemsSub = _notifications
@@ -34,7 +34,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
           ),
           onError: (Object _) {},
         );
-    _blockedSub = _safety.watchBlockedIds(viewerId).listen((ids) {
+    _blockedSub = _blocks.watchBlockedIds(viewerId).listen((ids) {
       _blocked = ids;
       unawaited(_onItems(_latest));
     }, onError: (Object _) {});
@@ -43,7 +43,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
   final NotificationRepository _notifications;
   final ConnectionRepository _connections;
   final ProfileRepository _profiles;
-  final SafetyRepository _safety;
+  final BlockRepository _blocks;
   final String viewerId;
 
   StreamSubscription<List<AppNotification>>? _itemsSub;

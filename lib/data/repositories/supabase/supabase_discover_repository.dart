@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/enums/media_bucket.dart';
 import '../../models/enums/user_role.dart';
 import '../../models/profile.dart';
+import '../block_repository.dart';
 import '../discover_repository.dart';
 import 'profile_row_mapper.dart';
 import 'supabase_failure_mapper.dart';
@@ -17,18 +18,20 @@ import 'supabase_failure_mapper.dart';
 /// affect listing. RLS is unchanged (signed-in users read profiles). Each subscription loads once (no
 /// Realtime, PHASE_006 decision 2); re-subscribe to reload.
 ///
-/// Blocked users are not filtered yet: the `blocks` table arrives with the
-/// Safety phase, which adds that filter here (PHASE_006 decision 1,
-/// `docs/KNOWN_ISSUES.md`).
+/// Blocks (PHASE_007): people the viewer blocked are dropped here; people
+/// who blocked the viewer are already hidden by RLS. The list re-loads
+/// whenever the viewer's blocks change ([BlockRepository.watchBlockedIds]).
 class SupabaseDiscoverRepository implements DiscoverRepository {
   SupabaseDiscoverRepository(
-    this._client, {
+    this._client,
+    this._blocks, {
     ProfileRowMapper rows = const ProfileRowMapper(),
     SupabaseFailureMapper failures = const SupabaseFailureMapper(),
   }) : _rows = rows,
        _failures = failures;
 
   final SupabaseClient _client;
+  final BlockRepository _blocks;
   final ProfileRowMapper _rows;
   final SupabaseFailureMapper _failures;
 
@@ -37,13 +40,23 @@ class SupabaseDiscoverRepository implements DiscoverRepository {
 
   @override
   Stream<List<Profile>> watchTeachers({required String viewerId}) =>
-      Stream<List<Profile>>.fromFuture(_load(UserRole.teacher, viewerId));
+      _watch(UserRole.teacher, viewerId);
 
   @override
   Stream<List<Profile>> watchStudents({required String viewerId}) =>
-      Stream<List<Profile>>.fromFuture(_load(UserRole.student, viewerId));
+      _watch(UserRole.student, viewerId);
 
-  Future<List<Profile>> _load(UserRole role, String viewerId) async {
+  /// Loads once per change of the viewer's blocks (first emission on
+  /// subscribe). Errors arrive on the stream as `Failure`s.
+  Stream<List<Profile>> _watch(UserRole role, String viewerId) => _blocks
+      .watchBlockedIds(viewerId)
+      .asyncMap((blocked) => _load(role, viewerId, blocked));
+
+  Future<List<Profile>> _load(
+    UserRole role,
+    String viewerId,
+    Set<String> blocked,
+  ) async {
     try {
       final rows = await _client
           .from('profiles')
@@ -53,22 +66,23 @@ class SupabaseDiscoverRepository implements DiscoverRepository {
           .neq('id', viewerId)
           .order('created_at', ascending: false)
           .limit(maxRows);
-      return toProfiles(rows, viewerId: viewerId);
+      return toProfiles(rows, viewerId: viewerId, blocked: blocked);
     } catch (error) {
       throw _failures.map(error);
     }
   }
 
-  /// Maps loaded rows: drops the viewer, removes every student photo (plan
-  /// section 7) and fills teacher photo URLs from the public `avatars`
-  /// bucket.
+  /// Maps loaded rows: drops the viewer and the people the viewer [blocked],
+  /// removes every student photo (plan section 7) and fills teacher photo
+  /// URLs from the public `avatars` bucket.
   @visibleForTesting
   List<Profile> toProfiles(
     List<Map<String, dynamic>> rows, {
     required String viewerId,
+    Set<String> blocked = const <String>{},
   }) => <Profile>[
     for (final row in rows)
-      if (row['id'] != viewerId) _profile(row),
+      if (row['id'] != viewerId && !blocked.contains(row['id'])) _profile(row),
   ];
 
   Profile _profile(Map<String, dynamic> row) {

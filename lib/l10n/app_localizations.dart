@@ -2902,6 +2902,12 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get retryAction;
 
+  /// No description provided for @blockFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t update the block. Check your connection and try again.'**
+  String get blockFailedMessage;
+
   /// No description provided for @requiredFieldsMissing.
   ///
   /// In en, this message translates to:

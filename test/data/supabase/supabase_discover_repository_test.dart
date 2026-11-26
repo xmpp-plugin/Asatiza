@@ -2,11 +2,13 @@ import 'package:asatiza/data/models/enums/user_role.dart';
 import 'package:asatiza/data/repositories/supabase/supabase_discover_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../fakes/fake_block_repository.dart';
 
 void main() {
   // No network: only row mapping and the public-URL builder are used.
   final repo = SupabaseDiscoverRepository(
     SupabaseClient('https://example.supabase.co', 'public-test-key'),
+    FakeBlockRepository(),
   );
 
   Map<String, dynamic> row(String id, String role, {String? photo}) =>
@@ -35,6 +37,15 @@ void main() {
       row('t-1', 'teacher'),
     ], viewerId: 'me');
     expect(people.map((p) => p.id), <String>['t-1']);
+  });
+
+  test('drops the people the viewer blocked', () {
+    final people = repo.toProfiles(
+      <Map<String, dynamic>>[row('t-1', 'teacher'), row('t-2', 'teacher')],
+      viewerId: 'me',
+      blocked: <String>{'t-1'},
+    );
+    expect(people.map((p) => p.id), <String>['t-2']);
   });
 
   test('teacher photos get a public avatars URL', () {

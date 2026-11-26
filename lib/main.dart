@@ -16,6 +16,7 @@ import 'core/services/image_picker_image_picker_service.dart';
 import 'core/services/image_picker_service.dart';
 import 'core/session/session_cubit.dart';
 import 'data/repositories/auth_repository.dart';
+import 'data/repositories/block_repository.dart';
 import 'data/repositories/chat_repository.dart';
 import 'data/repositories/connection_repository.dart';
 import 'data/repositories/discover_repository.dart';
@@ -31,6 +32,7 @@ import 'data/repositories/mock/mock_safety_repository.dart';
 import 'data/repositories/profile_repository.dart';
 import 'data/repositories/safety_repository.dart';
 import 'data/repositories/supabase/supabase_auth_repository.dart';
+import 'data/repositories/supabase/supabase_block_repository.dart';
 import 'data/repositories/supabase/supabase_discover_repository.dart';
 import 'data/repositories/supabase/supabase_media_repository.dart';
 import 'data/repositories/supabase/supabase_profile_repository.dart';
@@ -39,11 +41,14 @@ import 'data/repositories/supabase/supabase_profile_repository.dart';
 ///
 /// Each repository is either real (Supabase) or mock, never both:
 /// - real: accounts ([AuthRepository]), profiles ([ProfileRepository]),
-///   Storage uploads ([MediaRepository]) and the Teachers / Students tabs
-///   ([DiscoverRepository]);
-/// - mock until their phases: feed, connections, chat,
-///   notifications and safety (in-memory sample people, reset on restart).
-/// When a feature becomes real, replace only its mock line below.
+///   Storage uploads ([MediaRepository]), the Teachers / Students tabs
+///   ([DiscoverRepository]) and blocks ([BlockRepository]);
+/// - mock until their phases: feed, connections, chat, notifications and
+///   post reports ([SafetyRepository]) (in-memory sample people, reset on
+///   restart).
+/// When a feature becomes real, replace its mock line below and move the
+/// mock class out of `lib/` into `test/fakes/` (PHASE_007 rule: the app
+/// keeps only the implementation it runs).
 ///
 /// Supabase settings: `--dart-define-from-file=…` when given, otherwise the
 /// bundled `env/supabase.json` (so a plain `flutter run` works). Without
@@ -73,7 +78,11 @@ Future<void> main() async {
   final supabaseProfiles = SupabaseProfileRepository(client);
   final ProfileRepository userProfiles = supabaseProfiles;
   final MediaRepository media = SupabaseMediaRepository(client);
-  final DiscoverRepository discover = SupabaseDiscoverRepository(client);
+  final BlockRepository blocks = SupabaseBlockRepository(client);
+  final DiscoverRepository discover = SupabaseDiscoverRepository(
+    client,
+    blocks,
+  );
   final AuthRepository auth = SupabaseAuthRepository(
     client,
     supabaseProfiles,
@@ -107,6 +116,7 @@ Future<void> main() async {
         RepositoryProvider<DocumentPickerService>.value(value: documentPicker),
         RepositoryProvider<FeedRepository>.value(value: feed),
         RepositoryProvider<SafetyRepository>.value(value: safety),
+        RepositoryProvider<BlockRepository>.value(value: blocks),
         RepositoryProvider<DiscoverRepository>.value(value: discover),
         RepositoryProvider<ChatRepository>.value(value: chats),
         RepositoryProvider<NotificationRepository>.value(value: notifications),

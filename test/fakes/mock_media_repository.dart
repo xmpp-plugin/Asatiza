@@ -1,12 +1,14 @@
 import 'dart:typed_data';
 
-import '../../../core/errors/failures.dart';
-import '../../../core/logic/certificate_file_rules.dart';
-import '../../models/enums/media_bucket.dart';
-import '../media_repository.dart';
+import 'package:asatiza/core/errors/failures.dart';
+import 'package:asatiza/core/logic/certificate_file_rules.dart';
+import 'package:asatiza/data/models/enums/media_bucket.dart';
+import 'package:asatiza/data/repositories/media_repository.dart';
 
 /// In-memory [MediaRepository] for tests: files live in a map keyed by
 /// `<bucket>/<path>`. [failNext] makes the next call throw that failure.
+// Test-only fake: the app uses the Supabase implementation (moved from
+// `lib/` in PHASE_007).
 class MockMediaRepository implements MediaRepository {
   MockMediaRepository({
     CertificateFileRules rules = const CertificateFileRules(),

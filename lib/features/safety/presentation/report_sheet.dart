@@ -11,6 +11,7 @@ import '../../../core/widgets/app_checkbox.dart';
 import '../../../data/models/enums/report_reason.dart';
 import '../../../data/models/post.dart';
 import '../../../data/models/profile.dart';
+import '../../../data/repositories/block_repository.dart';
 import '../../../data/repositories/safety_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../bloc/report_cubit.dart';
@@ -31,6 +32,7 @@ class ReportSheet extends StatelessWidget {
     required String reporterId,
   }) async {
     final safety = context.read<SafetyRepository>();
+    final blocks = context.read<BlockRepository>();
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context);
     final sent = await AppBottomSheet.show<bool>(
@@ -38,6 +40,7 @@ class ReportSheet extends StatelessWidget {
       builder: (_) => BlocProvider<ReportCubit>(
         create: (_) => ReportCubit(
           safety,
+          blocks,
           postId: post.id,
           authorId: author.id,
           reporterId: reporterId,

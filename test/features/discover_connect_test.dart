@@ -12,9 +12,8 @@ import 'package:asatiza/data/models/enums/subject.dart';
 import 'package:asatiza/data/models/profile.dart';
 import 'package:asatiza/data/repositories/discover_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_discover_repository.dart';
+import '../fakes/mock_discover_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
 import 'package:asatiza/features/connections/bloc/connect_request_cubit.dart';
 import 'package:asatiza/features/connections/bloc/connections_cubit.dart';
 import 'package:asatiza/features/connections/logic/connect_note_rules.dart';
@@ -34,6 +33,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import '../helpers/test_app.dart';
+import '../fakes/fake_block_repository.dart';
 
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));
 
@@ -163,14 +163,14 @@ void main() {
 
   group('mocks', () {
     late MockProfileRepository profiles;
-    late MockSafetyRepository safety;
+    late FakeBlockRepository blocks;
     late MockDiscoverRepository discover;
     late MockConnectionRepository connections;
 
     setUp(() {
       profiles = MockProfileRepository(now: now);
-      safety = MockSafetyRepository();
-      discover = MockDiscoverRepository(profiles, safety);
+      blocks = FakeBlockRepository();
+      discover = MockDiscoverRepository(profiles, blocks);
       connections = MockConnectionRepository(profiles, now: now);
     });
 
@@ -179,7 +179,7 @@ void main() {
           .watchTeachers(viewerId: MockIds.ayesha)
           .first;
       expect(before.any((p) => p.id == MockIds.usman), isTrue);
-      await safety.blockUser(
+      await blocks.blockUser(
         blockerId: MockIds.usman,
         blockedId: MockIds.ayesha,
       );
@@ -333,7 +333,7 @@ void main() {
       final cubit = ConnectionsCubit(
         connections,
         profiles,
-        safety,
+        blocks,
         viewerId: MockIds.ahmed,
       );
       await settle();

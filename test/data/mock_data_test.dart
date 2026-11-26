@@ -4,11 +4,12 @@ import 'package:asatiza/data/mock/mock_profiles.dart';
 import 'package:asatiza/data/models/enums/post_tag.dart';
 import 'package:asatiza/data/models/enums/report_reason.dart';
 import 'package:asatiza/data/models/enums/user_role.dart';
-import 'package:asatiza/data/repositories/mock/mock_auth_repository.dart';
+import '../fakes/mock_auth_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../fakes/fake_block_repository.dart';
 
 void main() {
   final now = DateTime(2026, 11, 19, 16);
@@ -172,32 +173,41 @@ void main() {
     });
   });
 
-  group('MockSafetyRepository and MockProfileRepository', () {
-    test('blocking emits the blocked id; reports are counted', () async {
-      final safety = MockSafetyRepository();
-      await safety.reportPost(
-        postId: 'post-001',
-        reporterId: MockIds.ayesha,
-        reason: ReportReason.spam,
-      );
-      await safety.blockUser(
-        blockerId: MockIds.ayesha,
-        blockedId: MockIds.ahmed,
-      );
-      expect(await safety.watchBlockedIds(MockIds.ayesha).first, <String>{
-        MockIds.ahmed,
+  group(
+    'MockSafetyRepository, FakeBlockRepository and MockProfileRepository',
+    () {
+      test('reports are counted; blocking emits the blocked id', () async {
+        final safety = MockSafetyRepository();
+        await safety.reportPost(
+          postId: 'post-001',
+          reporterId: MockIds.ayesha,
+          reason: ReportReason.spam,
+        );
+        expect(safety.reportCount, 1);
+        final blocks = FakeBlockRepository();
+        await blocks.blockUser(
+          blockerId: MockIds.ayesha,
+          blockedId: MockIds.ahmed,
+        );
+        // Blocking yourself is a no-op (BlockRepository contract).
+        await blocks.blockUser(
+          blockerId: MockIds.ayesha,
+          blockedId: MockIds.ayesha,
+        );
+        expect(await blocks.watchBlockedIds(MockIds.ayesha).first, <String>{
+          MockIds.ahmed,
+        });
       });
-      expect(safety.reportCount, 1);
-    });
-    test('updateProfile never changes role or verification', () async {
-      final profiles = MockProfileRepository(now: now);
-      final ahmed = await profiles.getProfile(MockIds.ahmed);
-      final saved = await profiles.updateProfile(
-        ahmed.copyWith(headline: 'Tajweed teacher, 9 years'),
-      );
-      expect(saved.headline, 'Tajweed teacher, 9 years');
-      expect(saved.role, UserRole.teacher);
-      expect(saved.isVerified, isTrue);
-    });
-  });
+      test('updateProfile never changes role or verification', () async {
+        final profiles = MockProfileRepository(now: now);
+        final ahmed = await profiles.getProfile(MockIds.ahmed);
+        final saved = await profiles.updateProfile(
+          ahmed.copyWith(headline: 'Tajweed teacher, 9 years'),
+        );
+        expect(saved.headline, 'Tajweed teacher, 9 years');
+        expect(saved.role, UserRole.teacher);
+        expect(saved.isVerified, isTrue);
+      });
+    },
+  );
 }

@@ -12,7 +12,7 @@ import '../../../core/widgets/back_header.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/profile_repository.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../discover/presentation/widgets/person_row.dart';
 import '../bloc/blocked_users_cubit.dart';
@@ -30,7 +30,7 @@ class BlockedUsersScreen extends StatelessWidget {
     }
     return BlocProvider<BlockedUsersCubit>(
       create: (context) => BlockedUsersCubit(
-        context.read<SafetyRepository>(),
+        context.read<BlockRepository>(),
         context.read<ProfileRepository>(),
         viewerId: user.id,
       ),
@@ -101,7 +101,16 @@ class _BlockedUsersView extends StatelessWidget {
                           ),
                           trailing: AppButton(
                             label: l10n.unblockAction,
-                            onPressed: () => cubit.unblock(b.userId),
+                            onPressed: () async {
+                              final messenger = ScaffoldMessenger.of(context);
+                              if (!await cubit.unblock(b.userId)) {
+                                messenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.blockFailedMessage),
+                                  ),
+                                );
+                              }
+                            },
                             size: AppButtonSize.small,
                             variant: AppButtonVariant.secondary,
                             expand: false,

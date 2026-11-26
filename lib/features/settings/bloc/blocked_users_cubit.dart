@@ -2,21 +2,22 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/errors/failures.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/profile_repository.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 import 'blocked_users_state.dart';
 
 /// Lists the people the user blocked and unblocks them.
 class BlockedUsersCubit extends Cubit<BlockedUsersState> {
-  BlockedUsersCubit(this._safety, this._profiles, {required this.viewerId})
+  BlockedUsersCubit(this._blocks, this._profiles, {required this.viewerId})
     : super(const BlockedUsersState()) {
-    _sub = _safety
+    _sub = _blocks
         .watchBlockedUsers(viewerId)
         .listen(_onBlocked, onError: (Object _) {});
   }
 
-  final SafetyRepository _safety;
+  final BlockRepository _blocks;
   final ProfileRepository _profiles;
   final String viewerId;
   StreamSubscription<List<BlockedUser>>? _sub;
@@ -35,8 +36,16 @@ class BlockedUsersCubit extends Cubit<BlockedUsersState> {
     }
   }
 
-  Future<void> unblock(String userId) =>
-      _safety.unblockUser(blockerId: viewerId, blockedId: userId);
+  /// Removes the block; false when it failed (offline / server error), so
+  /// the screen can say so. The list is unchanged on failure.
+  Future<bool> unblock(String userId) async {
+    try {
+      await _blocks.unblockUser(blockerId: viewerId, blockedId: userId);
+      return true;
+    } on Failure {
+      return false;
+    }
+  }
 
   @override
   Future<void> close() async {

@@ -1,17 +1,20 @@
 import 'dart:async';
 
-import '../../../core/logic/discover_visibility_rules.dart';
-import '../../models/profile.dart';
-import '../discover_repository.dart';
-import 'mock_profile_repository.dart';
-import 'mock_safety_repository.dart';
+import 'package:asatiza/core/logic/discover_visibility_rules.dart';
+import 'package:asatiza/data/models/profile.dart';
+import 'package:asatiza/data/repositories/discover_repository.dart';
+import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
 
-/// In-memory [DiscoverRepository] over the mock profiles and blocks.
+import 'fake_block_repository.dart';
+
+/// Test-only in-memory [DiscoverRepository] over the mock profiles and
+/// blocks (the app uses `SupabaseDiscoverRepository`; moved from `lib/` in
+/// PHASE_007).
 class MockDiscoverRepository implements DiscoverRepository {
-  MockDiscoverRepository(this._profiles, this._safety);
+  MockDiscoverRepository(this._profiles, this._blocks);
 
   final MockProfileRepository _profiles;
-  final MockSafetyRepository _safety;
+  final FakeBlockRepository _blocks;
 
   static const DiscoverVisibilityRules _rules = DiscoverVisibilityRules();
 
@@ -19,7 +22,7 @@ class MockDiscoverRepository implements DiscoverRepository {
     for (final p in _profiles.all)
       if (p.id != viewerId &&
           _rules.isTeacherListed(p) &&
-          !_safety.blockedEitherWay(viewerId, p.id))
+          !_blocks.blockedEitherWay(viewerId, p.id))
         p,
   ];
 
@@ -27,7 +30,7 @@ class MockDiscoverRepository implements DiscoverRepository {
     for (final p in _profiles.all)
       if (p.id != viewerId &&
           _rules.isStudentListed(p) &&
-          !_safety.blockedEitherWay(viewerId, p.id))
+          !_blocks.blockedEitherWay(viewerId, p.id))
         _withoutPhoto(p),
   ];
 
@@ -57,7 +60,7 @@ class MockDiscoverRepository implements DiscoverRepository {
         void push(void _) => controller.add(read());
         subs
           ..add(_profiles.changes.listen(push))
-          ..add(_safety.changes.listen(push));
+          ..add(_blocks.changes.listen(push));
       },
       onCancel: () async {
         for (final s in subs) {

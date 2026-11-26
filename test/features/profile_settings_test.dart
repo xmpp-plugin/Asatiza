@@ -14,7 +14,7 @@ import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_notification_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_auth_repository.dart';
+import '../fakes/mock_auth_repository.dart';
 import 'package:asatiza/features/profile/bloc/edit_profile_cubit.dart';
 import 'package:asatiza/features/profile/bloc/my_profile_cubit.dart';
 import 'package:asatiza/features/profile/presentation/edit_profile_screen.dart';
@@ -25,12 +25,13 @@ import 'package:asatiza/features/settings/bloc/settings_cubit.dart';
 import 'package:asatiza/features/settings/presentation/blocked_users_screen.dart';
 import 'package:asatiza/features/settings/presentation/policy_screen.dart';
 import 'package:asatiza/features/settings/presentation/settings_screen.dart';
-import 'package:asatiza/data/repositories/mock/mock_media_repository.dart';
+import '../fakes/mock_media_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import '../helpers/test_app.dart';
+import '../fakes/fake_block_repository.dart';
 
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));
 
@@ -39,6 +40,7 @@ void main() {
   late MockProfileRepository profiles;
   late MockFeedRepository feed;
   late MockSafetyRepository safety;
+  late FakeBlockRepository blocks;
   late MockConnectionRepository connections;
   late MockChatRepository chats;
   late MockNotificationRepository notifications;
@@ -47,7 +49,8 @@ void main() {
   setUp(() {
     profiles = MockProfileRepository(now: now);
     feed = MockFeedRepository(now: now);
-    safety = MockSafetyRepository(clock: () => now);
+    safety = MockSafetyRepository();
+    blocks = FakeBlockRepository(clock: () => now);
     connections = MockConnectionRepository(profiles, now: now);
     chats = MockChatRepository(connections, now: now);
     notifications = MockNotificationRepository(now: now);
@@ -59,6 +62,7 @@ void main() {
         connections.removeUser(id);
         notifications.removeUser(id);
         safety.removeUser(id);
+        blocks.removeUser(id);
       },
     );
   });
@@ -108,18 +112,18 @@ void main() {
     });
 
     test('blocked users list with dates; unblock', () async {
-      await safety.blockUser(
+      await blocks.blockUser(
         blockerId: MockIds.ayesha,
         blockedId: MockIds.imran,
       );
-      final list = await safety.watchBlockedUsers(MockIds.ayesha).first;
+      final list = await blocks.watchBlockedUsers(MockIds.ayesha).first;
       expect(list.single.userId, MockIds.imran);
       expect(list.single.blockedAt, now);
-      await safety.unblockUser(
+      await blocks.unblockUser(
         blockerId: MockIds.ayesha,
         blockedId: MockIds.imran,
       );
-      expect(await safety.watchBlockedUsers(MockIds.ayesha).first, isEmpty);
+      expect(await blocks.watchBlockedUsers(MockIds.ayesha).first, isEmpty);
     });
   });
 
@@ -288,7 +292,7 @@ void main() {
     ) async {
       final app = TestApp();
       await app.startSignedIn(tester);
-      await app.safety.blockUser(
+      await app.blocks.blockUser(
         blockerId: MockIds.ayesha,
         blockedId: MockIds.imran,
       );

@@ -911,6 +911,7 @@
   "certificateOpenFailedTitle": "Couldn’t open the certificate",
   "certificateOpenFailedMessage": "Check your connection and try again.",
   "retryAction": "Try again",
+  "blockFailedMessage": "Couldn’t update the block. Check your connection and try again.",
   "requiredFieldsMissing": "Fill in to save: {fields}",
   "@requiredFieldsMissing": {
     "placeholders": {

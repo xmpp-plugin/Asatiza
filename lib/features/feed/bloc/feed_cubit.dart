@@ -7,19 +7,19 @@ import '../../../data/models/post.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/feed_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 import 'feed_state.dart';
 
 /// Home feed: ordered posts (repository order) minus blocked authors, with
 /// their author profiles.
 class FeedCubit extends Cubit<FeedState> {
-  FeedCubit(this._feed, this._profiles, this._safety, {required this.viewerId})
+  FeedCubit(this._feed, this._profiles, this._blocks, {required this.viewerId})
     : super(const FeedState()) {
     _postsSub = _feed.watchPosts(viewerId: viewerId).listen((posts) {
       _latestPosts = posts;
       _rebuild();
     }, onError: (Object _) {});
-    _blockedSub = _safety.watchBlockedIds(viewerId).listen((ids) {
+    _blockedSub = _blocks.watchBlockedIds(viewerId).listen((ids) {
       _blocked = ids;
       _rebuild();
     }, onError: (Object _) {});
@@ -27,7 +27,7 @@ class FeedCubit extends Cubit<FeedState> {
 
   final FeedRepository _feed;
   final ProfileRepository _profiles;
-  final SafetyRepository _safety;
+  final BlockRepository _blocks;
   final String viewerId;
 
   StreamSubscription<List<Post>>? _postsSub;

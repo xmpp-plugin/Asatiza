@@ -16,7 +16,7 @@ import '../../../data/models/profile.dart';
 import '../../../data/repositories/connection_repository.dart';
 import '../../../data/repositories/notification_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../bloc/notifications_cubit.dart';
 import '../bloc/notifications_state.dart';
@@ -39,7 +39,7 @@ class NotificationsScreen extends StatelessWidget {
         context.read<NotificationRepository>(),
         context.read<ConnectionRepository>(),
         context.read<ProfileRepository>(),
-        context.read<SafetyRepository>(),
+        context.read<BlockRepository>(),
         viewerId: user.id,
       ),
       child: const _NotificationsView(),

@@ -18,7 +18,7 @@ import '../../../data/models/enums/subject.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/connection_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../discover/presentation/widgets/person_row.dart';
 import '../bloc/connections_cubit.dart';
@@ -42,7 +42,7 @@ class ConnectionsScreen extends StatelessWidget {
       create: (context) => ConnectionsCubit(
         context.read<ConnectionRepository>(),
         context.read<ProfileRepository>(),
-        context.read<SafetyRepository>(),
+        context.read<BlockRepository>(),
         viewerId: viewer.id,
         initialTab: initialTab ?? ConnectionsTab.connected,
       ),

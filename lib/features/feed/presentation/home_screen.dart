@@ -14,7 +14,7 @@ import '../../../data/models/post.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/feed_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../safety/presentation/report_sheet.dart';
 import '../bloc/feed_cubit.dart';
@@ -37,7 +37,7 @@ class HomeScreen extends StatelessWidget {
       create: (context) => FeedCubit(
         context.read<FeedRepository>(),
         context.read<ProfileRepository>(),
-        context.read<SafetyRepository>(),
+        context.read<BlockRepository>(),
         viewerId: user.id,
       ),
       child: const _HomeView(),

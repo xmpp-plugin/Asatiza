@@ -10,10 +10,10 @@ import 'package:asatiza/data/models/enums/teaching_language.dart';
 import 'package:asatiza/data/models/enums/user_role.dart';
 import 'package:asatiza/data/models/enums/weekday.dart';
 import 'package:asatiza/data/models/profile.dart';
-import 'package:asatiza/data/repositories/mock/mock_auth_repository.dart';
+import '../fakes/mock_auth_repository.dart';
 import 'package:asatiza/core/services/image_source_kind.dart';
 import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_media_repository.dart';
+import '../fakes/mock_media_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
 import 'package:asatiza/features/auth/bloc/login_cubit.dart';
@@ -36,6 +36,10 @@ import 'package:asatiza/features/safety/bloc/report_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_app.dart';
+import '../fakes/fake_block_repository.dart';
+import 'package:asatiza/features/discover/bloc/public_profile_cubit.dart';
+import 'package:asatiza/features/settings/bloc/blocked_users_cubit.dart';
+import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
 
 /// Lets stream listeners and async cubit work run.
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));
@@ -45,12 +49,14 @@ void main() {
   late MockAuthRepository auth;
   late MockFeedRepository feed;
   late MockSafetyRepository safety;
+  late FakeBlockRepository blocks;
 
   setUp(() {
     profiles = MockProfileRepository();
     auth = MockAuthRepository(profiles);
     feed = MockFeedRepository();
     safety = MockSafetyRepository();
+    blocks = FakeBlockRepository();
   });
 
   test('SessionCubit: sign in, setup flag, profile updates, log out', () async {
@@ -331,7 +337,7 @@ void main() {
   test(
     'FeedCubit: loads ordered posts with authors; like toggles; block hides',
     () async {
-      final cubit = FeedCubit(feed, profiles, safety, viewerId: MockIds.ayesha);
+      final cubit = FeedCubit(feed, profiles, blocks, viewerId: MockIds.ayesha);
       await settle();
       expect(cubit.state.status, FeedStatus.ready);
       expect(cubit.state.visiblePosts.first.authorId, MockIds.ahmed);
@@ -341,7 +347,7 @@ void main() {
         cubit.state.posts.firstWhere((p) => p.id == 'post-002').likedByMe,
         isTrue,
       );
-      await safety.blockUser(
+      await blocks.blockUser(
         blockerId: MockIds.ayesha,
         blockedId: MockIds.ahmed,
       );
@@ -392,6 +398,7 @@ void main() {
   test('ReportCubit: reason required; also-block blocks the author', () async {
     final cubit = ReportCubit(
       safety,
+      blocks,
       postId: 'post-001',
       authorId: MockIds.ahmed,
       reporterId: MockIds.ayesha,
@@ -402,10 +409,48 @@ void main() {
       ..alsoBlockChanged(true);
     await cubit.submit();
     expect(cubit.state.status, ReportStatus.sent);
+    expect(safety.reportCount, 1);
     expect(
-      await safety.watchBlockedIds(MockIds.ayesha).first,
+      await blocks.watchBlockedIds(MockIds.ayesha).first,
       contains(MockIds.ahmed),
     );
+    await cubit.close();
+  });
+
+  test('PublicProfileCubit.block: a failure changes nothing', () async {
+    final cubit = PublicProfileCubit(
+      profiles,
+      MockConnectionRepository(profiles),
+      feed,
+      blocks,
+      viewerId: MockIds.ayesha,
+      profileId: MockIds.ahmed,
+    );
+    await settle();
+    blocks.failWith = const NetworkFailure();
+    expect(await cubit.block(), isFalse);
+    expect(cubit.state.blocked, isFalse);
+    blocks.failWith = null;
+    expect(await cubit.block(), isTrue);
+    expect(cubit.state.blocked, isTrue);
+    await cubit.close();
+  });
+
+  test('BlockedUsersCubit.unblock: a failure keeps the block', () async {
+    await blocks.blockUser(blockerId: MockIds.ayesha, blockedId: MockIds.imran);
+    final cubit = BlockedUsersCubit(blocks, profiles, viewerId: MockIds.ayesha);
+    await settle();
+    expect(cubit.state.blocked.single.userId, MockIds.imran);
+    blocks.failWith = const NetworkFailure();
+    expect(await cubit.unblock(MockIds.imran), isFalse);
+    blocks.failWith = null;
+    expect(
+      await blocks.watchBlockedIds(MockIds.ayesha).first,
+      contains(MockIds.imran),
+    );
+    expect(await cubit.unblock(MockIds.imran), isTrue);
+    await settle();
+    expect(cubit.state.blocked, isEmpty);
     await cubit.close();
   });
 

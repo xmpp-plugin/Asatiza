@@ -34,7 +34,7 @@ import '../../../data/models/teacher_details.dart';
 import '../../../data/repositories/connection_repository.dart';
 import '../../../data/repositories/feed_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../connections/presentation/connect_sheet.dart';
 import '../bloc/public_profile_cubit.dart';
@@ -57,7 +57,7 @@ class PublicProfileScreen extends StatelessWidget {
         context.read<ProfileRepository>(),
         context.read<ConnectionRepository>(),
         context.read<FeedRepository>(),
-        context.read<SafetyRepository>(),
+        context.read<BlockRepository>(),
         viewerId: viewer.id,
         profileId: profileId,
       ),
@@ -83,6 +83,7 @@ class _PublicProfileView extends StatelessWidget {
   Future<void> _more(BuildContext context, Profile p) async {
     final l10n = AppLocalizations.of(context);
     final cubit = context.read<PublicProfileCubit>();
+    final messenger = ScaffoldMessenger.of(context);
     final colors = Theme.of(context).extension<AppColors>()!;
     final block = await AppBottomSheet.show<bool>(
       context,
@@ -120,8 +121,8 @@ class _PublicProfileView extends StatelessWidget {
         ],
       ),
     );
-    if (block ?? false) {
-      await cubit.block();
+    if ((block ?? false) && !await cubit.block()) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.blockFailedMessage)));
     }
   }
 

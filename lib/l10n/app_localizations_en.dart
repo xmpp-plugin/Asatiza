@@ -1679,6 +1679,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retryAction => 'Try again';
 
   @override
+  String get blockFailedMessage =>
+      'Couldn’t update the block. Check your connection and try again.';
+
+  @override
   String requiredFieldsMissing(String fields) {
     return 'Fill in to save: $fields';
   }

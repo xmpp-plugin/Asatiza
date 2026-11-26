@@ -1,17 +1,19 @@
-import '../../../core/errors/failures.dart';
-import '../../../features/auth/logic/otp_rules.dart';
-import '../../../features/auth/logic/password_rules.dart';
-import '../../models/enums/user_role.dart';
-import '../../models/profile.dart';
-import '../../models/student_details.dart';
-import '../../models/teacher_details.dart';
-import '../auth_repository.dart';
-import 'mock_profile_repository.dart';
+import 'package:asatiza/core/errors/failures.dart';
+import 'package:asatiza/features/auth/logic/otp_rules.dart';
+import 'package:asatiza/features/auth/logic/password_rules.dart';
+import 'package:asatiza/data/models/enums/user_role.dart';
+import 'package:asatiza/data/models/profile.dart';
+import 'package:asatiza/data/models/student_details.dart';
+import 'package:asatiza/data/models/teacher_details.dart';
+import 'package:asatiza/data/repositories/auth_repository.dart';
+import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
 
 /// In-memory [AuthRepository]. Any valid email + 8-character password signs
 /// in; any 6 digits are a valid code. Known emails (the two mock accounts
 /// and anyone who signed up) get their own profile; other emails sign in as
 /// a new student.
+// Test-only fake: the app uses the Supabase implementation (moved from
+// `lib/` in PHASE_007).
 class MockAuthRepository implements AuthRepository {
   MockAuthRepository(this._profiles, {void Function(String userId)? onDelete})
     : _onDelete = onDelete;

@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-26 (`PHASE_007`): `supabase/migrations/20261127120000_blocks.sql` — `public.blocks (blocker_id, blocked_id, created_at)` (PK on both ids, FKs to `profiles` on delete cascade, no self-block, index on `blocked_id`); RLS: own blocks only (select / insert of the two ids / delete), nobody reads who blocked them. Profile / detail read policies now hide a profile from people its owner blocked, unless they also blocked the owner (`private.hidden_by_block`, security definer; `authenticated` gets usage on schema `private` and execute on this one function only). Checks: `supabase/tests/blocks_rls_checks.sql` (rolled back). Applied to the remote project: UNVERIFIED — the developer applies it before running a PHASE_007 build.
+
 VERIFIED 2026-11-26 (`PHASE_006` scope change): `supabase/migrations/20261126120000_profile_status.sql` adds `profiles.status` (`incomplete` / `active`, set by `private.profiles_before_write` from `private.profile_is_complete`: every required field filled; no update grant), drops `completion_pct`, `is_visible` and `private.profile_strength`, and recomputes every row. Lists read `status = 'active'`. Read-only checks: `supabase/tests/profile_status_checks.sql`; `profiles_rls_checks.sql` check 5 now covers `status`. Applied to the remote project: UNVERIFIED — the developer applies it in the SQL editor **before** running a PHASE_006 build. The older `is_visible` note below is superseded.
 
 VERIFIED 2026-11-25 (`PHASE_006`): Teachers / Students lists read `profiles` where `is_visible = true` (set by `private.profile_strength`); no migration, no RLS change, no local cache (loaded on tab open and refresh).

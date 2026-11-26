@@ -22,6 +22,10 @@ Status: DECIDED rules for all new code (owner decision 2026-11-18: SOLID, `logic
 - **I — Interface segregation:** no repository serves unrelated screens. Split an interface when its callers use disjoint groups of methods. Blocs/cubits depend only on the interfaces they actually call. Decided split: `ProfileRepository` (my profile, setup, edit, other user's profile), `DiscoverRepository` (Teachers/Students lists, search, filters), `MediaRepository` (all uploads: avatars, certificates, post images, chat images).
 - **D — Dependency inversion:** blocs, cubits and logic classes depend on abstractions. Concrete classes (`SupabaseClient`, `Dio`, `Supabase*Repository`, service implementations) are created only in the composition root and registered **by interface type**, e.g. `RepositoryProvider<ProfileRepository>(create: (_) => SupabaseProfileRepository(client))`. No class reaches a global singleton (`Supabase.instance`, `FirebaseMessaging.instance`, `FirebaseCrashlytics.instance`) from inside its methods.
 
+## Test Doubles
+
+DECIDED (PHASE_007): mock repositories live in `lib/` only while the app still runs them. Once a feature is real, its mock moves to `test/fakes/` (test-only) and honours the same interface contract; production code never imports `test/`.
+
 ## Repository Method Contract
 
 Document on every interface method (Dart doc comment) and in `API_REFERENCE.md`:

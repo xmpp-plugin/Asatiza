@@ -2,7 +2,7 @@ import 'package:asatiza/core/errors/failures.dart';
 import 'package:asatiza/data/mock/mock_profiles.dart';
 import 'package:asatiza/data/models/profile.dart';
 import 'package:asatiza/data/repositories/auth_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_auth_repository.dart';
+import '../fakes/mock_auth_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
 import 'package:asatiza/l10n/app_localizations.dart';
 import 'package:asatiza/core/theme/app_theme.dart';

@@ -5,7 +5,6 @@ import 'package:asatiza/data/repositories/mock/mock_chat_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_notification_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
 import 'package:asatiza/features/chat/bloc/chat_cubit.dart';
 import 'package:asatiza/features/chat/presentation/chat_screen.dart';
 import 'package:asatiza/features/chat/presentation/widgets/conversation_tile.dart';
@@ -17,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import '../helpers/test_app.dart';
+import '../fakes/fake_block_repository.dart';
 
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));
 
@@ -132,7 +132,7 @@ void main() {
         notifications,
         connections,
         profiles,
-        MockSafetyRepository(),
+        FakeBlockRepository(),
         viewerId: MockIds.ahmed,
       );
       await settle();

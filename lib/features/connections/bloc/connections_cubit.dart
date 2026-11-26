@@ -7,7 +7,7 @@ import '../../../data/models/connection.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/connection_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 import 'connections_state.dart';
 
 /// My connections: lists, accept / decline, remove, cancel and block.
@@ -15,21 +15,21 @@ class ConnectionsCubit extends Cubit<ConnectionsState> {
   ConnectionsCubit(
     this._connections,
     this._profiles,
-    this._safety, {
+    this._blocks, {
     required String viewerId,
     ConnectionsTab initialTab = ConnectionsTab.connected,
   }) : super(ConnectionsState(viewerId: viewerId, tab: initialTab)) {
     _sub = _connections
         .watchConnections(viewerId)
         .listen(_onConnections, onError: (Object _) {});
-    _blockedSub = _safety
+    _blockedSub = _blocks
         .watchBlockedIds(viewerId)
         .listen(_onBlocked, onError: (Object _) {});
   }
 
   final ConnectionRepository _connections;
   final ProfileRepository _profiles;
-  final SafetyRepository _safety;
+  final BlockRepository _blocks;
 
   StreamSubscription<List<Connection>>? _sub;
   StreamSubscription<Set<String>>? _blockedSub;
@@ -82,7 +82,7 @@ class ConnectionsCubit extends Cubit<ConnectionsState> {
   );
 
   Future<void> block(Connection connection) => _guard(
-    () => _safety.blockUser(
+    () => _blocks.blockUser(
       blockerId: _viewerId,
       blockedId: connection.otherId(_viewerId),
     ),

@@ -10,7 +10,7 @@ import '../../../data/models/profile.dart';
 import '../../../data/repositories/connection_repository.dart';
 import '../../../data/repositories/feed_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
-import '../../../data/repositories/safety_repository.dart';
+import '../../../data/repositories/block_repository.dart';
 import 'public_profile_state.dart';
 
 /// Someone else's profile: details, connection state, counts and block.
@@ -19,7 +19,7 @@ class PublicProfileCubit extends Cubit<PublicProfileState> {
     this._profiles,
     this._connections,
     this._feed,
-    this._safety, {
+    this._blocks, {
     required this.viewerId,
     required this.profileId,
   }) : super(const PublicProfileState()) {
@@ -59,7 +59,7 @@ class PublicProfileCubit extends Cubit<PublicProfileState> {
   final ProfileRepository _profiles;
   final ConnectionRepository _connections;
   final FeedRepository _feed;
-  final SafetyRepository _safety;
+  final BlockRepository _blocks;
   final String viewerId;
   final String profileId;
 
@@ -102,9 +102,16 @@ class PublicProfileCubit extends Cubit<PublicProfileState> {
     }
   }
 
-  Future<void> block() async {
-    await _safety.blockUser(blockerId: viewerId, blockedId: profileId);
+  /// Blocks the person; false when it failed (offline / server error), so
+  /// the screen can say so. Nothing changes on failure.
+  Future<bool> block() async {
+    try {
+      await _blocks.blockUser(blockerId: viewerId, blockedId: profileId);
+    } on Failure {
+      return false;
+    }
     _emit(state.copyWith(blocked: true));
+    return true;
   }
 
   @override

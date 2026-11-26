@@ -2,6 +2,8 @@
 
 ## Verified Architecture (updated 2026-11-19, `PHASE_001`)
 
+VERIFIED 2026-11-26 (`PHASE_007`): blocks are real (`BlockRepository` → `SupabaseBlockRepository`); post reports stay on `MockSafetyRepository`. DECIDED rule (developer, PHASE_007): `lib/` keeps only the implementation the app runs — when a feature becomes real, its mock repository moves from `lib/data/repositories/mock/` to `test/fakes/` as a test-only fake. Moved so far: `MockAuthRepository`, `MockDiscoverRepository`, `MockMediaRepository`, block code (`FakeBlockRepository`). `MockProfileRepository` stays in `lib/` while it is the sample-people source for the remaining mocks.
+
 VERIFIED 2026-11-26 (`PHASE_006` scope change): no profile percentage anywhere. `ProfileCompletenessRules` (core logic) replaces `ProfileStrengthCalculator`; `SessionState.needsSetup` is derived from `Profile.isActive`, so the router sends every incomplete user to setup (no Skip; setup opens at the first incomplete step). `DailyShuffle` (discover logic) orders lists. `ProfileStrengthCard` and `DiscoverSort` removed.
 
 VERIFIED 2026-11-25 (`PHASE_006`): `DiscoverRepository` is real (`SupabaseDiscoverRepository`) in `lib/main.dart`; `MockDiscoverRepository` stays for tests. `DiscoverCubit` has `DiscoverStatus.error` and `refresh()` (pull-to-refresh, "Try again"). Still mock: feed, connections, chat, notifications, safety.
