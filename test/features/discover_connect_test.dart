@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:asatiza/core/errors/failures.dart';
 import 'package:asatiza/core/logic/discover_visibility_rules.dart';
+import 'package:asatiza/core/logic/profile_completeness_rules.dart';
 import 'package:asatiza/data/mock/mock_profiles.dart';
 import 'package:asatiza/data/models/enums/connection_status.dart';
-import 'package:asatiza/data/models/enums/discover_sort.dart';
 import 'package:asatiza/data/models/enums/experience_filter.dart';
 import 'package:asatiza/data/models/enums/gender.dart';
 import 'package:asatiza/data/models/enums/learner_age_group.dart';
@@ -21,6 +21,7 @@ import 'package:asatiza/features/connections/logic/connect_note_rules.dart';
 import 'package:asatiza/features/connections/presentation/connections_screen.dart';
 import 'package:asatiza/features/discover/bloc/discover_cubit.dart';
 import 'package:asatiza/features/discover/bloc/discover_state.dart';
+import 'package:asatiza/features/discover/logic/daily_shuffle.dart';
 import 'package:asatiza/features/discover/logic/student_filter.dart';
 import 'package:asatiza/features/discover/logic/teacher_filter.dart';
 import 'package:asatiza/features/discover/presentation/discover_screen.dart';
@@ -40,21 +41,32 @@ String subjectName(Subject s) => s.name;
 
 void main() {
   final now = DateTime(2026, 11, 23);
-  final seed = buildMockProfiles(now);
+  const completeness = ProfileCompletenessRules();
+  // Seed people with their status, as the mock repository stores them.
+  final seed = <Profile>[
+    for (final p in buildMockProfiles(now))
+      p.copyWith(isActive: completeness.isComplete(p)),
+  ];
   Profile byId(String id) => seed.firstWhere((p) => p.id == id);
   const rules = DiscoverVisibilityRules();
 
   group('logic', () {
-    test('verified teachers from 80 % are listed; unverified are not', () {
+    test('every active teacher is listed, verified or not', () {
       final listed = seed.where(rules.isTeacherListed).toList();
       expect(listed, isNotEmpty);
-      expect(listed.any((p) => p.id == MockIds.rabia), isFalse);
+      expect(listed.any((p) => !p.isVerified), isTrue);
       expect(rules.isTeacherListed(byId(MockIds.ahmed)), isTrue);
+      final incomplete = byId(MockIds.ahmed).copyWith(isActive: false);
+      expect(rules.isTeacherListed(incomplete), isFalse);
+      expect(rules.canSendRequest(incomplete), isFalse);
     });
 
-    test('students are listed only while looking, from 60 %', () {
-      expect(rules.isStudentListed(byId(MockIds.bilalKhan)), isFalse);
+    test('every active student is listed; Looking is information only', () {
+      final bilal = byId(MockIds.bilalKhan);
+      expect(bilal.studentDetails!.lookingForTeacher, isFalse);
+      expect(rules.isStudentListed(bilal), isTrue);
       expect(rules.isStudentListed(byId(MockIds.sana)), isTrue);
+      expect(rules.isStudentListed(byId(MockIds.ahmed)), isFalse);
     });
 
     test('teacher filter: query, subject, gender, experience, fee', () {
@@ -106,12 +118,23 @@ void main() {
       expect(f.reset(), const TeacherFilter(query: 'q'));
     });
 
-    test('teacher order: verified, then most complete first', () {
-      final listed = const TeacherFilter().apply(
-        seed.where((p) => p.isTeacher),
-        subjectName,
-      );
-      expect(listed.last.isVerified, isFalse);
+    test('daily shuffle: same order all day, new order the next day', () {
+      final teachers = seed.where((p) => p.isTeacher).toList();
+      List<String> order(String viewer, DateTime day) => DailyShuffle(
+        viewerId: viewer,
+        day: day,
+      ).apply(teachers).map((p) => p.id).toList();
+      final morning = order(MockIds.ayesha, DateTime(2026, 11, 26, 8));
+      expect(order(MockIds.ayesha, DateTime(2026, 11, 26, 23)), morning);
+      expect(order(MockIds.ayesha, DateTime(2026, 11, 27, 8)), isNot(morning));
+      expect(order(MockIds.hira, DateTime(2026, 11, 26, 8)), isNot(morning));
+      expect(morning.toSet(), teachers.map((p) => p.id).toSet());
+      // Removing one person keeps the others in the same relative order.
+      final fewer = DailyShuffle(
+        viewerId: MockIds.ayesha,
+        day: DateTime(2026, 11, 26),
+      ).apply(teachers.skip(1)).map((p) => p.id).toList();
+      expect(fewer, morning.where((id) => id != teachers.first.id).toList());
     });
 
     test('student filter: age group and newest first', () {
@@ -125,12 +148,9 @@ void main() {
         ),
         isTrue,
       );
-      final newest = const StudentFilter(
-        sort: DiscoverSort.newest,
-      ).apply(students, subjectName);
-      for (var i = 1; i < newest.length; i++) {
-        expect(newest[i - 1].createdAt.isBefore(newest[i].createdAt), isFalse);
-      }
+      // No sort: the filter keeps the given order (DailyShuffle's).
+      final kept = const StudentFilter().apply(students, subjectName);
+      expect(kept.map((p) => p.id), students.map((p) => p.id));
     });
 
     test('connect note: trimmed, at most 200 characters', () {
@@ -337,7 +357,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(DiscoverScreen), findsOneWidget);
       expect(find.byType(TeacherCard), findsWidgets);
-      expect(find.textContaining('verified teachers'), findsOneWidget);
+      // List header: count only (no "verified" / "most complete" text).
+      expect(find.textContaining(RegExp(r'^\d+ teachers$')), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), 'Zainab');
       await tester.pumpAndSettle();
@@ -373,7 +394,7 @@ void main() {
       await tester.tap(find.bySemanticsLabel('Students'));
       await tester.pumpAndSettle();
       expect(find.byType(StudentCard), findsWidgets);
-      expect(find.textContaining('looking for a teacher'), findsOneWidget);
+      expect(find.textContaining(RegExp(r'^\d+ students$')), findsOneWidget);
 
       GoRouter.of(
         tester.element(find.byType(DiscoverScreen)),

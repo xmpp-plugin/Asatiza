@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 
 import '../../../core/errors/failures.dart';
-
+import '../../../core/logic/profile_completeness_rules.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/models/student_details.dart';
 
@@ -42,6 +42,11 @@ class StudentSetupState extends Equatable {
   final ValidationReason? mediaError;
 
   StudentDetails get details => draft.studentDetails ?? const StudentDetails();
+
+  /// Every required field of the current step is filled ("Continue" is
+  /// enabled). Photo, short note and "Looking for a teacher" are optional.
+  bool get stepComplete =>
+      const ProfileCompletenessRules().missingInStep(draft, step - 1).isEmpty;
 
   StudentSetupState copyWith({
     Profile? draft,

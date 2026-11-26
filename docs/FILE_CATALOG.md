@@ -2,7 +2,7 @@
 
 Every project-owned file under `lib/` and `test/`. Generated and tool files are not catalogued (`lib/l10n/app_localizations*.dart` come from `flutter gen-l10n`). Assets: `assets/fonts/` (PHASE_001), `assets/icons/` (42 design icons), `assets/illustrations/` (6), `assets/images/` (2 logos) — PHASE_002.
 
-Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows added 2026-11-23 (`PHASE_004`) and 2026-11-24 (`PHASE_005`). Outside `lib/` and `test/`: `supabase/migrations/*.sql`, `supabase/tests/profiles_rls_checks.sql`, `supabase/tests/storage_policies_checks.sql` (`PHASE_005`), `env/supabase.example.json` (`PHASE_004`; template for the git-ignored, bundled `env/supabase.json`).
+Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows added 2026-11-23 (`PHASE_004`) and 2026-11-24 (`PHASE_005`). Outside `lib/` and `test/`: `supabase/migrations/*.sql`, `supabase/tests/profiles_rls_checks.sql`, `supabase/tests/storage_policies_checks.sql` (`PHASE_005`), `env/supabase.example.json` (`PHASE_004`; template for the git-ignored, bundled `env/supabase.json`). Rows updated 2026-11-26 (`PHASE_006` scope change: percentage removed, profile status).
 
 | Path | Purpose | Layer | Public types / functions |
 |---|---|---|---|
@@ -10,8 +10,8 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/core/config/app_config.dart` | Run-time settings (`SUPABASE_URL`, `SUPABASE_ANON_KEY`) from defines or the bundled `env/supabase.json` (only those two keys allowed); both are required. | Core config | `AppConfig` |
 | `lib/core/errors/failures.dart` | Base type for every error a repository may throw. No raw exception (Postgrest, Auth, Dio…) leaves a repository. | Core errors | `Failure`, `ValidationFailure`, `ValidationReason`, `NotFoundFailure`, `NetworkFailure`, `UnexpectedFailure` |
 | `lib/core/logic/certificate_file_rules.dart` | Certificate rules: PDF only (`%PDF-` header), 3 MB, one per teacher, safe file name and display name. Pure. | Core logic | `CertificateFileRules` |
-| `lib/core/logic/discover_visibility_rules.dart` | Who appears on the Teachers / Students tabs and who may send a request (plan section 7). The backend phase mirrors these rules in RLS. | Core logic | `DiscoverVisibilityRules` |
-| `lib/core/logic/profile_strength_calculator.dart` | Checklist items behind the profile-strength %, in the order the strength card suggests them. | Core logic | `ProfileStrengthItem`, `ProfileStrengthCalculator` |
+| `lib/core/logic/discover_visibility_rules.dart` | Who appears on the Teachers / Students tabs and who may send a request: every active profile (`Profile.isActive`). | Core logic | `DiscoverVisibilityRules` |
+| `lib/core/logic/profile_completeness_rules.dart` | Required fields of an active profile and their setup step; mirrors `private.profile_is_complete` (PHASE_006). | Core logic | `RequiredField`, `ProfileCompletenessRules` |
 | `lib/core/router/app_router.dart` | Builds the app's route table, redirecting on the [session]: - signed out → only Splash and the sign-in screens; - signed in right after… | Core router | `createAppRouter` |
 | `lib/core/router/app_routes.dart` | — | Core router | `AppRoutes` |
 | `lib/core/services/document_picker_service.dart` | Lets the user choose a PDF (wraps `file_picker`). | Core service interface | `DocumentPickerService` |
@@ -58,12 +58,11 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/core/widgets/post_card.dart` | Feed post card: author row, text (4 lines in the feed), optional Arabic verse and photo, tag + counts, and Like / Comment / Report actions. | Core widgets | `PostCard` |
 | `lib/core/widgets/post_card_skeleton.dart` | Loading version of a post card (artboard "24 Loading states"). | Core widgets | `PostCardSkeleton` |
 | `lib/core/widgets/profile_header.dart` | Centred profile header: 88 px avatar, 26 px display name, muted subtitle and an optional pill — gold "Verified teacher" ([goldBadge]) or… | Core widgets | `ProfileHeader` |
-| `lib/core/widgets/profile_strength_card.dart` | Brand-tinted card: "Your profile is n% complete", a hint for the next missing item, an 8 px progress bar, "Complete profile" and steps left. | Core widgets | `ProfileStrengthCard` |
 | `lib/core/widgets/search_field.dart` | Search input from the artboards: 44 px, 20 px search icon, 15 px text. The list style ([pill] false) is a 12 px-radius white field with… | Core widgets | `SearchField` |
 | `lib/core/widgets/section_label.dart` | Section heading (15/20, bold) with optional trailing text, e.g. "Choose a tag … Required" or "Available days … 5:00–9:00 pm". | Core widgets | `SectionLabel` |
 | `lib/core/widgets/settings_tile.dart` | Settings row (artboard 21): 22 px icon, 15 px label, optional muted [value] below, and a chevron when it opens a screen. [danger] tints… | Core widgets | `SettingsTile` |
 | `lib/core/widgets/skeleton_box.dart` | A surface-200 placeholder block for loading states. | Core widgets | `SkeletonBox` |
-| `lib/core/widgets/step_progress_header.dart` | Profile-setup header: optional back button, "Step n of total" centred, "Skip for now" on the end side, and one 6 px bar per step below. | Core widgets | `StepProgressHeader` |
+| `lib/core/widgets/step_progress_header.dart` | Profile-setup header: optional back button, "Step n of total" centred and one bar per step (no Skip). | Core widget | `StepProgressHeader` |
 | `lib/core/widgets/tag_chip.dart` | 24 px post tag label: brand tint, or gold tint for achievements and class announcements. | Core widgets | `TagChip` |
 | `lib/core/widgets/teacher_card_skeleton.dart` | Loading placeholder for a teacher / student card (artboard 24). | Core widgets | `TeacherCardSkeleton` |
 | `lib/core/widgets/verified_badge.dart` | Gold circle with a dark check: the "Verified teacher" badge. | Core widgets | `VerifiedBadge` |
@@ -77,7 +76,6 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/data/models/connection.dart` | A connection request between two users (mirrors the planned `connections` table, plan section 12). | Model / enum | `Connection` |
 | `lib/data/models/conversation.dart` | A one-to-one chat between two connected users, as seen by one viewer: [lastMessage] and [unreadCount] are filled per viewer by the… | Model / enum | `Conversation` |
 | `lib/data/models/enums/connection_status.dart` | Lifecycle of a connection request (plan section 4: chat only after [accepted]). | Model / enum | `ConnectionStatus` |
-| `lib/data/models/enums/discover_sort.dart` | List order on the Teachers / Students tabs: [recommended] is verified and most complete first; [newest] is the newest profile first. | Model / enum | `DiscoverSort`, `DiscoverSortLabel` |
 | `lib/data/models/enums/experience_filter.dart` | Teacher filter "Experience": Any / 2+ / 5+ / 10+ years. | Model / enum | `ExperienceFilter`, `ExperienceFilterLabel` |
 | `lib/data/models/enums/fee_unit.dart` | — | Model / enum | `FeeUnit`, `FeeUnitLabel` |
 | `lib/data/models/enums/gender.dart` | — | Model / enum | `Gender`, `GenderLabel` |
@@ -120,7 +118,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/data/repositories/safety_repository.dart` | — | Repository interface | `BlockedUser`, `SafetyRepository` |
 | `lib/data/repositories/supabase/profile_row_mapper.dart` | Converts profile / detail rows to `Profile` and back (snake_case enum text). Pure. | Repository (Supabase) | `ProfileRowMapper` |
 | `lib/data/repositories/supabase/supabase_auth_repository.dart` | `AuthRepository` on Supabase Auth with 6-digit email codes; deletion via `delete_my_account()`. | Repository (Supabase) | `SupabaseAuthRepository` |
-| `lib/data/repositories/supabase/supabase_discover_repository.dart` | `DiscoverRepository` on visible `profiles` (+ details); one load per subscription; student photos removed. | Repository (Supabase) | `SupabaseDiscoverRepository` |
+| `lib/data/repositories/supabase/supabase_discover_repository.dart` | `DiscoverRepository` on active `profiles` (`status = 'active'`, + details); one load per subscription; student photos removed. | Repository (Supabase) | `SupabaseDiscoverRepository` |
 | `lib/data/repositories/supabase/supabase_failure_mapper.dart` | Maps Supabase Auth / PostgREST / Storage / network errors to `Failure`s. Pure. | Repository (Supabase) | `SupabaseFailureMapper` |
 | `lib/data/repositories/supabase/supabase_media_repository.dart` | `MediaRepository` on Supabase Storage (owner folders; authenticated certificate download). | Repository (Supabase) | `SupabaseMediaRepository` |
 | `lib/data/repositories/supabase/supabase_profile_repository.dart` | `ProfileRepository` on `profiles`, `teacher_details`, `student_details` (RLS). | Repository (Supabase) | `SupabaseProfileRepository` |
@@ -166,8 +164,9 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/features/discover/bloc/public_profile_state.dart` | Public profile (artboards 14 / 14b). | Feature discover · bloc | `PublicProfileState` |
 | `lib/features/discover/bloc/search_cubit.dart` | Searches people (through the list filters) and posts (body and tag). | Feature discover · bloc | `SearchCubit` |
 | `lib/features/discover/bloc/search_state.dart` | Home search results (artboard 08b): All / Teachers (or Students) / Posts. | Feature discover · bloc | `SearchTab`, `SearchState` |
-| `lib/features/discover/logic/student_filter.dart` | Search and filters for the Students tab (teacher view). Pure value: [apply] filters and orders a list (newest first by default). | Feature discover · logic | `StudentFilter` |
-| `lib/features/discover/logic/teacher_filter.dart` | Search and filters for the Teachers tab (student view). Pure value: [apply] filters and orders a list (verified, most complete first). | Feature discover · logic | `TeacherFilter` |
+| `lib/features/discover/logic/daily_shuffle.dart` | Random list order, stable per viewer per day (PHASE_006). | Feature discover · logic | `DailyShuffle` |
+| `lib/features/discover/logic/student_filter.dart` | Search and filters for the Students tab (teacher view). Pure value: [apply] filters a list (no sort). | Feature discover · logic | `StudentFilter` |
+| `lib/features/discover/logic/teacher_filter.dart` | Search and filters for the Teachers tab (student view). Pure value: [apply] filters a list (no sort). | Feature discover · logic | `TeacherFilter` |
 | `lib/features/discover/presentation/discover_screen.dart` | 11 Teachers (student viewer) / 12 Students (teacher viewer): search, filter sheet, filter chips and the list. | Feature discover · presentation | `DiscoverScreen` |
 | `lib/features/discover/presentation/public_profile_screen.dart` | 14 Public profile (teacher) / 14b Public profile (student). | Feature discover · presentation | `PublicProfileScreen` |
 | `lib/features/discover/presentation/search_results_screen.dart` | 08b Home search results: All / Teachers (Students for teachers) / Posts. | Feature discover · presentation | `SearchResultsScreen` |
@@ -243,11 +242,11 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `test/app_test.dart` | Tests | Test | `main` |
 | `test/core/config/app_config_test.dart` | Tests | Test | `main` |
 | `test/core/logic/certificate_file_rules_test.dart` | `CertificateFileRules` tests. | Test | — |
-| `test/core/logic/profile_strength_calculator_test.dart` | Tests | Test | `main` |
 | `test/core/router/app_router_test.dart` | Tests | Test | `tapTab`, `main` |
 | `test/core/theme/app_theme_test.dart` | Pins the theme to the Asatiza design-system tokens (tokens.json), so a drift between design and code shows up as a failing test. | Test | `main` |
 | `test/core/widgets/app_avatar_test.dart` | `AppAvatar` photo, fallback, `showPhoto`, preview. | Test | — |
 | `test/data/mock_data_test.dart` | Tests | Test | `main` |
+| `test/core/logic/profile_completeness_rules_test.dart` | Tests | Test | `main` |
 | `test/data/supabase/profile_row_mapper_test.dart` | Tests | Test | `main` |
 | `test/data/supabase/supabase_discover_repository_test.dart` | Tests | Test | `main` |
 | `test/data/supabase/supabase_failure_mapper_test.dart` | Tests | Test | `main` |

@@ -25,7 +25,7 @@ Labels: **VERIFIED** = seen in this repo · **DECIDED** = owner-approved in `doc
 ## Product
 
 - Asatiza — "Find Quran Teachers": a LinkedIn-style professional network for the Quran-learning world. DECIDED
-- Roles: Teacher and Student, one role per account, chosen at sign-up; sign-up is for adults 18+, and a parent may open a Student account for their child (separate parent/child accounts are v2.0). DECIDED
+- Roles: Two roles only (Teacher, Student), one per account; every account holder is 18+ and there are no child accounts in any version (owner decision 2026-11-26). A parent arranging lessons for a child uses their own Student account; "who will be learning" (adult / child / teen) is information only. DECIDED
 - Version in progress: 1.0 "Connect" (later 1.1 Polish, 2.0 Learn, 3.0 Grow, 4.0 Scale). DECIDED
 - Full details: [VERSION_1_PLAN.md](product/VERSION_1_PLAN.md) · [FULL_PRODUCT_PLAN.md](product/FULL_PRODUCT_PLAN.md).
 

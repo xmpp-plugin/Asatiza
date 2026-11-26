@@ -33,21 +33,20 @@ class SessionCubit extends Cubit<SessionState> {
   }
 
   /// Called after log-in, code verification or password reset.
-  void signedIn(Profile user, {bool needsSetup = false}) {
-    emit(SessionState.signedIn(user, needsSetup: needsSetup));
+  void signedIn(Profile user) {
+    emit(SessionState.signedIn(user));
     _profileSub?.cancel();
     _profileSub = _profiles.watchProfile(user.id).listen((profile) {
       if (state.user?.id == profile.id) {
-        emit(SessionState.signedIn(profile, needsSetup: state.needsSetup));
+        emit(SessionState.signedIn(profile));
       }
     }, onError: (Object _) {});
   }
 
-  /// Profile setup finished or skipped.
-  void completeSetup() {
-    final user = state.user;
-    if (user != null) {
-      emit(SessionState.signedIn(user));
+  /// Profile setup saved [profile] (active); the router leaves setup.
+  void completeSetup(Profile profile) {
+    if (state.user?.id == profile.id) {
+      emit(SessionState.signedIn(profile));
     }
   }
 

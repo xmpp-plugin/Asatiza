@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/errors/failures.dart';
+import '../../../core/logic/profile_completeness_rules.dart';
 import '../../../core/logic/certificate_file_rules.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/document_picker_service.dart';
@@ -68,6 +69,28 @@ class EditProfileScreen extends StatelessWidget {
     );
   }
 }
+
+/// Short name of a required field for the "fill in" note.
+String _fieldLabel(RequiredField field, AppLocalizations l10n) =>
+    switch (field) {
+      RequiredField.name => l10n.fullNameLabel,
+      RequiredField.gender => l10n.genderLabel,
+      RequiredField.languages => l10n.languagesLabel,
+      RequiredField.country => l10n.countryLabel,
+      RequiredField.timeZone => l10n.timeZoneLabel,
+      RequiredField.headline => l10n.headlineLabel,
+      RequiredField.subjects => l10n.subjectsLabel,
+      RequiredField.bio => l10n.bioLabel,
+      RequiredField.experience => l10n.experienceFilterLabel,
+      RequiredField.qualifications => l10n.qualificationsLabel,
+      RequiredField.fee => l10n.feeShortLabel,
+      RequiredField.availableDays => l10n.availableDaysLabel,
+      RequiredField.teaches => l10n.iTeachLabel,
+      RequiredField.learner => l10n.learnerAgeGroupLabel,
+      RequiredField.goals => l10n.wantToLearnLabel,
+      RequiredField.level => l10n.currentLevelLabel,
+      RequiredField.preferredTeacherGender => l10n.preferredTeacherGenderLabel,
+    };
 
 class _EditProfileView extends StatefulWidget {
   const _EditProfileView();
@@ -231,7 +254,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
                     AppButton(
                       label: l10n.saveAction,
                       loading: state.saving,
-                      onPressed: state.saving ? null : cubit.save,
+                      onPressed: state.canSave ? cubit.save : null,
                       size: AppButtonSize.small,
                       expand: false,
                     ),
@@ -245,9 +268,21 @@ class _EditProfileViewState extends State<_EditProfileView> {
                       AppSpacing.space5,
                       28,
                     ),
-                    children: p.isTeacher
-                        ? _teacher(p, state, cubit, l10n, colors)
-                        : _student(p, state, cubit, l10n, colors),
+                    children: <Widget>[
+                      if (state.missingFields.isNotEmpty) ...<Widget>[
+                        AppInfoNote(
+                          text: l10n.requiredFieldsMissing(
+                            state.missingFields
+                                .map((f) => _fieldLabel(f, l10n))
+                                .join(', '),
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.space4),
+                      ],
+                      ...p.isTeacher
+                          ? _teacher(p, state, cubit, l10n, colors)
+                          : _student(p, state, cubit, l10n, colors),
+                    ],
                   ),
                 ),
               ],
@@ -414,8 +449,8 @@ class _EditProfileViewState extends State<_EditProfileView> {
         cubit.goalToggled,
       ),
       gap,
-      // Level, languages and preferred teacher gender count 40 % of the
-      // student strength; before they could only be set in setup.
+      // Level, languages and preferred teacher gender are required fields
+      // (ProfileCompletenessRules).
       _select<LearnerLevel>(
         label: l10n.currentLevelLabel,
         value: s?.level,

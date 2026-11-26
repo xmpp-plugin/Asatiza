@@ -19,8 +19,10 @@ import '../../../core/widgets/app_option_tile.dart';
 import '../../../core/widgets/app_segmented_control.dart';
 import '../../../core/widgets/app_switch.dart';
 import '../../../core/widgets/app_text_area.dart';
+import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/section_label.dart';
 import '../../../core/widgets/step_progress_header.dart';
+import '../../../data/models/enums/gender.dart';
 import '../../../data/models/enums/learner_age_group.dart';
 import '../../../data/models/enums/learner_level.dart';
 import '../../../data/models/enums/subject.dart';
@@ -32,6 +34,8 @@ import '../../../data/repositories/profile_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../bloc/student_setup_cubit.dart';
 import '../bloc/student_setup_state.dart';
+import 'teacher_setup_screen.dart'
+    show pickProfileOption, profileCountries, profileTimeZones;
 import 'widgets/photo_picker_tile.dart';
 
 /// Subjects and languages offered to students (artboard 07d).
@@ -50,7 +54,7 @@ const List<TeachingLanguage> _studentLanguages = <TeachingLanguage>[
   TeachingLanguage.punjabi,
 ];
 
-/// 07e / 07d / 07f Student setup (skip-able): photo + learner age group;
+/// 07e / 07d / 07f Student setup (required fields, no Skip): photo + learner age group;
 /// goals, level, languages; preferred teacher gender, "Looking for a
 /// teacher", short note.
 class StudentSetupScreen extends StatelessWidget {
@@ -83,8 +87,8 @@ class StudentSetupScreen extends StatelessWidget {
             ),
         child: BlocConsumer<StudentSetupCubit, StudentSetupState>(
           listenWhen: (a, b) => !a.done && b.done,
-          listener: (context, _) {
-            context.read<SessionCubit>().completeSetup();
+          listener: (context, state) {
+            context.read<SessionCubit>().completeSetup(state.draft);
             context.go(AppRoutes.home);
           },
           buildWhen: (a, b) => a.step != b.step,
@@ -104,7 +108,6 @@ class StudentSetupScreen extends StatelessWidget {
                       StepProgressHeader(
                         step: state.step,
                         total: StudentSetupState.totalSteps,
-                        onSkip: cubit.skip,
                         onBack: state.step > 1 ? cubit.back : null,
                       ),
                       Expanded(
@@ -264,7 +267,7 @@ class _StepOne extends StatelessWidget {
           AppButton(
             label: l10n.continueAction,
             loading: state.saving,
-            onPressed: state.saving ? null : cubit.next,
+            onPressed: state.saving || !state.stepComplete ? null : cubit.next,
           ),
         ],
       ),
@@ -330,12 +333,59 @@ class _StepTwo extends StatelessWidget {
                 ),
             ],
           ),
+          const SizedBox(height: AppSpacing.space5),
+          SectionLabel(l10n.genderLabel),
+          const SizedBox(height: AppSpacing.gap10),
+          AppSegmentedControl<Gender>(
+            values: Gender.values,
+            selected: state.draft.gender,
+            label: (g) => g.label(l10n),
+            onChanged: cubit.genderChanged,
+          ),
+          const SizedBox(height: AppSpacing.space5),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: AppTextField(
+                  key: ValueKey<String?>('country-${state.draft.country}'),
+                  label: l10n.countryLabel,
+                  initialValue: state.draft.country ?? '',
+                  readOnly: true,
+                  trailingIcon: AppIcon.chevronDown,
+                  onTap: () => pickProfileOption(
+                    context,
+                    title: l10n.countryLabel,
+                    options: profileCountries,
+                    current: state.draft.country,
+                    onSelected: cubit.countryChanged,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.space3),
+              Expanded(
+                child: AppTextField(
+                  key: ValueKey<String?>('tz-${state.draft.timeZone}'),
+                  label: l10n.timeZoneLabel,
+                  initialValue: state.draft.timeZone ?? '',
+                  readOnly: true,
+                  trailingIcon: AppIcon.chevronDown,
+                  onTap: () => pickProfileOption(
+                    context,
+                    title: l10n.timeZoneLabel,
+                    options: profileTimeZones,
+                    current: state.draft.timeZone,
+                    onSelected: cubit.timeZoneChanged,
+                  ),
+                ),
+              ),
+            ],
+          ),
           const Spacer(),
           const SizedBox(height: AppSpacing.gap18),
           AppButton(
             label: l10n.continueAction,
             loading: state.saving,
-            onPressed: state.saving ? null : cubit.next,
+            onPressed: state.saving || !state.stepComplete ? null : cubit.next,
           ),
         ],
       ),
@@ -446,7 +496,7 @@ class _StepThreeState extends State<_StepThree> {
           AppButton(
             label: l10n.finishSetupAction,
             loading: state.saving,
-            onPressed: state.saving ? null : cubit.next,
+            onPressed: state.saving || !state.stepComplete ? null : cubit.next,
           ),
         ],
       ),

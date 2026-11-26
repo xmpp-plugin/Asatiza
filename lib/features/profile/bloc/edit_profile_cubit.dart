@@ -309,6 +309,9 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       emit(state.copyWith(nameMissing: true));
       return;
     }
+    if (state.missingFields.isNotEmpty) {
+      return;
+    }
     emit(state.copyWith(saving: true));
     try {
       await _profiles.updateProfile(

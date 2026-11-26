@@ -54,7 +54,7 @@ class _EmailCodeView extends StatelessWidget {
         final user = state.user;
         if (user != null) {
           // The router opens profile setup for the new account.
-          context.read<SessionCubit>().signedIn(user, needsSetup: true);
+          context.read<SessionCubit>().signedIn(user);
         }
       },
       child: Scaffold(

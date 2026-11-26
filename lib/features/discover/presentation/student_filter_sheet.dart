@@ -11,7 +11,6 @@ import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/app_option_tile.dart';
 import '../../../core/widgets/app_segmented_control.dart';
 import '../../../core/widgets/section_label.dart';
-import '../../../data/models/enums/discover_sort.dart';
 import '../../../data/models/enums/gender.dart';
 import '../../../data/models/enums/learner_age_group.dart';
 import '../../../data/models/enums/learner_level.dart';
@@ -272,19 +271,6 @@ class _StudentFilterSheetState extends State<StudentFilterSheet> {
                           ageGroups: _toggle(_draft.ageGroups, v),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.gap14),
-                  section(
-                    l10n.sortByLabel,
-                    AppSegmentedControl<DiscoverSort>(
-                      values: const <DiscoverSort>[
-                        DiscoverSort.newest,
-                        DiscoverSort.recommended,
-                      ],
-                      selected: _draft.sort,
-                      label: (s) => s.label(l10n),
-                      onChanged: (s) => _set(_draft.copyWith(sort: s)),
                     ),
                   ),
                 ],

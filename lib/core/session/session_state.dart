@@ -4,17 +4,19 @@ import '../../data/models/profile.dart';
 
 /// Who is signed in, and whether they still see profile setup.
 class SessionState extends Equatable {
-  const SessionState.signedOut() : user = null, needsSetup = false;
+  const SessionState.signedOut() : user = null;
 
-  const SessionState.signedIn(Profile this.user, {this.needsSetup = false});
+  const SessionState.signedIn(Profile this.user);
 
   final Profile? user;
 
-  /// True right after sign-up until setup is finished or skipped.
-  final bool needsSetup;
+  /// True while the signed-in user's profile is not active (a required
+  /// field is empty). Setup cannot be skipped; an unfinished setup resumes
+  /// at every log-in (plan section 4).
+  bool get needsSetup => user != null && !user!.isActive;
 
   bool get isSignedIn => user != null;
 
   @override
-  List<Object?> get props => <Object?>[user, needsSetup];
+  List<Object?> get props => <Object?>[user];
 }

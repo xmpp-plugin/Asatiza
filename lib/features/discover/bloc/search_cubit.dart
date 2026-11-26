@@ -10,6 +10,7 @@ import '../../../data/models/profile.dart';
 import '../../../data/repositories/discover_repository.dart';
 import '../../../data/repositories/feed_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
+import '../logic/daily_shuffle.dart';
 import '../logic/student_filter.dart';
 import '../logic/teacher_filter.dart';
 import 'search_state.dart';
@@ -24,14 +25,16 @@ class SearchCubit extends Cubit<SearchState> {
     required this.showTeachers,
     required String Function(Subject) subjectLabel,
     required String Function(PostTag) tagLabel,
+    DateTime? today,
   }) : _subjectLabel = subjectLabel,
        _tagLabel = tagLabel,
+       _order = DailyShuffle(viewerId: viewerId, day: today ?? DateTime.now()),
        super(const SearchState()) {
     final people = showTeachers
         ? _discover.watchTeachers(viewerId: viewerId)
         : _discover.watchStudents(viewerId: viewerId);
     _peopleSub = people.listen((list) {
-      _allPeople = list;
+      _allPeople = _order.apply(list);
       _rebuild();
     }, onError: (Object _) {});
     _postsSub = _feed.watchPosts(viewerId: viewerId).listen((list) {
@@ -47,6 +50,7 @@ class SearchCubit extends Cubit<SearchState> {
   final bool showTeachers;
   final String Function(Subject) _subjectLabel;
   final String Function(PostTag) _tagLabel;
+  final DailyShuffle _order;
 
   StreamSubscription<List<Profile>>? _peopleSub;
   StreamSubscription<List<Post>>? _postsSub;

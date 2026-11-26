@@ -276,9 +276,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get skipForNow => 'Skip for now';
-
-  @override
   String get teacherSetupTitle1 => 'Let students see who you are';
 
   @override
@@ -300,11 +297,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get headlineHint =>
       'Shown under your name everywhere. 60 characters max.';
-
-  @override
-  String profilePercent(int percent) {
-    return 'Profile $percent%';
-  }
 
   @override
   String get subjectsLabel => 'Subjects';
@@ -392,7 +384,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lookingForTeacherHint =>
-      'Teachers can find you in the Students tab and send you requests.';
+      'Shows teachers that you\'re looking for a teacher now.';
 
   @override
   String get shortNoteLabel => 'Short note (optional)';
@@ -596,77 +588,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myProfileAndSettings => 'My profile and settings';
 
   @override
-  String strengthTitle(int percent) {
-    return 'Your profile is $percent% complete';
-  }
-
-  @override
-  String stepsLeft(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count steps left',
-      one: '1 step left',
-      zero: 'All done',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get completeProfileAction => 'Complete profile';
-
-  @override
-  String get hideAction => 'Hide';
-
-  @override
-  String get strengthHintPhoto => 'Add a profile photo to build trust.';
-
-  @override
-  String get strengthHintHeadline =>
-      'Add a headline so students know what you teach.';
-
-  @override
-  String get strengthHintSubjects => 'Add the subjects you teach.';
-
-  @override
-  String get strengthHintLanguages => 'Add the languages you speak.';
-
-  @override
-  String get strengthHintBio => 'Write a short bio about your teaching.';
-
-  @override
-  String get strengthHintExperience =>
-      'Add your experience and qualifications.';
-
-  @override
-  String get strengthHintFee => 'Add your fee and available days.';
-
-  @override
-  String get strengthHintCertificate =>
-      'Upload a certificate to get verified faster.';
-
-  @override
-  String get strengthHintGoals =>
-      'Add your learning goal to reach teachers faster.';
-
-  @override
-  String get strengthHintAgeGroup => 'Add the learner’s age group.';
-
-  @override
-  String get strengthHintLevel => 'Add your current reading level.';
-
-  @override
-  String get strengthHintLocation => 'Add your country and time zone.';
-
-  @override
-  String get strengthHintPreferredGender =>
-      'Choose your preferred teacher gender.';
-
-  @override
-  String get strengthHintPhotoOrNote =>
-      'Add a photo or a short note for teachers.';
-
-  @override
   String get verifiedTeacher => 'Verified teacher';
 
   @override
@@ -830,18 +751,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String verifiedTeacherCount(int count) {
+  String teacherCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count verified teachers',
-      one: '1 verified teacher',
+      other: '$count teachers',
+      one: '1 teacher',
     );
     return '$_temp0';
   }
-
-  @override
-  String get mostCompleteFirstSuffix => ' · most complete first';
 
   @override
   String studentCount(int count) {
@@ -853,9 +771,6 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get lookingForTeacherSuffix => ' looking for a teacher';
 
   @override
   String teacherGenderChip(String gender) {
@@ -1000,12 +915,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get sortMostComplete => 'Most complete';
-
-  @override
-  String get sortNewestFirst => 'Newest first';
-
-  @override
   String get subjectWantedLabel => 'Subject wanted';
 
   @override
@@ -1019,9 +928,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get levelFilterLabel => 'Level';
-
-  @override
-  String get sortByLabel => 'Sort by';
 
   @override
   String get shareProfileAction => 'Share profile';
@@ -1660,7 +1566,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wantToLearnLabel => 'What I want to learn';
 
   @override
-  String get lookingSwitchHint => 'Teachers can find you and send requests.';
+  String get lookingSwitchHint =>
+      'Shows teachers that you\'re looking for a teacher now.';
 
   @override
   String get myPostsLabel => 'My posts';
@@ -1770,6 +1677,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retryAction => 'Try again';
+
+  @override
+  String requiredFieldsMissing(String fields) {
+    return 'Fill in to save: $fields';
+  }
 
   @override
   String get discoverLoadFailedTitle => 'Couldn’t load people';

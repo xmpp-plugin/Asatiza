@@ -35,7 +35,8 @@ import 'app_routes.dart';
 
 /// Builds the app's route table, redirecting on the [session]:
 /// - signed out → only Splash and the sign-in screens;
-/// - signed in right after sign-up → that role's profile setup;
+/// - signed in with a profile that is not active → that role's profile
+///   setup (no Skip; resumes at every log-in);
 /// - signed in → never back to the sign-in screens.
 GoRouter createAppRouter(SessionCubit session) {
   return GoRouter(

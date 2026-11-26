@@ -448,23 +448,11 @@ class _DiscoverViewState extends State<_DiscoverView> {
         separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.space3),
         itemBuilder: (context, i) {
           if (i == 0) {
-            return Text.rich(
-              TextSpan(
-                style: countStyle,
-                children: <InlineSpan>[
-                  TextSpan(
-                    text: state.showTeachers
-                        ? l10n.verifiedTeacherCount(results.length)
-                        : l10n.studentCount(results.length),
-                    style: countStyle.copyWith(color: colors.ink),
-                  ),
-                  TextSpan(
-                    text: state.showTeachers
-                        ? l10n.mostCompleteFirstSuffix
-                        : l10n.lookingForTeacherSuffix,
-                  ),
-                ],
-              ),
+            return Text(
+              state.showTeachers
+                  ? l10n.teacherCount(results.length)
+                  : l10n.studentCount(results.length),
+              style: countStyle.copyWith(color: colors.ink),
             );
           }
           final p = results[i - 1];

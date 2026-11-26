@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../core/logic/profile_strength_calculator.dart';
 import '../../../data/models/enums/experience_filter.dart';
 import '../../../data/models/enums/fee_unit.dart';
 import '../../../data/models/enums/gender.dart';
@@ -10,7 +9,7 @@ import '../../../data/models/enums/teaching_language.dart';
 import '../../../data/models/profile.dart';
 
 /// Search and filters for the Teachers tab (student view). Pure value:
-/// [apply] filters and orders a list (verified, most complete first).
+/// [apply] filters a list (no sort; order comes from `DailyShuffle`).
 class TeacherFilter extends Equatable {
   const TeacherFilter({
     this.query = '',
@@ -96,27 +95,13 @@ class TeacherFilter extends Equatable {
     return true;
   }
 
+  /// The teachers matching search and filters, in the given order (the
+  /// list order comes from `DailyShuffle`; Verified teachers get no
+  /// priority).
   List<Profile> apply(
     Iterable<Profile> teachers,
-    String Function(Subject) subjectLabel, {
-    ProfileStrengthCalculator strength = const ProfileStrengthCalculator(),
-  }) {
-    final list = teachers.where((p) => matches(p, subjectLabel)).toList();
-    final percent = <String, int>{
-      for (final p in list) p.id: strength.percent(p),
-    };
-    list.sort((a, b) {
-      if (a.isVerified != b.isVerified) {
-        return a.isVerified ? -1 : 1;
-      }
-      final byPercent = percent[b.id]!.compareTo(percent[a.id]!);
-      if (byPercent != 0) {
-        return byPercent;
-      }
-      return a.fullName.compareTo(b.fullName);
-    });
-    return list;
-  }
+    String Function(Subject) subjectLabel,
+  ) => teachers.where((p) => matches(p, subjectLabel)).toList();
 
   TeacherFilter copyWith({
     String? query,

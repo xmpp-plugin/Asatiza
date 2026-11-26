@@ -1,5 +1,5 @@
 import 'package:asatiza/core/errors/failures.dart';
-import 'package:asatiza/core/logic/profile_strength_calculator.dart';
+import 'package:asatiza/core/logic/profile_completeness_rules.dart';
 import 'package:asatiza/data/mock/mock_profiles.dart';
 import 'package:asatiza/data/models/enums/gender.dart';
 import 'package:asatiza/data/models/enums/learner_age_group.dart';
@@ -135,9 +135,9 @@ void main() {
       expect(cubit.canSave, isTrue);
     });
 
-    test('edit profile: teacher qualifications reach 100 %', () async {
+    test('edit profile: Save needs every required field', () async {
       final ahmed = await profiles.getProfile(MockIds.ahmed);
-      expect(const ProfileStrengthCalculator().percent(ahmed), 90);
+      expect(ahmed.isActive, isTrue);
       final cubit = EditProfileCubit(
         profiles,
         ahmed,
@@ -145,16 +145,25 @@ void main() {
         picker: FakeImagePicker(),
         compressor: const FakeImageCompressor(),
         documents: FakeDocumentPicker(),
-      )..qualificationsChanged('Ijazah in Hafs an Asim');
+      )..qualificationsChanged('');
+      expect(cubit.state.missingFields, <RequiredField>[
+        RequiredField.qualifications,
+      ]);
+      expect(cubit.state.canSave, isFalse);
+      await cubit.save();
+      expect(cubit.state.saved, isFalse);
+      cubit.qualificationsChanged('Ijazah in Hafs an Asim');
+      expect(cubit.state.canSave, isTrue);
       await cubit.save();
       expect(cubit.state.saved, isTrue);
-      final saved = await profiles.getProfile(MockIds.ahmed);
-      expect(const ProfileStrengthCalculator().percent(saved), 100);
+      expect((await profiles.getProfile(MockIds.ahmed)).isActive, isTrue);
+      await cubit.close();
     });
 
-    test('edit profile: a student can reach 100 % without setup', () async {
+    test('edit profile: a student becomes active once every required '
+        'field is filled', () async {
       final ayesha = await profiles.getProfile(MockIds.ayesha);
-      // As after skipping setup: no details, languages or location.
+      // As after an unfinished setup: no details, languages or location.
       final bare = await profiles.updateProfile(
         ayesha.copyWith(
           languages: const <TeachingLanguage>[],
@@ -163,7 +172,7 @@ void main() {
           studentDetails: const StudentDetails(),
         ),
       );
-      const strength = ProfileStrengthCalculator();
+      expect(bare.isActive, isFalse);
       final cubit =
           EditProfileCubit(
               profiles,
@@ -176,17 +185,16 @@ void main() {
             ..genderChanged(Gender.female)
             ..ageGroupChanged(LearnerAgeGroup.adult)
             ..countryChanged('Pakistan')
-            ..goalToggled(Subject.tajweed)
-            ..noteChanged('Evenings please');
-      expect(strength.percent(cubit.state.draft), 60);
+            ..timeZoneChanged('GMT+5')
+            ..goalToggled(Subject.tajweed);
+      expect(cubit.state.canSave, isFalse);
       cubit
         ..levelChanged(LearnerLevel.values.first)
         ..languageToggled(TeachingLanguage.urdu)
         ..preferenceChanged(TeacherGenderPreference.values.first);
-      expect(strength.percent(cubit.state.draft), 100);
+      expect(cubit.state.missingFields, isEmpty);
       await cubit.save();
-      final saved = await profiles.getProfile(MockIds.ayesha);
-      expect(strength.percent(saved), 100);
+      expect((await profiles.getProfile(MockIds.ayesha)).isActive, isTrue);
       await cubit.close();
     });
 
@@ -258,11 +266,11 @@ void main() {
 
       await tapText(tester, 'Edit profile');
       expect(find.byType(EditProfileScreen), findsOneWidget);
-      await tapText(tester, 'Tajweed');
+      await tapText(tester, 'Hifz');
       await tapText(tester, 'Save');
       expect(find.byType(MyProfileScreen), findsOneWidget);
       final saved = await app.profiles.getProfile(MockIds.ayesha);
-      expect(saved.studentDetails!.goals, contains(Subject.tajweed));
+      expect(saved.studentDetails!.goals, contains(Subject.hifz));
       await app.stop(tester);
     });
 

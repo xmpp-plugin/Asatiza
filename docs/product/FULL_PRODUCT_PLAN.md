@@ -1,6 +1,6 @@
 # Asatiza — Full Product Plan (All Versions)
 
-Complete product roadmap from Version 1.0 to Version 4.0 · Nov 18, 2026
+Complete product roadmap from Version 1.0 to Version 4.0 · Nov 18, 2026 · rules updated Nov 26, 2026 (owner decision: adult accounts only, no child accounts in any version; Verified badge from certificate review)
 
 ## 1. Vision
 
@@ -31,9 +31,9 @@ Complete product roadmap from Version 1.0 to Version 4.0 · Nov 18, 2026
 ## 4. What makes Asatiza unique (across versions)
 
 1. **Professional teacher identity** — LinkedIn-style profiles built for Quran teaching (v1.0).
-2. **Verified teachers** — admin approval (v1.0) → verified ijazah badges (v2.0).
+2. **Verified teachers** — admin certificate review gives the Verified badge (v1.0) → verified ijazah badges (v2.0).
 3. **Role-aware discovery** — students find teachers, teachers find students who are looking (v1.0).
-4. **Safety by design** — 18+ accounts in v1.0, parent-managed child accounts and recorded classes in v2.0.
+4. **Safety by design** — adult (18+) accounts only in every version; parents arrange lessons for a child from their own account; recorded classes in v2.0.
 5. **Sanad Tree** — a living, verifiable chain-of-transmission graph linking teachers to their teachers (v3.0).
 6. **Learner portfolio** — hifz and recitation progress that moves with the student between teachers (v2.0).
 
@@ -42,8 +42,7 @@ Complete product roadmap from Version 1.0 to Version 4.0 · Nov 18, 2026
 | User type | v1.0 | v2.0 | v3.0 | v4.0 |
 | --- | --- | --- | --- | --- |
 | Teacher | ✓ | ✓ | ✓ | ✓ |
-| Student (18+) | ✓ | ✓ | ✓ | ✓ |
-| Parent with child sub-profiles | — | ✓ | ✓ | ✓ |
+| Student (18+; may be a parent arranging lessons for a child) | ✓ | ✓ | ✓ | ✓ |
 | Academy / Madrasa (company page) | — | — | ✓ | ✓ |
 | Masjid / employer (jobs) | — | — | ✓ | ✓ |
 | Admin / moderator | Supabase dashboard | Admin web panel | Admin web panel + roles | Same |
@@ -54,7 +53,7 @@ Complete product roadmap from Version 1.0 to Version 4.0 · Nov 18, 2026
 | --- | --- | --- | --- |
 | **1.0** | Connect | Profiles, feed, discovery, connections, chat | Months 0–3 |
 | **1.1** | Polish | Urdu + Arabic (RTL), bookmarks, sharing, small fixes | Months 3–4 |
-| **2.0** | Learn | Booking, video classes, payments, parent accounts, reviews, progress, Python API starts | Months 4–10 |
+| **2.0** | Learn | Booking, video classes, payments, reviews, progress, Python API starts | Months 4–10 |
 | **3.0** | Grow | Sanad Tree, academies, group classes & halaqas, jobs board, Teacher Pro, web app | Months 10–18 |
 | **4.0** | Scale | AI recitation help, events & competitions, certificates, more languages, full own infrastructure | Months 18+ |
 
@@ -64,16 +63,16 @@ Timings are estimates for a small team and depend on funding and traction after 
 
 Full details are in the separate **Asatiza — Version 1.0 Plan** doc. Summary:
 
-- Two roles: Teacher and Student (18+).
+- Two roles only: Teacher and Student; every account holder is 18+ (no child accounts in any version).
 - Sign up with email + password + role, confirmed by a 6-digit email code; login with email + password only.
-- Skip-able profile setup with a LinkedIn-style profile-strength meter.
+- Required profile setup (no Skip; photo, certificate and short note optional) with a server-set profile status (active / incomplete) instead of a percentage.
 - Five tabs: Home (feed) · Teachers/Students · ＋ Post · Chats · Notifications; profile from the top-left photo.
 - Feed with text + photo posts, likes, comments, reports.
 - Role-aware search with filters; connection requests; 1-to-1 chat after accepting.
-- Report, block, delete account; admin approval of teachers.
+- Report, block, delete account; admin certificate review for the Verified badge.
 - Flutter + Supabase free plan + Firebase (push only) + Brevo email.
 
-**Exit criteria to start v2.0:** 150+ approved teachers, 1,000+ students, 500+ accepted connections, and clear demand for in-app booking/payment (surveyed in-app).
+**Exit criteria to start v2.0:** 150+ active teachers, 1,000+ students, 500+ accepted connections, and clear demand for in-app booking/payment (surveyed in-app).
 
 ## 8. Version 1.1 — Polish
 
@@ -90,9 +89,8 @@ Full details are in the separate **Asatiza — Version 1.0 Plan** doc. Summary:
 
 ### Features
 
-- **Parent accounts** with child sub-profiles; parents see all chats and class records of their children. Opens the app to child learners (Google Play Families Policy compliance).
 - **Booking & scheduling:** teacher availability calendar, free trial class, recurring weekly classes, time-zone handling, reminders.
-- **In-app video classes** (Agora, 100ms or LiveKit) with Quran page view and whiteboard; **recording for classes with children**.
+- **In-app video classes** (Agora, 100ms or LiveKit) with Quran page view and whiteboard; **recording for classes where a child is learning**.
 - **Payments:** Stripe (international) + JazzCash / Easypaisa (Pakistan) + other local wallets; platform commission; teacher payouts.
 - **Reviews & ratings** after classes.
 - **Learner progress tracker:** Qaida lessons, surahs read, juz memorized, homework, monthly report to parent.
@@ -132,14 +130,13 @@ Full details are in the separate **Asatiza — Version 1.0 Plan** doc. Summary:
 | Feature | 1.0 | 1.1 | 2.0 | 3.0 | 4.0 |
 | --- | --- | --- | --- | --- | --- |
 | Email sign-up + OTP, password login | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Teacher & student profiles, strength meter | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Teacher & student profiles, required setup + status | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Feed, posts, likes, comments | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Discovery + filters, connections | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1-to-1 chat, push notifications | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Report, block, admin approval | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Report, block, certificate review (Verified badge) | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Urdu / Arabic interface |  | ✓ | ✓ | ✓ | ✓ |
 | Bookmarks, deep links |  | ✓ | ✓ | ✓ | ✓ |
-| Parent & child accounts |  |  | ✓ | ✓ | ✓ |
 | Booking, video classes, payments |  |  | ✓ | ✓ | ✓ |
 | Reviews, progress tracker, ijazah badges |  |  | ✓ | ✓ | ✓ |
 | Group chats |  |  | ✓ | ✓ | ✓ |
@@ -195,10 +192,10 @@ Apple Developer Program (US$99/year) is added when the iOS version is published.
 
 | Area | v1.0 | v2.0+ |
 | --- | --- | --- |
-| Age | 18+ accounts only | Parent-managed child profiles; Families Policy compliance |
+| Age | 18+ account holders only | Same — no child accounts; parents arrange lessons for a child from their own account |
 | User content | Report, block, moderation, content policy | + automated filters, moderator team |
-| Teachers | Admin approval | + ID check, ijazah verification, background check for teaching children |
-| Classes | Outside the app | Recorded when a child is present; parent visibility |
+| Teachers | Admin certificate review → Verified badge | + ID check, ijazah verification, background check for teaching children |
+| Classes | Outside the app | Recorded when a child is learning; the parent holds the account |
 | Payments | — | Payment provider compliance, refunds policy, invoices |
 | Data | Privacy policy, data-safety form, account deletion | + data export, regional privacy laws (GDPR for Europe) |
 
@@ -206,7 +203,7 @@ Apple Developer Program (US$99/year) is added when the iOS version is published.
 
 | Version | Key metrics |
 | --- | --- |
-| 1.0 | Approved teachers, sign-ups, profile completion, accepted connections, weekly active users |
+| 1.0 | Active and verified teachers, sign-ups, setup completion, accepted connections, weekly active users |
 | 2.0 | Booked classes per week, trial-to-paid conversion, gross bookings, repeat students, average rating |
 | 3.0 | Academies onboarded, jobs filled, Pro subscribers, sanad chains verified |
 | 4.0 | Monthly active learners, retention at 90 days, revenue per teacher, countries with 100+ teachers |
@@ -225,10 +222,10 @@ Apple Developer Program (US$99/year) is added when the iOS version is published.
 | Risk | Mitigation |
 | --- | --- |
 | Not enough teachers at launch | Recruit 20+ founding teachers before launch; free Pro features for them later |
-| Child-safety incident | 18+ only in v1.0; parent visibility, recordings and vetting before children join in v2.0 |
+| Child-safety incident | Adult-only accounts in every version; the parent holds the account and the chat; Verified badge; report and block; class recording when a child is learning (v2.0) |
 | Inappropriate or sectarian content | Clear content policy, report thresholds, moderators, block |
 | Free-plan limits or project pause | Image compression, keep-alive ping, written upgrade triggers |
-| Fake teachers / false credentials | Admin approval, certificate review, later ijazah verification and Sanad Tree endorsements |
+| Fake teachers / false credentials | Certificate review (Verified badge), later ijazah verification and Sanad Tree endorsements |
 | Teachers and students taking payments outside the app | Make in-app booking worth it: reminders, records, reviews, refunds, progress reports |
 | Store rejection | Follow Play policies for UGC, data safety, account deletion; run the 12-tester / 14-day closed test |
 

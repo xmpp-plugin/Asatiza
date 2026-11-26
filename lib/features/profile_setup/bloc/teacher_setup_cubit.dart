@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/errors/failures.dart';
 import '../../../core/logic/certificate_file_rules.dart';
+import '../../../core/logic/profile_completeness_rules.dart';
 import '../../../core/services/document_picker_service.dart';
 import '../../../core/services/image_compressor.dart';
 import '../../../core/services/image_picker_service.dart';
@@ -13,6 +14,7 @@ import '../../../data/repositories/media_repository.dart';
 import '../../../data/models/enums/fee_unit.dart';
 import '../../../data/models/enums/gender.dart';
 import '../../../data/models/enums/subject.dart';
+import '../../../data/models/enums/teaches_audience.dart';
 import '../../../data/models/enums/teaching_language.dart';
 import '../../../data/models/enums/weekday.dart';
 import '../../../data/models/profile.dart';
@@ -20,8 +22,10 @@ import '../../../data/models/teacher_details.dart';
 import '../../../data/repositories/profile_repository.dart';
 import 'teacher_setup_state.dart';
 
-/// Teacher setup (artboards 07a–07c). Every step is saved when the user
-/// continues or skips, so the strength % reflects it immediately.
+/// Teacher setup (artboards 07a–07c). No Skip: "Continue" needs the step's
+/// required fields ([ProfileCompletenessRules]); every step is saved when
+/// the user continues. Opens at the first step with a missing required
+/// field, so an unfinished setup resumes where it stopped.
 class TeacherSetupCubit extends Cubit<TeacherSetupState> {
   TeacherSetupCubit(
     this._profiles,
@@ -35,7 +39,12 @@ class TeacherSetupCubit extends Cubit<TeacherSetupState> {
        _compressor = compressor,
        _documents = documents,
        _savedMedia = _mediaOf(user),
-       super(TeacherSetupState(draft: user));
+       super(TeacherSetupState(draft: user, step: _startStep(user)));
+
+  static const ProfileCompletenessRules _rules = ProfileCompletenessRules();
+
+  static int _startStep(Profile user) =>
+      (_rules.firstIncompleteStep(user) ?? 0) + 1;
 
   final ProfileRepository _profiles;
   final MediaRepository _media;
@@ -268,6 +277,14 @@ class TeacherSetupCubit extends Cubit<TeacherSetupState> {
     }
   }
 
+  void audienceToggled(TeachesAudience a) => _details((d) {
+    final teaches = Set<TeachesAudience>.of(d.teaches);
+    if (!teaches.remove(a)) {
+      teaches.add(a);
+    }
+    return d.copyWith(teaches: teaches);
+  });
+
   void feeUnitChanged(FeeUnit unit) =>
       _details((d) => d.copyWith(feeUnit: unit));
   void dayToggled(Weekday day) => _details((d) {
@@ -282,23 +299,34 @@ class TeacherSetupCubit extends Cubit<TeacherSetupState> {
     );
   });
 
-  Future<void> _save() async {
+  /// Saves the draft; false when the save failed (the user stays on the
+  /// step and can try again).
+  Future<bool> _save() async {
     emit(state.copyWith(saving: true));
     try {
       final saved = await _profiles.updateProfile(state.draft);
       emit(state.copyWith(draft: saved, saving: false));
       await _cleanUpAfterSave();
+      return true;
     } on Failure {
       emit(state.copyWith(saving: false));
+      return false;
     }
   }
 
+  /// Saves and moves on. After the last step the profile must be active
+  /// (set by the database); otherwise setup goes to the first step that is
+  /// still missing something.
   Future<void> next() async {
-    await _save();
+    if (state.saving || !state.stepComplete || !await _save()) {
+      return;
+    }
     if (state.step < TeacherSetupState.totalSteps) {
       emit(state.copyWith(step: state.step + 1));
-    } else {
+    } else if (state.draft.isActive) {
       emit(state.copyWith(done: true));
+    } else {
+      emit(state.copyWith(step: _startStep(state.draft)));
     }
   }
 
@@ -306,10 +334,5 @@ class TeacherSetupCubit extends Cubit<TeacherSetupState> {
     if (state.step > 1) {
       emit(state.copyWith(step: state.step - 1));
     }
-  }
-
-  Future<void> skip() async {
-    await _save();
-    emit(state.copyWith(done: true));
   }
 }

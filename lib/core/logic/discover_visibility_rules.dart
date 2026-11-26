@@ -1,34 +1,20 @@
 import '../../data/models/profile.dart';
-import 'profile_strength_calculator.dart';
 
 /// Who appears on the Teachers / Students tabs and who may send a request
-/// (plan section 7). The backend phase mirrors these rules in RLS.
+/// (plan section 7): every **active** profile (all required fields filled,
+/// `Profile.isActive`, set by the database). Admin approval and "Looking for
+/// a teacher" do not affect listing.
 class DiscoverVisibilityRules {
-  const DiscoverVisibilityRules({
-    ProfileStrengthCalculator strength = const ProfileStrengthCalculator(),
-  }) : _strength = strength;
-
-  final ProfileStrengthCalculator _strength;
-
-  /// Teachers are listed from this profile strength (and only when verified).
-  static const int teacherListPercent = 80;
-
-  /// Students are listed from this profile strength (and only when looking).
-  static const int studentListPercent = 60;
-
-  /// A user may send connection requests from this profile strength.
-  static const int requestPercent = 60;
+  const DiscoverVisibilityRules();
 
   bool isTeacherListed(Profile profile) =>
-      profile.isTeacher &&
-      profile.isVerified &&
-      _strength.percent(profile) >= teacherListPercent;
+      profile.isTeacher && profile.isActive;
 
   bool isStudentListed(Profile profile) =>
-      !profile.isTeacher &&
-      (profile.studentDetails?.lookingForTeacher ?? false) &&
-      _strength.percent(profile) >= studentListPercent;
+      !profile.isTeacher && profile.isActive;
 
-  bool canSendRequest(Profile sender) =>
-      _strength.percent(sender) >= requestPercent;
+  /// Sender and receiver both need an active profile.
+  bool canSendRequest(Profile sender) => sender.isActive;
+
+  bool canReceiveRequest(Profile receiver) => receiver.isActive;
 }

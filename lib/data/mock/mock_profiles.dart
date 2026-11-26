@@ -206,6 +206,8 @@ List<Profile> buildMockProfiles(DateTime now) {
       subjects: const [Subject.tajweed, Subject.hifz, Subject.nazra],
       languages: const [TeachingLanguage.urdu, TeachingLanguage.english],
       years: 8,
+      // PHASE_006: qualifications are required for an active profile.
+      qualifications: 'Hafiz (Jamia Ashrafia, Lahore); Tajweed ijazah in Hafs',
       fee: 40,
       days: mwfs,
       teaches: const {TeachesAudience.children, TeachesAudience.men},
@@ -616,7 +618,8 @@ List<Profile> buildMockProfiles(DateTime now) {
       country: 'Pakistan',
       timeZone: 'GMT+5',
       ageGroup: LearnerAgeGroup.adult,
-      goals: const [],
+      // PHASE_006: a learning goal is required for an active profile.
+      goals: const [Subject.tajweed],
       level: LearnerLevel.readsWithHelp,
       languages: const [TeachingLanguage.urdu, TeachingLanguage.english],
       preference: TeacherGenderPreference.female,

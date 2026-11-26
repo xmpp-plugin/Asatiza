@@ -11,10 +11,10 @@ import 'supabase_failure_mapper.dart';
 /// [DiscoverRepository] on `profiles` + `teacher_details` /
 /// `student_details`.
 ///
-/// Lists only rows with `is_visible = true`, which the database computes
-/// (`private.profile_strength`: teacher verified and >= 80 %, student
-/// looking and >= 60 %); the app can never write it. RLS is unchanged
-/// (signed-in users read profiles). Each subscription loads once (no
+/// Lists only rows with `status = 'active'`, which the database sets when
+/// every required field is filled (`private.profile_is_complete`); the app
+/// can never write it. Admin approval and "Looking for a teacher" do not
+/// affect listing. RLS is unchanged (signed-in users read profiles). Each subscription loads once (no
 /// Realtime, PHASE_006 decision 2); re-subscribe to reload.
 ///
 /// Blocked users are not filtered yet: the `blocks` table arrives with the
@@ -49,7 +49,7 @@ class SupabaseDiscoverRepository implements DiscoverRepository {
           .from('profiles')
           .select(ProfileRowMapper.select)
           .eq('role', role.name)
-          .eq('is_visible', true)
+          .eq('status', 'active')
           .neq('id', viewerId)
           .order('created_at', ascending: false)
           .limit(maxRows);

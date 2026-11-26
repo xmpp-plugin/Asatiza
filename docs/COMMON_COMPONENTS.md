@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-26 (`PHASE_006`): `ProfileStrengthCard` removed (no percentage); `StepProgressHeader` has no Skip; `pickProfileOption` (country / time zone sheet) is shared by teacher and student setup (top-level function in `teacher_setup_screen.dart`). Theme tokens `AppRadius.strengthCard` and the strength-card text style are now unused (kept; removal needs approval).
+
 VERIFIED 2026-11-24 (`PHASE_005`): `AppAvatar` shows `Profile.photoUrl` (or an unsaved `preview`) clipped to a circle, with the initials while loading and on error; `showPhoto: false` keeps initials (student photos in discover lists). `PhotoSourceSheet` (Take a photo / Choose from gallery on `AppBottomSheet`). Feature widgets: `PhotoPickerTile` (`preview`, `loading`), `UploadTile` (`loading`), `CertificateRow` (original file name, `onTap` opens the viewer; reused by teacher setup), `PersonRow.showPhoto`.
 
 VERIFIED 2026-11-24 (`PHASE_004` fix): `AppButton.loading` (spinner left of the label, variant colours kept, taps ignored) and `ConfirmSheet.loading` (spinner on confirm, Cancel disabled). Every button that starts a call passes its cubit's busy flag.

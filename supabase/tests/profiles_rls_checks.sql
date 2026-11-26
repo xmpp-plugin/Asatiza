@@ -1,6 +1,7 @@
 -- PHASE_004 manual RLS / privilege checks for profiles.
 --
--- Run in the Supabase SQL editor AFTER both migrations, once at least two
+-- Run in the Supabase SQL editor AFTER the profile migrations (including
+-- 20261126120000_profile_status.sql, PHASE_006), once at least two
 -- users have signed up (one of each role is best). Changes nothing: the
 -- whole script runs in a transaction that is rolled back.
 --
@@ -57,10 +58,10 @@ begin
     out := out || 'PASS 4 is_verified write; ';
   end;
   begin
-    update public.profiles set is_visible = true, completion_pct = 100 where id = me;
-    out := out || 'FAIL 5 is_visible / completion_pct write; ';
+    update public.profiles set status = 'active' where id = me;
+    out := out || 'FAIL 5 status write; ';
   exception when insufficient_privilege then
-    out := out || 'PASS 5 is_visible / completion_pct write; ';
+    out := out || 'PASS 5 status write; ';
   end;
   begin
     insert into public.profiles (id, role) values (gen_random_uuid(), 'teacher');

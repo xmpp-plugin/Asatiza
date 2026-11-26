@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 
 import '../../../core/errors/failures.dart';
-
+import '../../../core/logic/profile_completeness_rules.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/models/teacher_details.dart';
 
@@ -37,7 +37,7 @@ class TeacherSetupState extends Equatable {
   final int step;
   final bool saving;
 
-  /// Setup finished or skipped; the screen leaves for Home.
+  /// Setup saved and the profile is active; the screen leaves for Home.
   final bool done;
 
   /// A photo is being compressed and uploaded.
@@ -54,6 +54,11 @@ class TeacherSetupState extends Equatable {
   final bool uploadingCertificate;
 
   TeacherDetails get details => draft.teacherDetails ?? const TeacherDetails();
+
+  /// Every required field of the current step is filled ("Continue" is
+  /// enabled). Photo and certificate are optional.
+  bool get stepComplete =>
+      const ProfileCompletenessRules().missingInStep(draft, step - 1).isEmpty;
 
   TeacherSetupState copyWith({
     Profile? draft,

@@ -592,12 +592,6 @@ abstract class AppLocalizations {
   /// **'Step {step} of {total}'**
   String setupStepOf(int step, int total);
 
-  /// No description provided for @skipForNow.
-  ///
-  /// In en, this message translates to:
-  /// **'Skip for now'**
-  String get skipForNow;
-
   /// No description provided for @teacherSetupTitle1.
   ///
   /// In en, this message translates to:
@@ -639,12 +633,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Shown under your name everywhere. 60 characters max.'**
   String get headlineHint;
-
-  /// No description provided for @profilePercent.
-  ///
-  /// In en, this message translates to:
-  /// **'Profile {percent}%'**
-  String profilePercent(int percent);
 
   /// No description provided for @subjectsLabel.
   ///
@@ -793,7 +781,7 @@ abstract class AppLocalizations {
   /// No description provided for @lookingForTeacherHint.
   ///
   /// In en, this message translates to:
-  /// **'Teachers can find you in the Students tab and send you requests.'**
+  /// **'Shows teachers that you\'re looking for a teacher now.'**
   String get lookingForTeacherHint;
 
   /// No description provided for @shortNoteLabel.
@@ -1192,114 +1180,6 @@ abstract class AppLocalizations {
   /// **'My profile and settings'**
   String get myProfileAndSettings;
 
-  /// No description provided for @strengthTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Your profile is {percent}% complete'**
-  String strengthTitle(int percent);
-
-  /// No description provided for @stepsLeft.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =0{All done} =1{1 step left} other{{count} steps left}}'**
-  String stepsLeft(int count);
-
-  /// No description provided for @completeProfileAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete profile'**
-  String get completeProfileAction;
-
-  /// No description provided for @hideAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Hide'**
-  String get hideAction;
-
-  /// No description provided for @strengthHintPhoto.
-  ///
-  /// In en, this message translates to:
-  /// **'Add a profile photo to build trust.'**
-  String get strengthHintPhoto;
-
-  /// No description provided for @strengthHintHeadline.
-  ///
-  /// In en, this message translates to:
-  /// **'Add a headline so students know what you teach.'**
-  String get strengthHintHeadline;
-
-  /// No description provided for @strengthHintSubjects.
-  ///
-  /// In en, this message translates to:
-  /// **'Add the subjects you teach.'**
-  String get strengthHintSubjects;
-
-  /// No description provided for @strengthHintLanguages.
-  ///
-  /// In en, this message translates to:
-  /// **'Add the languages you speak.'**
-  String get strengthHintLanguages;
-
-  /// No description provided for @strengthHintBio.
-  ///
-  /// In en, this message translates to:
-  /// **'Write a short bio about your teaching.'**
-  String get strengthHintBio;
-
-  /// No description provided for @strengthHintExperience.
-  ///
-  /// In en, this message translates to:
-  /// **'Add your experience and qualifications.'**
-  String get strengthHintExperience;
-
-  /// No description provided for @strengthHintFee.
-  ///
-  /// In en, this message translates to:
-  /// **'Add your fee and available days.'**
-  String get strengthHintFee;
-
-  /// No description provided for @strengthHintCertificate.
-  ///
-  /// In en, this message translates to:
-  /// **'Upload a certificate to get verified faster.'**
-  String get strengthHintCertificate;
-
-  /// No description provided for @strengthHintGoals.
-  ///
-  /// In en, this message translates to:
-  /// **'Add your learning goal to reach teachers faster.'**
-  String get strengthHintGoals;
-
-  /// No description provided for @strengthHintAgeGroup.
-  ///
-  /// In en, this message translates to:
-  /// **'Add the learner’s age group.'**
-  String get strengthHintAgeGroup;
-
-  /// No description provided for @strengthHintLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Add your current reading level.'**
-  String get strengthHintLevel;
-
-  /// No description provided for @strengthHintLocation.
-  ///
-  /// In en, this message translates to:
-  /// **'Add your country and time zone.'**
-  String get strengthHintLocation;
-
-  /// No description provided for @strengthHintPreferredGender.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose your preferred teacher gender.'**
-  String get strengthHintPreferredGender;
-
-  /// No description provided for @strengthHintPhotoOrNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Add a photo or a short note for teachers.'**
-  String get strengthHintPhotoOrNote;
-
   /// No description provided for @verifiedTeacher.
   ///
   /// In en, this message translates to:
@@ -1552,29 +1432,17 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{Filters} =1{Filters, 1 active} other{Filters, {count} active}}'**
   String filtersButtonLabel(int count);
 
-  /// No description provided for @verifiedTeacherCount.
+  /// No description provided for @teacherCount.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 verified teacher} other{{count} verified teachers}}'**
-  String verifiedTeacherCount(int count);
-
-  /// No description provided for @mostCompleteFirstSuffix.
-  ///
-  /// In en, this message translates to:
-  /// **' · most complete first'**
-  String get mostCompleteFirstSuffix;
+  /// **'{count, plural, =1{1 teacher} other{{count} teachers}}'**
+  String teacherCount(int count);
 
   /// No description provided for @studentCount.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 student} other{{count} students}}'**
   String studentCount(int count);
-
-  /// No description provided for @lookingForTeacherSuffix.
-  ///
-  /// In en, this message translates to:
-  /// **' looking for a teacher'**
-  String get lookingForTeacherSuffix;
 
   /// No description provided for @teacherGenderChip.
   ///
@@ -1774,18 +1642,6 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{No students to show} =1{Show 1 student} other{Show {count} students}}'**
   String showStudentsAction(int count);
 
-  /// No description provided for @sortMostComplete.
-  ///
-  /// In en, this message translates to:
-  /// **'Most complete'**
-  String get sortMostComplete;
-
-  /// No description provided for @sortNewestFirst.
-  ///
-  /// In en, this message translates to:
-  /// **'Newest first'**
-  String get sortNewestFirst;
-
   /// No description provided for @subjectWantedLabel.
   ///
   /// In en, this message translates to:
@@ -1815,12 +1671,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Level'**
   String get levelFilterLabel;
-
-  /// No description provided for @sortByLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Sort by'**
-  String get sortByLabel;
 
   /// No description provided for @shareProfileAction.
   ///
@@ -2845,7 +2695,7 @@ abstract class AppLocalizations {
   /// No description provided for @lookingSwitchHint.
   ///
   /// In en, this message translates to:
-  /// **'Teachers can find you and send requests.'**
+  /// **'Shows teachers that you\'re looking for a teacher now.'**
   String get lookingSwitchHint;
 
   /// No description provided for @myPostsLabel.
@@ -3051,6 +2901,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try again'**
   String get retryAction;
+
+  /// No description provided for @requiredFieldsMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in to save: {fields}'**
+  String requiredFieldsMissing(String fields);
 
   /// No description provided for @discoverLoadFailedTitle.
   ///

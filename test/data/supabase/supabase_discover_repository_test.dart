@@ -18,7 +18,7 @@ void main() {
         'photo_path': photo,
         'languages': <String>['urdu'],
         'is_verified': role == 'teacher',
-        'is_visible': true,
+        'status': 'active',
         'teacher_details': role == 'teacher'
             ? <String, dynamic>{
                 'subjects': <String>['tajweed'],

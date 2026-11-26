@@ -103,7 +103,6 @@
       }
     }
   },
-  "skipForNow": "Skip for now",
   "teacherSetupTitle1": "Let students see who you are",
   "teacherSetupTitle2": "What do you teach?",
   "teacherSetupTitle3": "Your classes and fee",
@@ -111,14 +110,6 @@
   "teacherPhotoHint": "A clear, modest photo builds trust with parents and students.",
   "headlineLabel": "Headline",
   "headlineHint": "Shown under your name everywhere. 60 characters max.",
-  "profilePercent": "Profile {percent}%",
-  "@profilePercent": {
-    "placeholders": {
-      "percent": {
-        "type": "int"
-      }
-    }
-  },
   "subjectsLabel": "Subjects",
   "teachingLanguagesLabel": "Languages you teach in",
   "genderLabel": "Gender",
@@ -157,7 +148,7 @@
   "studentSetupTitle3": "Your ideal teacher",
   "preferredTeacherGenderLabel": "Preferred teacher gender",
   "lookingForTeacherLabel": "Looking for a teacher",
-  "lookingForTeacherHint": "Teachers can find you in the Students tab and send you requests.",
+  "lookingForTeacherHint": "Shows teachers that you're looking for a teacher now.",
   "shortNoteLabel": "Short note (optional)",
   "shortNotePlaceholder": "For example: evenings after 6 pm work best for me.",
   "characterCounter": "{count} / {max}",
@@ -234,38 +225,6 @@
   "reportReasonSomethingElse": "Something else",
   "searchPlaceholder": "Search teachers, posts, subjects",
   "myProfileAndSettings": "My profile and settings",
-  "strengthTitle": "Your profile is {percent}% complete",
-  "@strengthTitle": {
-    "placeholders": {
-      "percent": {
-        "type": "int"
-      }
-    }
-  },
-  "stepsLeft": "{count, plural, =0{All done} =1{1 step left} other{{count} steps left}}",
-  "@stepsLeft": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "completeProfileAction": "Complete profile",
-  "hideAction": "Hide",
-  "strengthHintPhoto": "Add a profile photo to build trust.",
-  "strengthHintHeadline": "Add a headline so students know what you teach.",
-  "strengthHintSubjects": "Add the subjects you teach.",
-  "strengthHintLanguages": "Add the languages you speak.",
-  "strengthHintBio": "Write a short bio about your teaching.",
-  "strengthHintExperience": "Add your experience and qualifications.",
-  "strengthHintFee": "Add your fee and available days.",
-  "strengthHintCertificate": "Upload a certificate to get verified faster.",
-  "strengthHintGoals": "Add your learning goal to reach teachers faster.",
-  "strengthHintAgeGroup": "Add the learner’s age group.",
-  "strengthHintLevel": "Add your current reading level.",
-  "strengthHintLocation": "Add your country and time zone.",
-  "strengthHintPreferredGender": "Choose your preferred teacher gender.",
-  "strengthHintPhotoOrNote": "Add a photo or a short note for teachers.",
   "verifiedTeacher": "Verified teacher",
   "postMetaTeacher": "{subject} teacher",
   "@postMetaTeacher": {
@@ -363,15 +322,14 @@
       }
     }
   },
-  "verifiedTeacherCount": "{count, plural, =1{1 verified teacher} other{{count} verified teachers}}",
-  "@verifiedTeacherCount": {
+  "teacherCount": "{count, plural, =1{1 teacher} other{{count} teachers}}",
+  "@teacherCount": {
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "mostCompleteFirstSuffix": " · most complete first",
   "studentCount": "{count, plural, =1{1 student} other{{count} students}}",
   "@studentCount": {
     "placeholders": {
@@ -380,7 +338,6 @@
       }
     }
   },
-  "lookingForTeacherSuffix": " looking for a teacher",
   "teacherGenderChip": "{gender} teacher",
   "@teacherGenderChip": {
     "placeholders": {
@@ -518,14 +475,11 @@
       }
     }
   },
-  "sortMostComplete": "Most complete",
-  "sortNewestFirst": "Newest first",
   "subjectWantedLabel": "Subject wanted",
   "studentGenderLabel": "Student gender",
   "countryTimeZoneLabel": "Country / time zone",
   "anyCountry": "Any country",
   "levelFilterLabel": "Level",
-  "sortByLabel": "Sort by",
   "shareProfileAction": "Share profile",
   "reportOrBlockAction": "Report or block",
   "profileShareText": "{name} — {headline} · on Asatiza",
@@ -922,7 +876,7 @@
   "iTeachLabel": "I teach",
   "learningLabel": "Learning",
   "wantToLearnLabel": "What I want to learn",
-  "lookingSwitchHint": "Teachers can find you and send requests.",
+  "lookingSwitchHint": "Shows teachers that you're looking for a teacher now.",
   "myPostsLabel": "My posts",
   "noPostsYet": "You haven’t posted yet.",
   "myProfileTitle": "My profile",
@@ -957,6 +911,14 @@
   "certificateOpenFailedTitle": "Couldn’t open the certificate",
   "certificateOpenFailedMessage": "Check your connection and try again.",
   "retryAction": "Try again",
+  "requiredFieldsMissing": "Fill in to save: {fields}",
+  "@requiredFieldsMissing": {
+    "placeholders": {
+      "fields": {
+        "type": "String"
+      }
+    }
+  },
   "discoverLoadFailedTitle": "Couldn’t load people",
   "discoverLoadFailedMessage": "Check your connection and try again.",
   "certificatePageIndicator": "{page} / {total}",

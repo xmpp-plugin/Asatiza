@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-26 (`PHASE_006` scope change): `supabase/migrations/20261126120000_profile_status.sql` adds `profiles.status` (`incomplete` / `active`, set by `private.profiles_before_write` from `private.profile_is_complete`: every required field filled; no update grant), drops `completion_pct`, `is_visible` and `private.profile_strength`, and recomputes every row. Lists read `status = 'active'`. Read-only checks: `supabase/tests/profile_status_checks.sql`; `profiles_rls_checks.sql` check 5 now covers `status`. Applied to the remote project: UNVERIFIED — the developer applies it in the SQL editor **before** running a PHASE_006 build. The older `is_visible` note below is superseded.
+
 VERIFIED 2026-11-25 (`PHASE_006`): Teachers / Students lists read `profiles` where `is_visible = true` (set by `private.profile_strength`); no migration, no RLS change, no local cache (loaded on tab open and refresh).
 
 VERIFIED 2026-11-24 (`PHASE_005`): `supabase/migrations/20261124120000_storage_avatars_certificates.sql` — buckets `avatars` (public, `image/jpeg`, 1 MB) and `certificates` (private, `application/pdf`, 3 MB) and owner-folder policies on `storage.objects` (`(storage.foldername(name))[1] = auth.uid()`; certificate insert only for `role = 'teacher'`; no admin policy yet). No table change. One certificate per teacher is an app rule (`CertificateFileRules.maxCertificates = 1`), not a database check. Manual checks: `supabase/tests/storage_policies_checks.sql`. Applied to the remote project: UNVERIFIED — the developer applies it in the SQL editor.

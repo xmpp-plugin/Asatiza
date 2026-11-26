@@ -9,7 +9,6 @@ import 'package:asatiza/core/theme/app_theme.dart';
 import 'package:asatiza/core/widgets/app_button.dart';
 import 'package:asatiza/core/widgets/app_checkbox.dart';
 import 'package:asatiza/core/widgets/post_card.dart';
-import 'package:asatiza/core/widgets/profile_strength_card.dart';
 import 'package:asatiza/features/auth/presentation/email_code_screen.dart';
 import 'package:asatiza/features/auth/presentation/log_in_screen.dart';
 import 'package:asatiza/features/auth/presentation/new_password_screen.dart';
@@ -94,8 +93,11 @@ void main() {
     expect(find.byType(StudentSetupScreen), findsOneWidget);
     expect(find.text('Tell us about the learner'), findsOneWidget);
 
-    await tapText(tester, 'Skip for now');
-    expect(find.byType(HomeScreen), findsOneWidget);
+    // No Skip; Continue stays disabled until the learner is chosen.
+    expect(find.text('Skip for now'), findsNothing);
+    await tapText(tester, 'Continue');
+    expect(find.text('Tell us about the learner'), findsOneWidget);
+    expect(find.byType(HomeScreen), findsNothing);
     await app.stop(tester);
   });
 
@@ -114,18 +116,19 @@ void main() {
 
     expect(find.byType(TeacherSetupScreen), findsOneWidget);
     expect(find.text('Step 1 of 3'), findsOneWidget);
+    expect(find.text('Skip for now'), findsNothing);
     await enterField(tester, 'Headline', 'Hifz teacher for boys, 6 years');
     await tapText(tester, 'Continue');
     expect(find.text('What do you teach?'), findsOneWidget);
     await tapText(tester, 'Hifz');
+    // Languages, gender, country and time zone are still missing.
     await tapText(tester, 'Continue');
-    expect(find.text('Your classes and fee'), findsOneWidget);
-    await tapText(tester, 'Finish setup');
-    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.text('What do you teach?'), findsOneWidget);
+    expect(find.byType(HomeScreen), findsNothing);
     await app.stop(tester);
   });
 
-  testWidgets('Log in with the mock email: Qari Ahmed, strength 90%', (
+  testWidgets('Log in with the mock email: Qari Ahmed, straight to Home', (
     tester,
   ) async {
     final app = TestApp();
@@ -136,14 +139,9 @@ void main() {
     await enterField(tester, 'Password', 'tajweed2026');
     await tapText(tester, 'Log in');
 
+    // An active profile goes straight to Home, with no percentage card.
     expect(find.byType(HomeScreen), findsOneWidget);
-    expect(find.byType(ProfileStrengthCard), findsOneWidget);
-    expect(find.text('Your profile is 90% complete'), findsOneWidget);
-    expect(
-      find.text('Add your experience and qualifications.'),
-      findsOneWidget,
-    );
-    expect(find.text('1 step left'), findsOneWidget);
+    expect(find.textContaining('% complete'), findsNothing);
     expect(find.text('Qari Ahmed Khan'), findsWidgets);
     await app.stop(tester);
   });
@@ -156,7 +154,9 @@ void main() {
     await tapText(tester, 'I already have an account');
     await tapText(tester, 'Forgot password?');
     expect(find.text('Reset your password'), findsOneWidget);
-    await enterField(tester, 'Email', 'ayesha.khan@gmail.com');
+    // An existing, active account (a new email would create an incomplete
+    // mock account and open setup instead).
+    await enterField(tester, 'Email', MockAccounts.teacherEmail);
     await tapText(tester, 'Send code');
     expect(find.text('Enter the code'), findsOneWidget);
     // Never confirms that the email has an account.

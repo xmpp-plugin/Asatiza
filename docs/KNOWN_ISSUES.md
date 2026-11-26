@@ -29,6 +29,20 @@ Everything in `docs/product/VERSION_1_PLAN.md` is not yet implemented. Phases ar
 - 2026-11-18: SOLID rules adopted (`docs/CLASS_AND_COMPONENT_RULES.md`). Repositories differ from plan section 11: profile access is split into `ProfileRepository`, `DiscoverRepository` and `MediaRepository`, plus `SafetyRepository`; business rules live in pure-Dart `logic/` classes; platform plugins sit behind `lib/core/services/` interfaces.
 - `docs/product/` is left unchanged.
 
+### Plan update 2026-11-26 — code not yet changed
+
+Owner updated `docs/product/VERSION_1_PLAN.md` and `FULL_PRODUCT_PLAN.md` (roles, required setup, status, visibility, connections, Verified badge). The code still follows the old rules until approved phases change it:
+
+| # | New plan rule | Current code (VERIFIED) | Suggested place |
+|---|---|---|---|
+| A | Teachers **and students** listed when **active** (required fields filled); no admin approval; "Looking" is a label only; random order stable per user per day; no sort menu | `is_visible` needs `is_verified` and ≥ 80 % (teacher) / looking and ≥ 60 % (student); sort menu | Implemented in PHASE_006 (2026-11-26), manual test pending |
+| B | `profiles.status` (incomplete / active) from required fields; percentage removed from app and database | `completion_pct` + `is_visible`; `ProfileStrengthCalculator`; Home / My profile show % | Implemented in PHASE_006 (2026-11-26), manual test pending |
+| C | Profile setup has no Skip; unfinished setup resumes at log-in; Edit profile cannot empty required fields | "Skip for now" on setup steps; router sends users to Home | Implemented in PHASE_006 (2026-11-26), manual test pending |
+| D | Learner type wording: "Who will be learning? Myself / My child / My teenager"; filter "Learner type" | Labels say age group (child / teen / adult); values unchanged | Small copy step (no migration) |
+| E | Connect needs both active; 10 requests per rolling 24 h; checked in a database function | `DiscoverVisibilityRules.canSendRequest` (≥ 60 %), mock connections | Connections phase |
+| F | No status card on Home / My profile; Connect-button messages | Percentage strength card | Card removal implemented in PHASE_006 (2026-11-26); Connect-button messages: Connections phase |
+| G | Verified badge only from certificate review; "Certificate under review" to the teacher | `is_verified` set by admin; no "under review" state | Profile-status phase |
+
 ## Open Decisions (settle during the matching phase)
 
 | # | Decision needed | Why | Decide in |
@@ -36,7 +50,7 @@ Everything in `docs/product/VERSION_1_PLAN.md` is not yet implemented. Phases ar
 | 1 | How an admin bans a user: add `profiles.is_banned`, use `profiles.is_visible`, or disable the user in Supabase Auth | Plan section 15 says "ban user" but the schema has no ban column; RLS text mentions `is_hidden` for profiles, which exists only on `posts` | Safety / admin phase |
 | 2 | ~~Android-only or Android + iOS~~ — DECIDED 2026-11-18: Android **and** iOS in v1.0 | — | Closed in `PHASE_001` |
 | 3 | ~~Localization from the start~~ — DECIDED 2026-11-18: English-only `gen-l10n` now, RTL-ready layout | — | Closed in `PHASE_001` |
-| 4 | Parent-for-child flow: parent signs up as Student, ticks 18+, sets learner age group "child"? | Plan allows a parent to open a Student account for a child; separate parent/child accounts are v2.0 | Auth / profile phase |
+| 4 | ~~Parent-for-child flow~~ — DECIDED 2026-11-26: adults-only accounts in every version; a parent uses their own Student account; learner type is information only | — | Closed (plan update) |
 
 ## Architecture Risks
 

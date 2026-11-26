@@ -1,6 +1,6 @@
 # Asatiza — Version 1.0 Plan (Release 1)
 
-Final plan for the first release · Version 1.0 · Nov 18, 2026
+Final plan for the first release · Version 1.0 · Nov 18, 2026 · rules updated Nov 26, 2026 (owner decision: roles, required profile setup, profile status without percentage, visibility, random daily order, connections, Verified badge)
 
 ## 1. Summary
 
@@ -14,7 +14,7 @@ Final plan for the first release · Version 1.0 · Nov 18, 2026
 | Play Store title | **Asatiza: Find Quran Teachers** (28 characters; limit is 30) |
 | Short description | Connect with Quran teachers & students worldwide. Learn Tajweed, Hifz & more. |
 | Roles | Two: **Teacher** and **Student** (one role per account, chosen at sign-up) |
-| Who can sign up | Adults **18+**. A parent may open a Student account for their child |
+| Who can sign up | Adults **18+** only. A parent arranging lessons for a child uses their **own** Student account and is responsible for it and its chats. There are **no child accounts** in any version |
 | Platforms | Android + iOS, one **Flutter** codebase |
 | Backend | **Supabase** free plan (login, database, files, realtime chat) |
 | Push notifications | **Firebase Cloud Messaging** (free) + Crashlytics |
@@ -27,10 +27,10 @@ Final plan for the first release · Version 1.0 · Nov 18, 2026
 
 | Metric | Target |
 | --- | --- |
-| Approved teachers | 150+ |
+| Active teachers | 150+ |
 | Students signed up | 1,000+ |
 | Sign-ups that confirm the email code | 80%+ |
-| Profiles at 100% strength | 40%+ |
+| Profiles with every optional item added (photo; certificate or short note) | 40%+ |
 | Accepted connections | 500+ |
 | Weekly active users | 30% of all users |
 | Crash-free users | 99%+ |
@@ -42,8 +42,8 @@ Final plan for the first release · Version 1.0 · Nov 18, 2026
 1. Sign up with **name, email, password, role** → confirm email with a **6-digit code**.
 2. Log in with **email + password only** (no code at login).
 3. Forgot password with an emailed code.
-4. **Skip-able profile setup** — users land on Home right after confirming; profile can be finished later.
-5. **Profile strength meter** and checklist card until 100%.
+4. **Required profile setup** — no Skip. Required fields must be filled before Home; photo, certificate (teacher) and short note (student) are optional. Each step is saved; unfinished setup resumes at the next log-in.
+5. **Profile status** — *active* (set up) or *incomplete*, set by the database. **No percentage** anywhere in the app or database.
 6. **Home feed** — posts from connections first, then recent posts from everyone.
 7. **Create post** — text + one photo + one tag.
 8. **Like, comment, report** on posts; delete own posts and comments.
@@ -52,12 +52,14 @@ Final plan for the first release · Version 1.0 · Nov 18, 2026
 11. **Chat** — 1-to-1 text + image messages after connecting; read ticks; unread badges.
 12. **Notifications tab** + push notifications.
 13. **Profiles** — my profile, edit profile, other people's profiles with their posts.
-14. **Safety** — report, block, delete account, admin approval of teachers.
+14. **Safety** — report, block, delete account, admin review of teacher certificates for the **Verified** badge.
 15. **Settings** — change password, notification switches, privacy policy, terms, log out, delete account.
 
 ### Out of scope for 1.0 (planned later)
 
-Payments · in-app video classes · class booking · parent/child accounts · reviews and ratings · Sanad Tree · academies · jobs board · group chats · video posts · Urdu/Arabic interface · web app.
+Payments · in-app video classes · class booking · reviews and ratings · Sanad Tree · academies · jobs board · group chats · video posts · Urdu/Arabic interface · web app.
+
+Child accounts and parent/child sub-profiles are **not planned in any version** (owner decision Nov 26, 2026).
 
 Until video arrives, teachers share a Zoom or Google Meet link in chat. Until payments arrive, fees are arranged directly between teacher and student.
 
@@ -69,7 +71,7 @@ Until video arrives, teachers share a Zoom or Google Meet link in chat. Until pa
 2. Form: full name, email, password (8+ characters), "I am a **Teacher** / **Student**", tick "I am 18 or older and agree to the Terms".
 3. App calls Supabase sign-up → Supabase emails a **6-digit code**.
 4. Code screen: 6 boxes, auto-submit, "Resend code" after 60 seconds, "Wrong email? Change it".
-5. Code correct → signed in → **Profile setup** (skip-able) → **Home**.
+5. Code correct → signed in → **Profile setup** (required) → **Home**.
 
 ### Log in
 
@@ -79,20 +81,22 @@ Email + password → Home. If the email was never confirmed, the app sends a fre
 
 Email → 6-digit code → new password → signed in.
 
-### Profile setup (after sign-up, every step has "Skip for now")
+### Profile setup (after sign-up; no "Skip" — required fields must be filled, optional ones are marked "Optional")
 
 | Step | Teacher | Student |
 | --- | --- | --- |
-| 1 | Photo + headline (e.g. "Hafiz & Tajweed teacher, 8 years") | Photo (optional) + age group of the learner |
+| 1 | Photo (optional) + headline (e.g. "Hafiz & Tajweed teacher, 8 years") | Photo (optional) + who will be learning (Myself / My child / My teenager) |
 | 2 | Subjects + languages + gender + country/time zone | What I want to learn + current level + languages |
-| 3 | Bio, experience, fee, availability, certificates | Preferred teacher gender + "Looking for a teacher" switch |
+| 3 | Bio, experience + qualifications, fee (or Free) + availability, teaches; certificate (optional — only for the Verified badge) | Preferred teacher gender + "Looking for a teacher" switch + short note (optional) |
+
+Each step saves when the user taps Next. A user who leaves during setup returns to the same step at the next log-in. Accounts created before this rule that never finished setup are sent back to setup at their next log-in. Edit profile cannot empty a required field.
 
 ### Connect and chat
 
-1. Student opens Teachers tab → filters → opens a teacher's profile → **Connect** (optional note, 200 characters).
+1. Student opens Teachers tab → filters → opens a teacher's profile → **Connect** (optional note, 200 characters). A request works only when **both** people are *active*; max **10 requests per user per rolling 24 hours**. The database function that creates the request checks this, not only the app.
 2. Teacher gets a push + Notifications entry → **Accept** or **Decline**.
 3. Accepted → both get a chat. Either side can remove the connection or block.
-4. Teachers can also send Connect to students who have "Looking for a teacher" switched on.
+4. Teachers can also send Connect to any student in the Students tab. Any teacher may connect with any student; the learner type and "Looking for a teacher" are information only.
 
 ### Post
 
@@ -104,7 +108,7 @@ Email → 6-digit code → new password → signed in.
 
 | # | Tab | Contents |
 | --- | --- | --- |
-| 1 | Home | Feed, profile-strength card |
+| 1 | Home | Feed |
 | 2 | Teachers (student) / Students (teacher) | Search, filters, people cards with Connect |
 | 3 | **＋ Post** (centre) | Create post |
 | 4 | Chats | Chat list with unread badges |
@@ -143,31 +147,52 @@ Email → 6-digit code → new password → signed in.
 
 ### Teacher profile fields
 
-Full name · photo · headline · gender · country · time zone · languages · subjects (Noorani Qaida, Nazra, Tajweed, Hifz, Tafsir, Arabic, Islamic studies) · bio · years of experience · qualifications (text) · certificates (images/PDF) · fee amount + currency + per (class / month) · availability (days + time ranges) · teaches (children / women / men / all).
+Full name · photo · headline · gender · country · time zone · languages · subjects (Noorani Qaida, Nazra, Tajweed, Hifz, Tafsir, Arabic, Islamic studies) · bio · years of experience · qualifications (text) · one certificate (PDF, optional — used only for the Verified badge) · fee amount (or Free) + currency + per (class / month) · availability (days + time ranges) · teaches (children / women / men / all).
 
 ### Student profile fields
 
-Full name · photo (optional, never shown in the Students list) · gender · country · time zone · languages · learner age group (child / teen / adult) · what I want to learn · current level · preferred teacher gender · "Looking for a teacher" switch · short note.
+Full name · photo (optional, never shown in the Students list) · gender · country · time zone · languages · who will be learning (Myself — adult / My child / My teenager; information only, creates no rules) · what I want to learn · current level · preferred teacher gender · "Looking for a teacher" switch · short note.
 
-### Profile strength (how the % is counted)
+### Required and optional fields
 
-| Teacher item | % | Student item | % |
-| --- | --- | --- | --- |
-| Photo | 15 | Learner age group | 15 |
-| Headline | 10 | Learning goals | 25 |
-| Subjects | 15 | Level | 15 |
-| Languages | 10 | Languages | 15 |
-| Bio | 15 | Country / time zone | 10 |
-| Experience + qualifications | 10 | Preferred teacher gender | 10 |
-| Fee + availability | 15 | Photo or short note | 10 |
-| Certificate uploaded | 10 |  |  |
+| | Required | Optional |
+| --- | --- | --- |
+| Teacher | Full name, gender, headline, subjects, languages, country / time zone, bio, experience + qualifications, fee (or Free) + available days, teaches | Photo, certificate |
+| Student | Full name, gender, who will be learning, learning goals, level, languages, country / time zone, preferred teacher gender | Photo, short note |
+
+Photo stays optional for everyone (many teachers and students, especially women, prefer not to share one).
+
+### Profile status (no percentage)
+
+- The database sets each profile's status every time it is saved: **active** when every required field is filled, otherwise **incomplete**. The app only reads the status; it never decides from a percentage.
+- Admin decisions are kept in their own columns (`is_verified` now; suspension later) and always win over the automatic status, so editing a profile can never undo an admin decision.
 
 ### Visibility rules
 
-- **Teachers** appear in the Teachers tab only when strength ≥ 80% **and** an admin has approved them ("Verified" tick).
-- **Students** appear in the Students tab only when "Looking for a teacher" is ON and strength ≥ 60%.
-- Anyone can **read and post** in the feed right after confirming their email.
-- Sending a **connection request** needs your own profile at ≥ 60%.
+- **Teachers** appear in the Teachers tab when their status is **active**. Admin approval is **not** needed to appear.
+- **Students** appear in the Students tab when their status is **active**. "Looking for a teacher" is **information only**: when it is on, the student card and profile show the label "Looking for a teacher". A student's photo is never shown in the list.
+- **Order:** random, stable for each user for one day (a new order the next day). No sort menu; search and filters stay. Verified teachers get no priority.
+- Nobody sees themselves. Blocked users are hidden from every list.
+- Anyone signed in can open a listed profile and see its details.
+- Anyone can **read and post** in the feed right after confirming their email, whatever their status.
+- Sending or receiving a **connection request** needs both people to be **active**.
+
+### Verified badge
+
+- A teacher may upload **one certificate** (optional). The admin reviews it and sets `is_verified = true` → the teacher shows the **Verified** badge.
+- Without a certificate a teacher is still listed, just without the badge. Uploading alone never shows the badge; while waiting, only the teacher sees "Certificate under review".
+- "Verified" is used for nothing else. Active profiles get no other badge.
+
+### Connect button (one message per case)
+
+| Case | What the user sees |
+| --- | --- |
+| Other person not active yet (e.g. opened from the feed) | Disabled "Not accepting requests yet"; on tap: "This teacher is still completing their profile. You can connect once it's complete." |
+| 10 requests in the last 24 hours | "You've sent 10 requests in the last 24 hours. Try again later." |
+| Request already sent | "Pending" |
+| Already connected | "Message" |
+
+Users who have not finished setup are always sent back to setup, so everyone who reaches Home is active. Home and My profile show **no** profile-strength or status card.
 
 ## 8. Teachers / Students search
 
@@ -178,10 +203,10 @@ Full name · photo (optional, never shown in the Students list) · gender · cou
 | Language | Language |
 | Country / time zone | Country / time zone |
 | Fee range | Level |
-| Years of experience | Learner age group |
-| Teaches children / women | Newest first |
+| Years of experience | Learner type (adult / child / teenager) |
+| Teaches children / women |  |
 
-Search box matches name, headline and subjects. Default sort: verified + most complete first, then newest.
+Search box matches name, headline and subjects. Order: random, stable per user per day (see Visibility rules). No sort options.
 
 ## 9. Feed rules and moderation
 
@@ -201,7 +226,7 @@ Search box matches name, headline and subjects. Default sort: verified + most co
 | New message | Yes | Badge on Chats |
 | Like on your post | No (grouped in app) | Yes |
 | Comment on your post | Yes | Yes |
-| Teacher profile approved / needs changes | Yes | Yes |
+| Certificate approved (Verified badge) / needs changes | Yes | Yes |
 
 ## 11. Technical architecture
 
@@ -244,9 +269,9 @@ lib/
 
 | Table | Main columns |
 | --- | --- |
-| profiles | id (auth user id), role, full\_name, headline, photo\_path, gender, country, timezone, languages\[\], bio, completion\_pct, is\_visible, is\_verified, created\_at |
+| profiles | id (auth user id), role, full\_name, headline, photo\_path, gender, country, timezone, languages\[\], bio, status (server-set: incomplete / active; completion\_pct and is\_visible removed), is\_verified (admin; Verified badge), created\_at |
 | teacher\_details | profile\_id, subjects\[\], experience\_years, qualifications, fee\_amount, fee\_currency, fee\_unit, availability (json), teaches\[\], certificate\_paths\[\] |
-| student\_details | profile\_id, age\_group, goals\[\], level, preferred\_teacher\_gender, looking\_for\_teacher, note |
+| student\_details | profile\_id, age\_group (who will be learning: adult / child / teen; information only), goals\[\], level, preferred\_teacher\_gender, looking\_for\_teacher, note |
 | connections | id, requester\_id, receiver\_id, status, note, created\_at, responded\_at |
 | posts | id, author\_id, body, image\_path, tag, like\_count, comment\_count, report\_count, is\_hidden, created\_at |
 | post\_likes | post\_id, user\_id, created\_at |
@@ -258,7 +283,7 @@ lib/
 | blocks | blocker\_id, blocked\_id, created\_at |
 | device\_tokens | user\_id, fcm\_token, platform, updated\_at |
 
-**Row Level Security (required):** users write only their own rows · messages readable only by the two conversation members · conversations created only from accepted connections · hidden/unverified profiles and hidden posts excluded from lists · `role`, `is_verified` and `is_hidden` changeable only by admin · blocked users filtered from every query.
+**Row Level Security (required):** users write only their own rows · messages readable only by the two conversation members · conversations created only from accepted connections · hidden profiles, profiles that are not active and hidden posts excluded from lists · connection requests created only through a database function that checks both statuses and the 24-hour limit · `role`, `is_verified` and `is_hidden` changeable only by admin · blocked users filtered from every query.
 
 **Storage buckets:** `avatars` (public read), `post-images` (public read), `certificates` (private; owner + admin), `chat-images` (private; conversation members).
 
@@ -291,7 +316,7 @@ lib/
 
 No separate admin app yet. The admin uses the Supabase dashboard with saved views:
 
-- **Pending teachers** → review certificates → set `is_verified = true` (or send "needs changes").
+- **Pending certificates** → review → set `is_verified = true` (Verified badge) or send "needs changes".
 - **Open reports** → hide post / warn / ban user.
 - **New users today**, **posts today**, **connections today**.
 
@@ -301,7 +326,8 @@ No separate admin app yet. The admin uses the Supabase dashboard with saved view
 - User-generated content: report, block, moderation and a written content policy (required by Google Play).
 - In-app account deletion plus a web page where users can request deletion.
 - Data safety form: email, name, photos, messages, device token, crash data.
-- Teacher approval before appearing in search.
+- Every account holder is 18+; parents arrange lessons for a child from their own account. Store listings target 18+ (not the Google Play Families programme).
+- The Verified badge appears only after admin review of the certificate.
 - Students' photos never shown in the Students list.
 
 ## 17. Timeline (8 weeks build + launch)
@@ -310,7 +336,7 @@ No separate admin app yet. The admin uses the Supabase dashboard with saved view
 | --- | --- |
 | 1 | Supabase + Firebase (FCM) + Brevo setup, domain email, Flutter structure, theme, 5-tab shell |
 | 2 | Sign up + email OTP, login, forgot password |
-| 3 | Profile setup (skip-able), profile pages, strength meter, photo upload |
+| 3 | Profile setup (required fields), profile pages, photo upload |
 | 4 | Feed, create post, likes, comments, image compression |
 | 5 | Teachers/Students tab, search, filters, connection requests |
 | 6 | Chat (realtime), push notifications, Notifications tab |
@@ -337,7 +363,7 @@ Recruit the 12+ testers early: founding teachers and their students are ideal.
 - [ ] Brevo SMTP connected; sign-up code email tested in Gmail, Outlook, Yahoo
 - [ ] Privacy Policy, Terms, Content Policy, account-deletion page live on the website
 - [ ] RLS policies tested with two test accounts per role
-- [ ] 20 founding teachers approved with complete profiles before launch
+- [ ] 20 founding teachers set up before launch, with their certificates reviewed (Verified)
 - [ ] Store listing: icon, 6–8 screenshots, feature graphic, description
 - [ ] Closed test running with 12+ testers for 14 days
 - [ ] Crashlytics and daily keep-alive ping working
@@ -346,8 +372,8 @@ Recruit the 12+ testers early: founding teachers and their students are ideal.
 
 - New user signs up, confirms the 6-digit code and reaches Home in under a minute.
 - Returning user logs in with email + password only.
-- Skipping profile setup works; the strength card guides completion.
+- Profile setup cannot be skipped; required fields are checked by the app and the database; unfinished setup resumes at the next log-in.
 - Student finds a teacher by subject + gender + language, connects and chats.
 - Teacher finds students looking for a teacher, connects and chats.
-- Posts, likes, comments, reports and blocks work; admin can hide content and approve teachers.
+- Posts, likes, comments, reports and blocks work; admin can hide content and review certificates (Verified badge).
 - Everything runs on free plans with the upgrade triggers written down.

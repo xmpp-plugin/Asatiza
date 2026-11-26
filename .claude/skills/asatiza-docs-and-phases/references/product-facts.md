@@ -10,7 +10,7 @@ These come from the owner's product plan. Label every fact in docs with one of:
 |---|---|
 | Product | Asatiza — Quran teacher & student professional network |
 | Version in progress | 1.0 "Connect" (later: 1.1 Polish, 2.0 Learn, 3.0 Grow, 4.0 Scale) |
-| Roles | Teacher, Student (one role per account). Sign-up is for adults 18+; a parent may open a Student account for their child (exact flow is an open decision in `docs/KNOWN_ISSUES.md`). Separate parent/child accounts are v2.0 |
+| Roles | Two roles only (Teacher, Student), one per account; every account holder is 18+ and there are no child accounts in any version (owner decision 2026-11-26). A parent arranging lessons for a child uses their own Student account; "who will be learning" (adult / child / teen) is information only |
 | Platforms | Android + iOS, one Flutter codebase |
 | State management | BLoC (`flutter_bloc`): Cubit by default, Bloc for event-heavy flows (auth, chat, feed paging). Repositories injected with `RepositoryProvider`. Owner decision 2026-11-18; replaces `flutter_riverpod` listed in the PDF plan |
 | HTTP / API | `supabase_flutter` for Auth, database, Storage, Realtime. Dio for Edge Function HTTP calls and the later Python FastAPI. Owner decision 2026-11-18 |

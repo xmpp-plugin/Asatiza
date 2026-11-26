@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 
 import '../../../core/errors/failures.dart';
+import '../../../core/logic/profile_completeness_rules.dart';
 
 import '../../../data/models/profile.dart';
 
@@ -43,6 +44,16 @@ class EditProfileState extends Equatable {
 
   /// A certificate is being uploaded.
   final bool uploadingCertificate;
+
+  /// Required fields that are empty (the name keeps its own error). Save is
+  /// disabled while this is not empty, so a profile never loses its active
+  /// status by editing.
+  List<RequiredField> get missingFields => <RequiredField>[
+    for (final f in const ProfileCompletenessRules().missing(draft))
+      if (f != RequiredField.name) f,
+  ];
+
+  bool get canSave => !saving && missingFields.isEmpty;
 
   EditProfileState copyWith({
     Profile? draft,

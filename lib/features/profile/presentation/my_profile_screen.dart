@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 
 import '../../../core/errors/failures.dart';
 import '../../../core/widgets/empty_state_view.dart';
-import '../../../core/logic/profile_strength_calculator.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
@@ -19,7 +18,6 @@ import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/app_switch.dart';
 import '../../../core/widgets/back_header.dart';
 import '../../../core/widgets/info_row.dart';
-import '../../../core/widgets/profile_strength_card.dart';
 import '../../../core/widgets/section_label.dart';
 import '../../../core/widgets/tag_chip.dart';
 import '../../../core/widgets/verified_badge.dart';
@@ -63,9 +61,6 @@ class MyProfileScreen extends StatelessWidget {
 
 class _MyProfileView extends StatelessWidget {
   const _MyProfileView();
-
-  static const ProfileStrengthCalculator _strength =
-      ProfileStrengthCalculator();
 
   @override
   Widget build(BuildContext context) {
@@ -236,15 +231,6 @@ class _MyProfileView extends StatelessWidget {
           ),
         ],
       ),
-      if (_strength.percent(p) < 100 &&
-          !state.strengthCardDismissed) ...<Widget>[
-        gap,
-        ProfileStrengthCard(
-          profile: p,
-          onComplete: edit,
-          onDismiss: cubit.dismissStrengthCard,
-        ),
-      ],
       if (!p.isTeacher) ...<Widget>[
         gap,
         _Card(

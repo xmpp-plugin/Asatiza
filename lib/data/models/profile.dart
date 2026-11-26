@@ -25,6 +25,7 @@ class Profile extends Equatable {
     this.languages = const <TeachingLanguage>[],
     this.bio,
     this.isVerified = false,
+    this.isActive = false,
     this.teacherDetails,
     this.studentDetails,
   });
@@ -55,8 +56,14 @@ class Profile extends Equatable {
   final List<TeachingLanguage> languages;
   final String? bio;
 
-  /// Set by an admin only; the app never writes it.
+  /// Set by an admin only (certificate review → Verified badge); the app
+  /// never writes it.
   final bool isVerified;
+
+  /// Every required field is filled (`profiles.status = 'active'`, set by
+  /// the database; mock data uses `ProfileCompletenessRules`). Only active
+  /// profiles are listed and can connect. The app never writes it.
+  final bool isActive;
   final TeacherDetails? teacherDetails;
   final StudentDetails? studentDetails;
 
@@ -101,6 +108,7 @@ class Profile extends Equatable {
     String? bio,
     TeacherDetails? teacherDetails,
     StudentDetails? studentDetails,
+    bool? isActive,
   }) {
     return Profile(
       id: id,
@@ -118,6 +126,7 @@ class Profile extends Equatable {
       languages: languages ?? this.languages,
       bio: bio ?? this.bio,
       isVerified: isVerified,
+      isActive: isActive ?? this.isActive,
       teacherDetails: teacherDetails ?? this.teacherDetails,
       studentDetails: studentDetails ?? this.studentDetails,
     );
@@ -140,6 +149,7 @@ class Profile extends Equatable {
     languages,
     bio,
     isVerified,
+    isActive,
     teacherDetails,
     studentDetails,
   ];

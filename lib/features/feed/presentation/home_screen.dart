@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/logic/profile_strength_calculator.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/session/session_state.dart';
@@ -11,7 +10,6 @@ import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/post_card.dart';
 import '../../../core/widgets/post_card_skeleton.dart';
-import '../../../core/widgets/profile_strength_card.dart';
 import '../../../data/models/post.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/feed_repository.dart';
@@ -23,7 +21,7 @@ import '../bloc/feed_cubit.dart';
 import '../bloc/feed_state.dart';
 import 'widgets/home_top_bar.dart';
 
-/// 08 Home: top bar, profile-strength card, and the feed (connections
+/// 08 Home: top bar and the feed (connections
 /// first, then everyone, newest first).
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -49,9 +47,6 @@ class HomeScreen extends StatelessWidget {
 
 class _HomeView extends StatelessWidget {
   const _HomeView();
-
-  static const ProfileStrengthCalculator _calculator =
-      ProfileStrengthCalculator();
 
   Future<void> _report(
     BuildContext context,
@@ -83,17 +78,8 @@ class _HomeView extends StatelessWidget {
                 child: BlocBuilder<FeedCubit, FeedState>(
                   builder: (context, state) {
                     final cubit = context.read<FeedCubit>();
-                    final showStrength =
-                        !state.strengthCardDismissed &&
-                        _calculator.percent(user) < 100;
                     final posts = state.visiblePosts;
                     final children = <Widget>[
-                      if (showStrength)
-                        ProfileStrengthCard(
-                          profile: user,
-                          onComplete: () => context.push(AppRoutes.editProfile),
-                          onDismiss: cubit.dismissStrengthCard,
-                        ),
                       if (state.status == FeedStatus.loading) ...const <Widget>[
                         PostCardSkeleton(),
                         PostCardSkeleton(),

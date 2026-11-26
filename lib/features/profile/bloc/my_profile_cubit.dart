@@ -81,9 +81,6 @@ class MyProfileCubit extends Cubit<MyProfileState> {
     );
   }
 
-  void dismissStrengthCard() =>
-      emit(state.copyWith(strengthCardDismissed: true));
-
   @override
   Future<void> close() async {
     await _profileSub?.cancel();

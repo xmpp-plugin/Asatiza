@@ -1,10 +1,12 @@
 import 'package:asatiza/core/errors/failures.dart';
 import 'package:asatiza/core/session/session_cubit.dart';
 import 'package:asatiza/data/mock/mock_profiles.dart';
-import 'package:asatiza/data/models/enums/learner_age_group.dart';
+import 'package:asatiza/data/models/enums/gender.dart';
 import 'package:asatiza/data/models/enums/post_tag.dart';
 import 'package:asatiza/data/models/enums/report_reason.dart';
 import 'package:asatiza/data/models/enums/subject.dart';
+import 'package:asatiza/data/models/enums/teaches_audience.dart';
+import 'package:asatiza/data/models/enums/teaching_language.dart';
 import 'package:asatiza/data/models/enums/user_role.dart';
 import 'package:asatiza/data/models/enums/weekday.dart';
 import 'package:asatiza/data/models/profile.dart';
@@ -54,9 +56,11 @@ void main() {
   test('SessionCubit: sign in, setup flag, profile updates, log out', () async {
     final session = SessionCubit(auth, profiles);
     final ayesha = await profiles.getProfile(MockIds.ayesha);
-    session.signedIn(ayesha, needsSetup: true);
+    // Setup is needed while the profile is not active.
+    session.signedIn(ayesha.copyWith(isActive: false));
     expect(session.state.needsSetup, isTrue);
-    session.completeSetup();
+    session.completeSetup(ayesha);
+    expect(ayesha.isActive, isTrue);
     expect(session.state.needsSetup, isFalse);
     await profiles.updateProfile(ayesha.copyWith(city: 'Lahore'));
     await settle();
@@ -239,7 +243,13 @@ void main() {
         picker: FakeImagePicker(),
         compressor: const FakeImageCompressor(),
         documents: FakeDocumentPicker(),
-      )..headlineChanged('Hifz teacher for boys, 6 years');
+      );
+      // Continue does nothing until the step's required fields are filled.
+      expect(cubit.state.step, 1);
+      expect(cubit.state.stepComplete, isFalse);
+      await cubit.next();
+      expect(cubit.state.step, 1);
+      cubit.headlineChanged('Hifz teacher for boys, 6 years');
       await cubit.photoPicked(ImageSourceKind.gallery);
       expect(cubit.state.draft.photoPath, startsWith('${user.id}/avatar-'));
       await cubit.next();
@@ -256,12 +266,24 @@ void main() {
         ..subjectToggled(Subject.hifz)
         ..countryChanged('Pakistan');
       await cubit.next();
+      expect(cubit.state.step, 2, reason: 'languages, gender, time zone');
+      cubit
+        ..languageToggled(TeachingLanguage.urdu)
+        ..genderChanged(Gender.male)
+        ..timeZoneChanged('GMT+5');
+      await cubit.next();
+      expect(cubit.state.step, 3);
       cubit
         ..dayToggled(Weekday.monday)
         ..feeChanged('5,000')
-        ..experienceChanged('6');
+        ..experienceChanged('6')
+        ..bioChanged('Hifz for boys with a weekly plan.')
+        ..qualificationsChanged('Hafiz, Jamia Ashrafia');
+      expect(cubit.state.stepComplete, isFalse, reason: '"Teaches" missing');
+      cubit.audienceToggled(TeachesAudience.children);
       await cubit.next();
       expect(cubit.state.done, isTrue);
+      expect((await profiles.getProfile(user.id)).isActive, isTrue);
       final saved = await profiles.getProfile(user.id);
       expect(saved.teacherDetails!.feeAmount, 5000);
       expect(
@@ -272,24 +294,37 @@ void main() {
     },
   );
 
-  test('StudentSetupCubit: back and skip', () async {
+  test('StudentSetupCubit: resumes at the first incomplete step; '
+      'Continue needs the step fields', () async {
     final ayesha = await profiles.getProfile(MockIds.ayesha);
+    // Step 2 fields missing (as after an unfinished setup).
+    final unfinished = await profiles.updateProfile(
+      ayesha.copyWith(timeZone: '', country: ''),
+    );
+    expect(unfinished.isActive, isFalse);
     final cubit = StudentSetupCubit(
       profiles,
-      ayesha,
+      unfinished,
       media: MockMediaRepository(),
       picker: FakeImagePicker(),
       compressor: const FakeImageCompressor(),
-    )..ageGroupChanged(LearnerAgeGroup.teen);
-    await cubit.next();
-    cubit.back();
-    expect(cubit.state.step, 1);
-    await cubit.skip();
-    expect(cubit.state.done, isTrue);
-    expect(
-      (await profiles.getProfile(MockIds.ayesha)).studentDetails!.ageGroup,
-      LearnerAgeGroup.teen,
     );
+    expect(cubit.state.step, 2);
+    expect(cubit.state.stepComplete, isFalse);
+    await cubit.next();
+    expect(cubit.state.step, 2);
+    cubit
+      ..countryChanged('Pakistan')
+      ..timeZoneChanged('GMT+5');
+    expect(cubit.state.stepComplete, isTrue);
+    await cubit.next();
+    expect(cubit.state.step, 3);
+    cubit.back();
+    expect(cubit.state.step, 2);
+    await cubit.next();
+    await cubit.next();
+    expect(cubit.state.done, isTrue);
+    expect((await profiles.getProfile(MockIds.ayesha)).isActive, isTrue);
     await cubit.close();
   });
 

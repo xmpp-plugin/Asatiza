@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/errors/failures.dart';
+import '../../../core/logic/profile_completeness_rules.dart';
 import '../../../core/services/image_compressor.dart';
 import '../../../core/services/image_picker_service.dart';
 import '../../../core/services/image_source_kind.dart';
 import '../../../data/models/enums/media_bucket.dart';
 import '../../../data/repositories/media_repository.dart';
+import '../../../data/models/enums/gender.dart';
 import '../../../data/models/enums/learner_age_group.dart';
 import '../../../data/models/enums/learner_level.dart';
 import '../../../data/models/enums/subject.dart';
@@ -18,8 +20,10 @@ import '../../../data/models/student_details.dart';
 import '../../../data/repositories/profile_repository.dart';
 import 'student_setup_state.dart';
 
-/// Student setup (artboards 07e, 07d, 07f). Each step is saved when the
-/// user continues or skips.
+/// Student setup (artboards 07e, 07d, 07f). No Skip: "Continue" needs the
+/// step's required fields ([ProfileCompletenessRules]); each step is saved
+/// when the user continues. Opens at the first step with a missing required
+/// field, so an unfinished setup resumes where it stopped.
 class StudentSetupCubit extends Cubit<StudentSetupState> {
   StudentSetupCubit(
     this._profiles,
@@ -31,7 +35,12 @@ class StudentSetupCubit extends Cubit<StudentSetupState> {
        _picker = picker,
        _compressor = compressor,
        _savedMedia = _mediaOf(user),
-       super(StudentSetupState(draft: user));
+       super(StudentSetupState(draft: user, step: _startStep(user)));
+
+  static const ProfileCompletenessRules _rules = ProfileCompletenessRules();
+
+  static int _startStep(Profile user) =>
+      (_rules.firstIncompleteStep(user) ?? 0) + 1;
 
   final ProfileRepository _profiles;
   final MediaRepository _media;
@@ -155,6 +164,12 @@ class StudentSetupCubit extends Cubit<StudentSetupState> {
       draft: state.draft.copyWith(languages: _toggle(state.draft.languages, l)),
     ),
   );
+  void genderChanged(Gender g) =>
+      emit(state.copyWith(draft: state.draft.copyWith(gender: g)));
+  void countryChanged(String c) =>
+      emit(state.copyWith(draft: state.draft.copyWith(country: c)));
+  void timeZoneChanged(String tz) =>
+      emit(state.copyWith(draft: state.draft.copyWith(timeZone: tz)));
 
   // Step 3
   void preferenceChanged(TeacherGenderPreference p) =>
@@ -169,23 +184,34 @@ class StudentSetupCubit extends Cubit<StudentSetupState> {
     ),
   );
 
-  Future<void> _save() async {
+  /// Saves the draft; false when the save failed (the user stays on the
+  /// step and can try again).
+  Future<bool> _save() async {
     emit(state.copyWith(saving: true));
     try {
       final saved = await _profiles.updateProfile(state.draft);
       emit(state.copyWith(draft: saved, saving: false));
       await _cleanUpAfterSave();
+      return true;
     } on Failure {
       emit(state.copyWith(saving: false));
+      return false;
     }
   }
 
+  /// Saves and moves on. After the last step the profile must be active
+  /// (set by the database); otherwise setup goes to the first step that is
+  /// still missing something.
   Future<void> next() async {
-    await _save();
+    if (state.saving || !state.stepComplete || !await _save()) {
+      return;
+    }
     if (state.step < StudentSetupState.totalSteps) {
       emit(state.copyWith(step: state.step + 1));
-    } else {
+    } else if (state.draft.isActive) {
       emit(state.copyWith(done: true));
+    } else {
+      emit(state.copyWith(step: _startStep(state.draft)));
     }
   }
 
@@ -193,10 +219,5 @@ class StudentSetupCubit extends Cubit<StudentSetupState> {
     if (state.step > 1) {
       emit(state.copyWith(step: state.step - 1));
     }
-  }
-
-  Future<void> skip() async {
-    await _save();
-    emit(state.copyWith(done: true));
   }
 }

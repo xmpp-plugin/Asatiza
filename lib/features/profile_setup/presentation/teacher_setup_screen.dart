@@ -5,14 +5,12 @@ import 'package:intl/intl.dart';
 
 import '../../../core/errors/failures.dart';
 import '../../../core/logic/certificate_file_rules.dart';
-import '../../../core/logic/profile_strength_calculator.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/document_picker_service.dart';
 import '../../../core/services/image_compressor.dart';
 import '../../../core/services/image_picker_service.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
@@ -29,6 +27,7 @@ import '../../../core/widgets/step_progress_header.dart';
 import '../../../data/models/enums/fee_unit.dart';
 import '../../../data/models/enums/gender.dart';
 import '../../../data/models/enums/subject.dart';
+import '../../../data/models/enums/teaches_audience.dart';
 import '../../../data/models/enums/teaching_language.dart';
 import '../../../data/repositories/media_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
@@ -65,7 +64,7 @@ const List<String> profileTimeZones = <String>[
   'GMT+10',
 ];
 
-/// 07a–07c Teacher setup (skip-able): photo + headline; subjects,
+/// 07a–07c Teacher setup (required fields, no Skip): photo + headline; subjects,
 /// languages, gender, country, time zone; bio, experience, fee, days,
 /// certificates.
 class TeacherSetupScreen extends StatelessWidget {
@@ -99,8 +98,8 @@ class TeacherSetupScreen extends StatelessWidget {
             ),
         child: BlocConsumer<TeacherSetupCubit, TeacherSetupState>(
           listenWhen: (a, b) => !a.done && b.done,
-          listener: (context, _) {
-            context.read<SessionCubit>().completeSetup();
+          listener: (context, state) {
+            context.read<SessionCubit>().completeSetup(state.draft);
             context.go(AppRoutes.home);
           },
           buildWhen: (a, b) => a.step != b.step,
@@ -120,7 +119,6 @@ class TeacherSetupScreen extends StatelessWidget {
                       StepProgressHeader(
                         step: state.step,
                         total: TeacherSetupState.totalSteps,
-                        onSkip: cubit.skip,
                         onBack: state.step > 1 ? cubit.back : null,
                       ),
                       Expanded(
@@ -139,6 +137,44 @@ class TeacherSetupScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Bottom sheet listing [options] (country, time zone); used by teacher and
+/// student setup.
+Future<void> pickProfileOption(
+  BuildContext context, {
+  required String title,
+  required List<String> options,
+  required String? current,
+  required ValueChanged<String> onSelected,
+}) async {
+  final colors = Theme.of(context).extension<AppColors>()!;
+  final chosen = await AppBottomSheet.show<String>(
+    context,
+    builder: (context) => Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Text(title, style: AppTextStyles.titleLg.copyWith(color: colors.ink)),
+        const SizedBox(height: AppSpacing.space2),
+        for (final option in options)
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              option,
+              style: AppTextStyles.bodyLg.copyWith(color: colors.ink),
+            ),
+            trailing: option == current
+                ? AppIcon(AppIcon.check, color: colors.brand700)
+                : null,
+            onTap: () => Navigator.of(context).pop(option),
+          ),
+      ],
+    ),
+  );
+  if (chosen != null) {
+    onSelected(chosen);
   }
 }
 
@@ -200,17 +236,12 @@ class _Title extends StatelessWidget {
 class _StepOne extends StatelessWidget {
   const _StepOne({super.key});
 
-  static const ProfileStrengthCalculator _calculator =
-      ProfileStrengthCalculator();
-
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     final l10n = AppLocalizations.of(context);
     final cubit = context.read<TeacherSetupCubit>();
     return BlocBuilder<TeacherSetupCubit, TeacherSetupState>(
       builder: (context, state) {
-        final percent = _calculator.percent(state.draft);
         return _StepBody(
           padding: const EdgeInsetsDirectional.fromSTEB(
             AppSpacing.space5,
@@ -246,33 +277,13 @@ class _StepOne extends StatelessWidget {
             ),
             const Spacer(),
             const SizedBox(height: AppSpacing.space6),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppRadius.pill),
-                    child: SizedBox(
-                      height: 6,
-                      child: LinearProgressIndicator(
-                        value: percent / 100,
-                        backgroundColor: colors.surface200,
-                        color: colors.brand600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.gap10),
-                Text(
-                  l10n.profilePercent(percent),
-                  style: AppTextStyles.helper.copyWith(color: colors.inkMuted),
-                ),
-              ],
-            ),
             const SizedBox(height: AppSpacing.gap10),
             AppButton(
               label: l10n.continueAction,
               loading: state.saving,
-              onPressed: state.saving ? null : cubit.next,
+              onPressed: state.saving || !state.stepComplete
+                  ? null
+                  : cubit.next,
             ),
           ],
         );
@@ -283,42 +294,6 @@ class _StepOne extends StatelessWidget {
 
 class _StepTwo extends StatelessWidget {
   const _StepTwo({super.key});
-
-  Future<void> _pick(
-    BuildContext context, {
-    required String title,
-    required List<String> options,
-    required String? current,
-    required ValueChanged<String> onSelected,
-  }) async {
-    final colors = Theme.of(context).extension<AppColors>()!;
-    final chosen = await AppBottomSheet.show<String>(
-      context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(title, style: AppTextStyles.titleLg.copyWith(color: colors.ink)),
-          const SizedBox(height: AppSpacing.space2),
-          for (final option in options)
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                option,
-                style: AppTextStyles.bodyLg.copyWith(color: colors.ink),
-              ),
-              trailing: option == current
-                  ? AppIcon(AppIcon.check, color: colors.brand700)
-                  : null,
-              onTap: () => Navigator.of(context).pop(option),
-            ),
-        ],
-      ),
-    );
-    if (chosen != null) {
-      onSelected(chosen);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -383,7 +358,7 @@ class _StepTwo extends StatelessWidget {
                   initialValue: state.draft.country ?? '',
                   readOnly: true,
                   trailingIcon: AppIcon.chevronDown,
-                  onTap: () => _pick(
+                  onTap: () => pickProfileOption(
                     context,
                     title: l10n.countryLabel,
                     options: profileCountries,
@@ -400,7 +375,7 @@ class _StepTwo extends StatelessWidget {
                   initialValue: state.draft.timeZone ?? '',
                   readOnly: true,
                   trailingIcon: AppIcon.chevronDown,
-                  onTap: () => _pick(
+                  onTap: () => pickProfileOption(
                     context,
                     title: l10n.timeZoneLabel,
                     options: profileTimeZones,
@@ -416,7 +391,7 @@ class _StepTwo extends StatelessWidget {
           AppButton(
             label: l10n.continueAction,
             loading: state.saving,
-            onPressed: state.saving ? null : cubit.next,
+            onPressed: state.saving || !state.stepComplete ? null : cubit.next,
           ),
         ],
       ),
@@ -538,6 +513,21 @@ class _StepThreeState extends State<_StepThree> {
               onToggle: cubit.dayToggled,
             ),
             const SizedBox(height: AppSpacing.space4),
+            SectionLabel(l10n.iTeachLabel),
+            const SizedBox(height: AppSpacing.gap10),
+            Wrap(
+              spacing: AppSpacing.space2,
+              runSpacing: AppSpacing.space2,
+              children: <Widget>[
+                for (final a in TeachesAudience.values)
+                  AppChip(
+                    label: a.label(l10n),
+                    selected: d.teaches.contains(a),
+                    onTap: () => cubit.audienceToggled(a),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.space4),
             for (final path in d.certificatePaths) ...<Widget>[
               CertificateRow(
                 path: path,
@@ -564,7 +554,9 @@ class _StepThreeState extends State<_StepThree> {
             AppButton(
               label: l10n.finishSetupAction,
               loading: state.saving,
-              onPressed: state.saving ? null : cubit.next,
+              onPressed: state.saving || !state.stepComplete
+                  ? null
+                  : cubit.next,
             ),
           ],
         );

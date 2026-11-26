@@ -8,13 +8,14 @@ import '../../../data/models/enums/subject.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/connection_repository.dart';
 import '../../../data/repositories/discover_repository.dart';
+import '../logic/daily_shuffle.dart';
 import '../logic/student_filter.dart';
 import '../logic/teacher_filter.dart';
 import 'discover_state.dart';
 
-/// Loads the visible teachers (student viewer) or students (teacher viewer)
-/// and applies search and filters through [TeacherFilter] /
-/// [StudentFilter].
+/// Loads the listed teachers (student viewer) or students (teacher viewer),
+/// orders them with [DailyShuffle] (random, stable for the day) and applies
+/// search and filters through [TeacherFilter] / [StudentFilter].
 class DiscoverCubit extends Cubit<DiscoverState> {
   DiscoverCubit(
     this._discover,
@@ -22,7 +23,9 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     required this.viewerId,
     required bool showTeachers,
     required String Function(Subject) subjectLabel,
+    DateTime? today,
   }) : _subjectLabel = subjectLabel,
+       _order = DailyShuffle(viewerId: viewerId, day: today ?? DateTime.now()),
        super(DiscoverState(showTeachers: showTeachers)) {
     unawaited(_listenPeople());
     _connectionsSub = _connections
@@ -37,6 +40,7 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   final ConnectionRepository _connections;
   final String viewerId;
   final String Function(Subject) _subjectLabel;
+  final DailyShuffle _order;
 
   StreamSubscription<List<Profile>>? _peopleSub;
   StreamSubscription<List<Connection>>? _connectionsSub;
@@ -54,7 +58,7 @@ class DiscoverCubit extends Cubit<DiscoverState> {
         : _discover.watchStudents(viewerId: viewerId);
     _peopleSub = people.listen(
       (list) {
-        _emitFiltered(all: list, status: DiscoverStatus.ready);
+        _emitFiltered(all: _order.apply(list), status: DiscoverStatus.ready);
         finish();
       },
       onError: (Object _) {

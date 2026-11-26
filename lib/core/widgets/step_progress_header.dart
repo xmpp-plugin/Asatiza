@@ -8,12 +8,11 @@ import '../theme/app_text_styles.dart';
 import 'app_icon.dart';
 
 /// Profile-setup header: optional back button, "Step n of total" centred,
-/// "Skip for now" on the end side, and one 6 px bar per step below.
+/// and one 6 px bar per step below. There is no Skip: setup is required.
 class StepProgressHeader extends StatelessWidget {
   const StepProgressHeader({
     required this.step,
     required this.total,
-    required this.onSkip,
     super.key,
     this.onBack,
   });
@@ -21,7 +20,6 @@ class StepProgressHeader extends StatelessWidget {
   /// 1-based current step.
   final int step;
   final int total;
-  final VoidCallback onSkip;
   final VoidCallback? onBack;
 
   @override
@@ -81,19 +79,8 @@ class StepProgressHeader extends StatelessWidget {
                     ),
                   ),
                 ),
-                TextButton(
-                  onPressed: onSkip,
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.gap10,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.padded,
-                    foregroundColor: colors.brand700,
-                    textStyle: AppTextStyles.label,
-                  ),
-                  child: Text(l10n.skipForNow),
-                ),
+                // Keeps the step text centred (no Skip: setup is required).
+                const SizedBox(width: 34),
               ],
             ),
           ),

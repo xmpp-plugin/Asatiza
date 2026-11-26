@@ -1,17 +1,25 @@
 import 'dart:async';
 
 import '../../../core/errors/failures.dart';
+import '../../../core/logic/profile_completeness_rules.dart';
 import '../../mock/mock_profiles.dart';
 import '../../models/profile.dart';
 import '../profile_repository.dart';
 
 /// In-memory [ProfileRepository] seeded with [buildMockProfiles]. State
-/// resets when the app restarts.
+/// resets when the app restarts. Like the database, it sets
+/// [Profile.isActive] on every write ([ProfileCompletenessRules]).
 class MockProfileRepository implements ProfileRepository {
   MockProfileRepository({DateTime? now})
     : _profiles = <String, Profile>{
-        for (final p in buildMockProfiles(now ?? DateTime.now())) p.id: p,
+        for (final p in buildMockProfiles(now ?? DateTime.now()))
+          p.id: _withStatus(p),
       };
+
+  static const ProfileCompletenessRules _rules = ProfileCompletenessRules();
+
+  static Profile _withStatus(Profile p) =>
+      p.copyWith(isActive: _rules.isComplete(p));
 
   final Map<String, Profile> _profiles;
   final StreamController<void> _changes = StreamController<void>.broadcast();
@@ -30,7 +38,7 @@ class MockProfileRepository implements ProfileRepository {
   }
 
   void insert(Profile profile) {
-    _profiles[profile.id] = profile;
+    _profiles[profile.id] = _withStatus(profile);
     _changes.add(null);
   }
 
@@ -87,7 +95,8 @@ class MockProfileRepository implements ProfileRepository {
     if (current == null) {
       throw const NotFoundFailure();
     }
-    // Role, verification, id and created date are never taken from the app.
+    // Role, verification, status, id and created date are never taken from
+    // the app.
     final stored = current.copyWith(
       fullName: profile.fullName,
       email: profile.email,
@@ -102,8 +111,9 @@ class MockProfileRepository implements ProfileRepository {
       teacherDetails: profile.teacherDetails,
       studentDetails: profile.studentDetails,
     );
-    _profiles[profile.id] = stored;
+    final withStatus = _withStatus(stored);
+    _profiles[profile.id] = withStatus;
     _changes.add(null);
-    return stored;
+    return withStatus;
   }
 }

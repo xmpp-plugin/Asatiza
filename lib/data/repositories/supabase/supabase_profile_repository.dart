@@ -11,8 +11,8 @@ import 'supabase_failure_mapper.dart';
 
 /// [ProfileRepository] on the `profiles`, `teacher_details` and
 /// `student_details` tables (RLS: signed-in users read; owners update their
-/// own editable columns; `role`, `is_verified`, `is_visible` and
-/// `completion_pct` are never written by the app).
+/// own editable columns; `role`, `is_verified` and `status` are never
+/// written by the app).
 ///
 /// [watchProfile] emits the stored profile and then every save made through
 /// this repository (no Realtime in this phase).

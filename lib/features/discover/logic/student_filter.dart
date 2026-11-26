@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../core/logic/profile_strength_calculator.dart';
-import '../../../data/models/enums/discover_sort.dart';
 import '../../../data/models/enums/gender.dart';
 import '../../../data/models/enums/learner_age_group.dart';
 import '../../../data/models/enums/learner_level.dart';
@@ -10,7 +8,7 @@ import '../../../data/models/enums/teaching_language.dart';
 import '../../../data/models/profile.dart';
 
 /// Search and filters for the Students tab (teacher view). Pure value:
-/// [apply] filters and orders a list (newest first by default).
+/// [apply] filters a list (no sort; order comes from `DailyShuffle`).
 class StudentFilter extends Equatable {
   const StudentFilter({
     this.query = '',
@@ -20,7 +18,6 @@ class StudentFilter extends Equatable {
     this.country,
     this.levels = const <LearnerLevel>{},
     this.ageGroups = const <LearnerAgeGroup>{},
-    this.sort = DiscoverSort.newest,
   });
 
   final String query;
@@ -36,10 +33,9 @@ class StudentFilter extends Equatable {
   final String? country;
   final Set<LearnerLevel> levels;
   final Set<LearnerAgeGroup> ageGroups;
-  final DiscoverSort sort;
 
   /// Number of active filters (the badge on the filter button); search text
-  /// and sort order are not counted.
+  /// is not counted.
   int get activeCount =>
       subjects.length +
       (gender == null ? 0 : 1) +
@@ -86,28 +82,12 @@ class StudentFilter extends Equatable {
     return true;
   }
 
+  /// The students matching search and filters, in the given order (the
+  /// list order comes from `DailyShuffle`).
   List<Profile> apply(
     Iterable<Profile> students,
-    String Function(Subject) subjectLabel, {
-    ProfileStrengthCalculator strength = const ProfileStrengthCalculator(),
-  }) {
-    final list = students.where((p) => matches(p, subjectLabel)).toList();
-    switch (sort) {
-      case DiscoverSort.newest:
-        list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      case DiscoverSort.recommended:
-        final percent = <String, int>{
-          for (final p in list) p.id: strength.percent(p),
-        };
-        list.sort((a, b) {
-          final byPercent = percent[b.id]!.compareTo(percent[a.id]!);
-          return byPercent != 0
-              ? byPercent
-              : b.createdAt.compareTo(a.createdAt);
-        });
-    }
-    return list;
-  }
+    String Function(Subject) subjectLabel,
+  ) => students.where((p) => matches(p, subjectLabel)).toList();
 
   StudentFilter copyWith({
     String? query,
@@ -117,7 +97,6 @@ class StudentFilter extends Equatable {
     String? Function()? country,
     Set<LearnerLevel>? levels,
     Set<LearnerAgeGroup>? ageGroups,
-    DiscoverSort? sort,
   }) {
     return StudentFilter(
       query: query ?? this.query,
@@ -127,11 +106,10 @@ class StudentFilter extends Equatable {
       country: country != null ? country() : this.country,
       levels: levels ?? this.levels,
       ageGroups: ageGroups ?? this.ageGroups,
-      sort: sort ?? this.sort,
     );
   }
 
-  /// Same search text, every filter cleared and the default order.
+  /// Same search text, every filter cleared.
   StudentFilter reset() => StudentFilter(query: query);
 
   @override
@@ -143,6 +121,5 @@ class StudentFilter extends Equatable {
     country,
     levels,
     ageGroups,
-    sort,
   ];
 }

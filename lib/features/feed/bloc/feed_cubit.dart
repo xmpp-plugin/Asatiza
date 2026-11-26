@@ -68,9 +68,6 @@ class FeedCubit extends Cubit<FeedState> {
     }
   }
 
-  void dismissStrengthCard() =>
-      emit(state.copyWith(strengthCardDismissed: true));
-
   @override
   Future<void> close() async {
     await _postsSub?.cancel();

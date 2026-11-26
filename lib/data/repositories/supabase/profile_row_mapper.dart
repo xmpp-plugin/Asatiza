@@ -43,6 +43,7 @@ class ProfileRowMapper {
       languages: _enumList(TeachingLanguage.values, row['languages']),
       bio: _text(row['bio']),
       isVerified: (row['is_verified'] as bool?) ?? false,
+      isActive: row['status'] == 'active',
       teacherDetails: role == UserRole.teacher
           ? _teacher(_embedded(row['teacher_details']))
           : null,
@@ -53,7 +54,7 @@ class ProfileRowMapper {
   }
 
   /// Only the columns the app may write. Never `id`, `role`,
-  /// `is_verified`, `is_visible` or `completion_pct`.
+  /// `is_verified` or `status`.
   Map<String, dynamic> profileUpdate(Profile profile) => <String, dynamic>{
     'full_name': profile.fullName.trim(),
     'headline': _clean(profile.headline),

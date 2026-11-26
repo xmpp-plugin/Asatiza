@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:asatiza/core/logic/profile_strength_calculator.dart';
+import 'package:asatiza/core/logic/profile_completeness_rules.dart';
 import 'package:asatiza/data/models/enums/fee_unit.dart';
 import 'package:asatiza/data/models/enums/gender.dart';
 import 'package:asatiza/data/models/enums/learner_age_group.dart';
@@ -34,8 +34,7 @@ void main() {
     'timezone': 'GMT+5',
     'languages': <String>['urdu', 'english', 'klingon'],
     'bio': null,
-    'completion_pct': 70,
-    'is_visible': false,
+    'status': 'incomplete',
     'is_verified': true,
   };
 
@@ -132,8 +131,7 @@ void main() {
       'id',
       'role',
       'is_verified',
-      'is_visible',
-      'completion_pct',
+      'status',
       'created_at',
     ]) {
       expect(update.containsKey(column), isFalse, reason: column);
@@ -177,16 +175,43 @@ void main() {
     expect(p.studentDetails!.ageGroup, LearnerAgeGroup.adult);
   });
 
-  test('server strength trigger uses the app weights (same order)', () {
+  test('server status check covers every app required field', () {
     final sql = File(
-      'supabase/migrations/20261123120000_profiles.sql',
+      'supabase/migrations/20261126120000_profile_status.sql',
     ).readAsStringSync();
-    final weights = RegExp(
-      r'total := total \+ (\d+)',
-    ).allMatches(sql).map((m) => int.parse(m[1]!)).toList();
-    expect(weights, <int>[
-      ...ProfileStrengthCalculator.teacherWeights.values,
-      ...ProfileStrengthCalculator.studentWeights.values,
-    ]);
+    final start = sql.indexOf(
+      'create or replace function private.profile_is_complete(',
+    );
+    final body = sql.substring(
+      start,
+      sql.indexOf(
+        'create or replace function private.profiles_before_write(',
+        start,
+      ),
+    );
+    // One SQL condition per RequiredField (ProfileCompletenessRules).
+    const columns = <RequiredField, String>{
+      RequiredField.name: 'p.full_name',
+      RequiredField.gender: 'p.gender',
+      RequiredField.languages: 'p.languages',
+      RequiredField.country: 'p.country',
+      RequiredField.timeZone: 'p.timezone',
+      RequiredField.headline: 'p.headline',
+      RequiredField.subjects: 't.subjects',
+      RequiredField.bio: 'p.bio',
+      RequiredField.experience: 't.experience_years',
+      RequiredField.qualifications: 't.qualifications',
+      RequiredField.fee: 't.fee_amount',
+      RequiredField.availableDays: "t.availability -> 'days'",
+      RequiredField.teaches: 't.teaches',
+      RequiredField.learner: 's.age_group',
+      RequiredField.goals: 's.goals',
+      RequiredField.level: 's.level',
+      RequiredField.preferredTeacherGender: 's.preferred_teacher_gender',
+    };
+    expect(columns.keys.toSet(), RequiredField.values.toSet());
+    for (final entry in columns.entries) {
+      expect(body.contains(entry.value), isTrue, reason: entry.key.name);
+    }
   });
 }
