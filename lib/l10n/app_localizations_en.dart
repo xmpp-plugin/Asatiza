@@ -797,7 +797,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get connectedLabel => 'Connected';
 
   @override
-  String get requestedLabel => 'Requested';
+  String get requestedLabel => 'Pending';
 
   @override
   String get acceptAction => 'Accept';
@@ -1062,11 +1062,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectProfileIncompleteError =>
-      'Complete at least 60% of your profile to send requests.';
+      'Finish setting up your profile to connect.';
 
   @override
   String get connectAlreadyError =>
       'You already have a request or connection with this person.';
+
+  @override
+  String get connectRequestLimitError =>
+      'You\'ve sent 10 requests in the last 24 hours. Try again later.';
+
+  @override
+  String get connectDeclinedRecentlyError =>
+      'This person declined your request. You can ask again after 3 days.';
+
+  @override
+  String get connectReceiverNotActiveTeacher =>
+      'This teacher is still completing their profile. You can connect once it\'s complete.';
+
+  @override
+  String get connectReceiverNotActiveStudent =>
+      'This student is still completing their profile. You can connect once it\'s complete.';
+
+  @override
+  String get notAcceptingRequestsLabel => 'Not accepting requests yet';
+
+  @override
+  String get chatComingSoon => 'Chat is coming soon.';
 
   @override
   String get connectionsTitle => 'My connections';

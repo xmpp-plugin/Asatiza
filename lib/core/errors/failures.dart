@@ -53,6 +53,15 @@ enum ValidationReason {
   /// The teacher already has the maximum number of certificates.
   certificateLimitReached,
 
+  /// 10 connection requests in the last 24 hours (PHASE_008).
+  requestLimitReached,
+
+  /// The receiver declined this requester less than 3 days ago (PHASE_008).
+  declinedRecently,
+
+  /// The receiver's profile is not active yet (PHASE_008).
+  receiverNotActive,
+
   /// No connection (from [NetworkFailure]).
   network,
 

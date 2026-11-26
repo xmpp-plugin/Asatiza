@@ -2,6 +2,8 @@
 
 ## Verified Architecture (updated 2026-11-19, `PHASE_001`)
 
+VERIFIED 2026-11-26 (`PHASE_008`): connections are real (`SupabaseConnectionRepository`). `MockConnectionRepository` is no longer registered as `ConnectionRepository`; it stays in `lib/` only as `sampleConnections` behind the still-mock chat (moves to `test/fakes/` in the Chat phase). "Message" on real connections shows "Chat is coming soon" until then.
+
 VERIFIED 2026-11-26 (`PHASE_007`): blocks are real (`BlockRepository` → `SupabaseBlockRepository`); post reports stay on `MockSafetyRepository`. DECIDED rule (developer, PHASE_007): `lib/` keeps only the implementation the app runs — when a feature becomes real, its mock repository moves from `lib/data/repositories/mock/` to `test/fakes/` as a test-only fake. Moved so far: `MockAuthRepository`, `MockDiscoverRepository`, `MockMediaRepository`, block code (`FakeBlockRepository`). `MockProfileRepository` stays in `lib/` while it is the sample-people source for the remaining mocks.
 
 VERIFIED 2026-11-26 (`PHASE_006` scope change): no profile percentage anywhere. `ProfileCompletenessRules` (core logic) replaces `ProfileStrengthCalculator`; `SessionState.needsSetup` is derived from `Profile.isActive`, so the router sends every incomplete user to setup (no Skip; setup opens at the first incomplete step). `DailyShuffle` (discover logic) orders lists. `ProfileStrengthCard` and `DiscoverSort` removed.

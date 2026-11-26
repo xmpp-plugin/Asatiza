@@ -29,6 +29,8 @@ Everything in `docs/product/VERSION_1_PLAN.md` is not yet implemented. Phases ar
 - 2026-11-18: SOLID rules adopted (`docs/CLASS_AND_COMPONENT_RULES.md`). Repositories differ from plan section 11: profile access is split into `ProfileRepository`, `DiscoverRepository` and `MediaRepository`, plus `SafetyRepository`; business rules live in pure-Dart `logic/` classes; platform plugins sit behind `lib/core/services/` interfaces.
 - `docs/product/` is left unchanged.
 
+- 2026-11-26 (`PHASE_008`, temporary): "Message" on a real connection shows "Chat is coming soon" (chat still mock); the Notifications tab's sample request items cannot act on real requests (Notifications phase).
+
 ### Plan update 2026-11-26 — code not yet changed
 
 Owner updated `docs/product/VERSION_1_PLAN.md` and `FULL_PRODUCT_PLAN.md` (roles, required setup, status, visibility, connections, Verified badge). The code still follows the old rules until approved phases change it:
@@ -39,7 +41,7 @@ Owner updated `docs/product/VERSION_1_PLAN.md` and `FULL_PRODUCT_PLAN.md` (roles
 | B | `profiles.status` (incomplete / active) from required fields; percentage removed from app and database | `completion_pct` + `is_visible`; `ProfileStrengthCalculator`; Home / My profile show % | Implemented in PHASE_006 (2026-11-26), manual test pending |
 | C | Profile setup has no Skip; unfinished setup resumes at log-in; Edit profile cannot empty required fields | "Skip for now" on setup steps; router sends users to Home | Implemented in PHASE_006 (2026-11-26), manual test pending |
 | D | Learner type wording: "Who will be learning? Myself / My child / My teenager"; filter "Learner type" | Labels say age group (child / teen / adult); values unchanged | Small copy step (no migration) |
-| E | Connect needs both active; 10 requests per rolling 24 h; checked in a database function | `DiscoverVisibilityRules.canSendRequest` (≥ 60 %), mock connections | Connections phase |
+| E | Connect needs both active; 10 requests per rolling 24 h; checked in a database function | `DiscoverVisibilityRules.canSendRequest` (≥ 60 %), mock connections | Implemented in PHASE_008 (2026-11-26), manual test pending |
 | F | No status card on Home / My profile; Connect-button messages | Percentage strength card | Card removal implemented in PHASE_006 (2026-11-26); Connect-button messages: Connections phase |
 | G | Verified badge only from certificate review; "Certificate under review" to the teacher | `is_verified` set by admin; no "under review" state | Profile-status phase |
 

@@ -1483,7 +1483,7 @@ abstract class AppLocalizations {
   /// No description provided for @requestedLabel.
   ///
   /// In en, this message translates to:
-  /// **'Requested'**
+  /// **'Pending'**
   String get requestedLabel;
 
   /// No description provided for @acceptAction.
@@ -1879,7 +1879,7 @@ abstract class AppLocalizations {
   /// No description provided for @connectProfileIncompleteError.
   ///
   /// In en, this message translates to:
-  /// **'Complete at least 60% of your profile to send requests.'**
+  /// **'Finish setting up your profile to connect.'**
   String get connectProfileIncompleteError;
 
   /// No description provided for @connectAlreadyError.
@@ -1887,6 +1887,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You already have a request or connection with this person.'**
   String get connectAlreadyError;
+
+  /// No description provided for @connectRequestLimitError.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve sent 10 requests in the last 24 hours. Try again later.'**
+  String get connectRequestLimitError;
+
+  /// No description provided for @connectDeclinedRecentlyError.
+  ///
+  /// In en, this message translates to:
+  /// **'This person declined your request. You can ask again after 3 days.'**
+  String get connectDeclinedRecentlyError;
+
+  /// No description provided for @connectReceiverNotActiveTeacher.
+  ///
+  /// In en, this message translates to:
+  /// **'This teacher is still completing their profile. You can connect once it\'s complete.'**
+  String get connectReceiverNotActiveTeacher;
+
+  /// No description provided for @connectReceiverNotActiveStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'This student is still completing their profile. You can connect once it\'s complete.'**
+  String get connectReceiverNotActiveStudent;
+
+  /// No description provided for @notAcceptingRequestsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not accepting requests yet'**
+  String get notAcceptingRequestsLabel;
+
+  /// No description provided for @chatComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat is coming soon.'**
+  String get chatComingSoon;
 
   /// No description provided for @connectionsTitle.
   ///

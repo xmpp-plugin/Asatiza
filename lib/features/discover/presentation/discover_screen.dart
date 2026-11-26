@@ -261,7 +261,10 @@ class _DiscoverViewState extends State<_DiscoverView> {
       Connection(status: ConnectionStatus.accepted) => (
         l10n.messageAction,
         AppIcon.chat,
-        () => context.push(AppRoutes.chat(p.id)),
+        // Chat becomes real in the Chat phase (PHASE_008 decision 5).
+        () => ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.chatComingSoon))),
       ),
       Connection(requesterId: final from) when from == widget.viewer.id => (
         l10n.requestedLabel,

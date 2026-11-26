@@ -33,8 +33,9 @@ class ConnectRequestCubit extends Cubit<ConnectRequestState> {
       emit(state.copyWith(sending: false, sent: true));
     } on ValidationFailure catch (f) {
       emit(state.copyWith(sending: false, error: () => f.reason));
-    } on Failure {
-      emit(state.copyWith(sending: false, error: () => null));
+    } on Failure catch (f) {
+      // Offline, server error, or the person is no longer available.
+      emit(state.copyWith(sending: false, error: () => f.displayReason));
     }
   }
 }

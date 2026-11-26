@@ -9,7 +9,10 @@ import '../../models/enums/connection_status.dart';
 import '../connection_repository.dart';
 import 'mock_profile_repository.dart';
 
-/// In-memory [ConnectionRepository] (resets on restart).
+/// In-memory [ConnectionRepository] (resets on restart). Since PHASE_008 the
+/// app uses `SupabaseConnectionRepository`; this class stays in `lib/` only
+/// as the sample connections behind the still-mock chat (`main.dart`) and
+/// moves to `test/fakes/` with the Chat phase.
 class MockConnectionRepository implements ConnectionRepository {
   MockConnectionRepository(this._profiles, {DateTime? now}) : _now = now {
     for (final c in buildMockConnections(now ?? DateTime.now())) {
@@ -79,9 +82,12 @@ class MockConnectionRepository implements ConnectionRepository {
       throw const ValidationFailure(ValidationReason.connectNoteTooLong);
     }
     final sender = await _profiles.getProfile(requesterId);
-    await _profiles.getProfile(receiverId);
+    final receiver = await _profiles.getProfile(receiverId);
     if (!_visibility.canSendRequest(sender)) {
       throw const ValidationFailure(ValidationReason.profileIncomplete);
+    }
+    if (!_visibility.canReceiveRequest(receiver)) {
+      throw const ValidationFailure(ValidationReason.receiverNotActive);
     }
     final exists = _of(requesterId).any((c) => c.involves(receiverId));
     if (exists || requesterId == receiverId) {
@@ -117,6 +123,10 @@ class MockConnectionRepository implements ConnectionRepository {
     );
     _changes.add(null);
   }
+
+  @override
+  Future<int> connectionCount(String userId) async =>
+      acceptedIdsOf(userId).length;
 
   @override
   Future<void> remove({

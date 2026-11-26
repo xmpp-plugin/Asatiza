@@ -28,12 +28,17 @@ class DiscoverCubit extends Cubit<DiscoverState> {
        _order = DailyShuffle(viewerId: viewerId, day: today ?? DateTime.now()),
        super(DiscoverState(showTeachers: showTeachers)) {
     unawaited(_listenPeople());
-    _connectionsSub = _connections
-        .watchConnections(viewerId)
-        .listen(
-          (list) => emit(state.copyWith(connections: list)),
-          onError: (Object _) {},
-        );
+    _listenConnections();
+  }
+
+  /// The viewer's pending / accepted connections (button states). A new
+  /// subscription loads them again.
+  void _listenConnections() {
+    _connectionsSub = _connections.watchConnections(viewerId).listen((list) {
+      if (!isClosed) {
+        emit(state.copyWith(connections: list));
+      }
+    }, onError: (Object _) {});
   }
 
   final DiscoverRepository _discover;
@@ -72,13 +77,16 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     return done.future;
   }
 
-  /// Reloads the list (pull-to-refresh and "Try again"). Search and filters
-  /// are kept. Shows the skeleton only after an error.
+  /// Reloads the list and the viewer's connections (pull-to-refresh and
+  /// "Try again"), e.g. after the other person accepted on their device.
+  /// Search and filters are kept. Shows the skeleton only after an error.
   Future<void> refresh() async {
     await _peopleSub?.cancel();
+    await _connectionsSub?.cancel();
     if (isClosed) {
       return;
     }
+    _listenConnections();
     if (state.status == DiscoverStatus.error) {
       emit(state.copyWith(status: DiscoverStatus.loading));
     }

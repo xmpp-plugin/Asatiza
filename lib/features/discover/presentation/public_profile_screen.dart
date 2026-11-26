@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/router/app_routes.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -248,6 +247,11 @@ class _PublicProfileView extends StatelessWidget {
     ];
   }
 
+  void _chatComingSoon(BuildContext context) =>
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).chatComingSoon)),
+      );
+
   Widget _actions(
     BuildContext context,
     PublicProfileState state,
@@ -258,7 +262,22 @@ class _PublicProfileView extends StatelessWidget {
     final c = state.connection;
     final connected = c?.status == ConnectionStatus.accepted;
     final cubit = context.read<PublicProfileCubit>();
+    void notAccepting() => ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          p.isTeacher
+              ? l10n.connectReceiverNotActiveTeacher
+              : l10n.connectReceiverNotActiveStudent,
+        ),
+      ),
+    );
     final (String label, String icon, VoidCallback? onTap) = switch (c) {
+      // Only reachable from the feed: lists show active people only.
+      null when !p.isActive => (
+        l10n.notAcceptingRequestsLabel,
+        AppIcon.userPlus,
+        notAccepting,
+      ),
       null => (
         l10n.connectAction,
         AppIcon.userPlus,
@@ -295,9 +314,8 @@ class _PublicProfileView extends StatelessWidget {
             Expanded(
               child: AppButton(
                 label: l10n.messageAction,
-                onPressed: connected
-                    ? () => context.push(AppRoutes.chat(p.id))
-                    : null,
+                // Chat becomes real in the Chat phase (PHASE_008 decision 5).
+                onPressed: connected ? () => _chatComingSoon(context) : null,
                 leading: AppIcon(
                   AppIcon.chat,
                   size: 18,

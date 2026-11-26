@@ -34,6 +34,8 @@ import 'package:go_router/go_router.dart';
 
 import '../helpers/test_app.dart';
 import '../fakes/fake_block_repository.dart';
+import 'package:asatiza/data/repositories/connection_repository.dart';
+import 'package:asatiza/data/models/connection.dart';
 
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));
 
@@ -286,6 +288,50 @@ void main() {
       await cubit.close();
     });
 
+    test(
+      'discover cubit: refresh picks up a request accepted elsewhere',
+      () async {
+        // Like Supabase without Realtime: each subscription loads once.
+        final snapshot = _SnapshotConnections(connections);
+        final cubit = DiscoverCubit(
+          discover,
+          snapshot,
+          viewerId: MockIds.ayesha,
+          showTeachers: true,
+          subjectLabel: subjectName,
+        );
+        final sent = await connections.sendRequest(
+          requesterId: MockIds.ayesha,
+          receiverId: MockIds.zainab,
+        );
+        await cubit.refresh();
+        await settle();
+        expect(
+          cubit.state.connectionWith(MockIds.zainab)?.status,
+          ConnectionStatus.pending,
+        );
+        // Zainab accepts on her own device.
+        await connections.respond(
+          connectionId: sent.id,
+          userId: MockIds.zainab,
+          accept: true,
+        );
+        await settle();
+        expect(
+          cubit.state.connectionWith(MockIds.zainab)?.status,
+          ConnectionStatus.pending,
+          reason: 'no live update without Realtime',
+        );
+        await cubit.refresh();
+        await settle();
+        expect(
+          cubit.state.connectionWith(MockIds.zainab)?.status,
+          ConnectionStatus.accepted,
+        );
+        await cubit.close();
+      },
+    );
+
     test('discover cubit shows an error and refresh reloads', () async {
       final flaky = _FlakyDiscover(discover);
       final cubit = DiscoverCubit(
@@ -327,6 +373,27 @@ void main() {
       expect(fresh.state.sent, isTrue);
       await cubit.close();
       await fresh.close();
+    });
+
+    test('connect request: a receiver who is not active is refused', () async {
+      final zainab = await profiles.getProfile(MockIds.zainab);
+      await profiles.updateProfile(zainab.copyWith(timeZone: ''));
+      final cubit = ConnectRequestCubit(
+        connections,
+        requesterId: MockIds.ayesha,
+        receiverId: MockIds.zainab,
+      );
+      await cubit.send();
+      expect(cubit.state.error, ValidationReason.receiverNotActive);
+      expect(cubit.state.sent, isFalse);
+      await cubit.close();
+    });
+
+    test('connection count of another profile', () async {
+      expect(
+        await connections.connectionCount(MockIds.ahmed),
+        mockConnectedIds(MockIds.ahmed).length,
+      );
     });
 
     test('connections cubit: requests tab accept moves to connected', () async {
@@ -384,7 +451,23 @@ void main() {
       await tapText(tester, 'Connect');
       expect(find.text('Connect with Ustadha Zainab'), findsOneWidget);
       await tapText(tester, 'Send request');
-      expect(find.text('Requested'), findsOneWidget);
+      // Plan section 7: a sent request shows "Pending".
+      expect(find.text('Pending'), findsOneWidget);
+      await app.stop(tester);
+    });
+
+    testWidgets('Message on a connection says chat is coming soon', (
+      tester,
+    ) async {
+      final app = TestApp();
+      await app.startSignedIn(tester);
+      await tester.tap(find.bySemanticsLabel('Teachers'));
+      await tester.pumpAndSettle();
+      // Ayesha is connected to Qari Ahmed in the sample data.
+      await tester.enterText(find.byType(TextField), 'Qari Ahmed');
+      await tester.pumpAndSettle();
+      await tapText(tester, 'Message');
+      expect(find.text('Chat is coming soon.'), findsOneWidget);
       await app.stop(tester);
     });
 
@@ -447,4 +530,45 @@ class _FlakyDiscover implements DiscoverRepository {
   @override
   Stream<List<Profile>> watchStudents({required String viewerId}) =>
       _inner.watchStudents(viewerId: viewerId);
+}
+
+/// Emits [_inner]'s connections once per subscription (no later updates),
+/// like `SupabaseConnectionRepository` for changes made on another device.
+class _SnapshotConnections implements ConnectionRepository {
+  _SnapshotConnections(this._inner);
+
+  final ConnectionRepository _inner;
+
+  @override
+  Stream<List<Connection>> watchConnections(String userId) =>
+      _inner.watchConnections(userId).take(1);
+
+  @override
+  Future<Connection> sendRequest({
+    required String requesterId,
+    required String receiverId,
+    String? note,
+  }) => _inner.sendRequest(
+    requesterId: requesterId,
+    receiverId: receiverId,
+    note: note,
+  );
+
+  @override
+  Future<void> respond({
+    required String connectionId,
+    required String userId,
+    required bool accept,
+  }) => _inner.respond(
+    connectionId: connectionId,
+    userId: userId,
+    accept: accept,
+  );
+
+  @override
+  Future<void> remove({required String connectionId, required String userId}) =>
+      _inner.remove(connectionId: connectionId, userId: userId);
+
+  @override
+  Future<int> connectionCount(String userId) => _inner.connectionCount(userId);
 }

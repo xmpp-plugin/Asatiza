@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/errors/failures.dart';
 import '../../../data/models/connection.dart';
-import '../../../data/models/enums/connection_status.dart';
 import '../../../data/models/post.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/connection_repository.dart';
@@ -32,18 +31,6 @@ class PublicProfileCubit extends Cubit<PublicProfileState> {
     _mineSub = _connections
         .watchConnections(viewerId)
         .listen(_onMine, onError: (Object _) {});
-    _theirsSub = _connections
-        .watchConnections(profileId)
-        .listen(
-          (list) => _emit(
-            state.copyWith(
-              connectionCount: list
-                  .where((c) => c.status == ConnectionStatus.accepted)
-                  .length,
-            ),
-          ),
-          onError: (Object _) {},
-        );
     _postsSub = _feed
         .watchPosts(viewerId: viewerId)
         .listen(
@@ -65,7 +52,6 @@ class PublicProfileCubit extends Cubit<PublicProfileState> {
 
   StreamSubscription<Profile>? _profileSub;
   StreamSubscription<List<Connection>>? _mineSub;
-  StreamSubscription<List<Connection>>? _theirsSub;
   StreamSubscription<List<Post>>? _postsSub;
 
   void _emit(PublicProfileState next) {
@@ -83,6 +69,19 @@ class PublicProfileCubit extends Cubit<PublicProfileState> {
       }
     }
     _emit(state.copyWith(connection: () => found));
+    // Their count can change when the viewer connects or disconnects.
+    unawaited(_loadCount());
+  }
+
+  /// The person's accepted connections (`ConnectionRepository
+  /// .connectionCount`; other people's connection rows are not readable).
+  Future<void> _loadCount() async {
+    try {
+      final count = await _connections.connectionCount(profileId);
+      _emit(state.copyWith(connectionCount: count));
+    } on Failure {
+      // Keeps the last count; the profile still shows.
+    }
   }
 
   /// Accepts this person's pending request to the viewer.
@@ -118,7 +117,6 @@ class PublicProfileCubit extends Cubit<PublicProfileState> {
   Future<void> close() async {
     await _profileSub?.cancel();
     await _mineSub?.cancel();
-    await _theirsSub?.cancel();
     await _postsSub?.cancel();
     return super.close();
   }

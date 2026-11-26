@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-26 (`PHASE_008`): `SupabaseConnectionRepository` implements `ConnectionRepository` (reads via RLS, `rpc` for send / respond / remove, `connectionCount` via `connection_count`). New `ConnectionRepository.connectionCount(String userId)` (approved at the execution stop). New `ValidationReason`s: `requestLimitReached`, `declinedRecently`, `receiverNotActive`; `profileIncomplete` now means the sender is not active. `ConnectRequestCubit` shows network / unexpected failures too.
+
 VERIFIED 2026-11-26 (`PHASE_007`): `BlockRepository` (`blockUser` — twice or self is a no-op; `watchBlockedIds` / `watchBlockedUsers` — emit now and after local changes; `unblockUser`) with `SupabaseBlockRepository`; `SafetyRepository` now has only `reportPost` (mock until the Feed phase). `SupabaseDiscoverRepository(client, blocks)` drops blocked people and reloads on block changes. `PublicProfileCubit.block()` and `BlockedUsersCubit.unblock()` return false on `Failure` (snackbar `blockFailedMessage`).
 
 VERIFIED 2026-11-26 (`PHASE_006` scope change): `Profile.isActive` (read from `profiles.status`; never written). `SupabaseDiscoverRepository` lists `status = 'active'` for both roles (no approval or Looking filter). `DiscoverVisibilityRules.canSendRequest` / `canReceiveRequest` need an active profile. Interface signatures unchanged; `DiscoverSort` removed (order is `DailyShuffle`).

@@ -78,6 +78,14 @@ class _ConnectSheetState extends State<ConnectSheet> {
         ValidationReason.profileIncomplete =>
           l10n.connectProfileIncompleteError,
         ValidationReason.alreadyConnected => l10n.connectAlreadyError,
+        ValidationReason.requestLimitReached => l10n.connectRequestLimitError,
+        ValidationReason.declinedRecently => l10n.connectDeclinedRecentlyError,
+        ValidationReason.receiverNotActive =>
+          widget.target.isTeacher
+              ? l10n.connectReceiverNotActiveTeacher
+              : l10n.connectReceiverNotActiveStudent,
+        ValidationReason.network => l10n.errorNoConnection,
+        ValidationReason.unexpected => l10n.errorSomethingWentWrong,
         _ => null,
       };
 
