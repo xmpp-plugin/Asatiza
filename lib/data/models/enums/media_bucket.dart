@@ -1,5 +1,5 @@
-/// Supabase Storage buckets used by the app (PHASE_005, PHASE_009). Post
-/// images are added by the Feed phase.
+/// Supabase Storage buckets used by the app (PHASE_005, PHASE_009,
+/// PHASE_010).
 enum MediaBucket {
   /// Profile photos; public read, owner writes (JPEG, 1 MB).
   avatars('avatars'),
@@ -8,7 +8,10 @@ enum MediaBucket {
   certificates('certificates'),
 
   /// Chat photos; readable only by the two conversation members (JPEG, 1 MB).
-  chatImages('chat-images');
+  chatImages('chat-images'),
+
+  /// Post photos; public read, owner writes (JPEG, 1 MB).
+  postImages('post-images');
 
   const MediaBucket(this.id);
 

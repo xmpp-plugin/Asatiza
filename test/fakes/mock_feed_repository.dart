@@ -1,17 +1,19 @@
 import 'dart:async';
 
-import '../../../core/errors/failures.dart';
-import '../../../features/feed/logic/feed_ordering.dart';
-import '../../../features/post/logic/post_rules.dart';
-import '../../mock/mock_posts.dart';
-import '../../mock/mock_profiles.dart';
-import '../../models/comment.dart';
-import '../../models/enums/post_tag.dart';
-import '../../models/post.dart';
-import '../feed_repository.dart';
+import 'package:asatiza/core/errors/failures.dart';
+import 'package:asatiza/features/feed/logic/feed_ordering.dart';
+import 'package:asatiza/features/post/logic/post_rules.dart';
+import 'package:asatiza/data/mock/mock_posts.dart';
+import 'package:asatiza/data/mock/mock_profiles.dart';
+import 'package:asatiza/data/models/comment.dart';
+import 'package:asatiza/data/models/enums/post_tag.dart';
+import 'package:asatiza/data/models/post.dart';
+import 'package:asatiza/data/repositories/feed_repository.dart';
 
 /// In-memory [FeedRepository] seeded with [buildMockPosts] and
 /// [buildMockComments]. State resets when the app restarts.
+// Test-only fake: the app uses the Supabase implementation (moved from
+// `lib/` in PHASE_010).
 class MockFeedRepository implements FeedRepository {
   MockFeedRepository({
     DateTime? now,
@@ -98,8 +100,70 @@ class MockFeedRepository implements FeedRepository {
   }
 
   @override
-  Stream<List<Post>> watchPosts({required String viewerId}) =>
-      _watch(() => _feed(viewerId));
+  Stream<List<Post>> watchPosts({required String viewerId, int limit = 20}) =>
+      _watch(() => _feed(viewerId).take(limit).toList());
+
+  @override
+  Stream<List<Post>> watchPostsBy({
+    required String authorId,
+    required String viewerId,
+  }) => _watch(
+    () =>
+        _posts.values
+            .where((p) => p.authorId == authorId)
+            .map((p) => _view(p, viewerId))
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt)),
+  );
+
+  @override
+  Future<List<Post>> searchPosts({
+    required String query,
+    required String viewerId,
+  }) async {
+    final q = query.trim().toLowerCase();
+    if (q.isEmpty) {
+      return const <Post>[];
+    }
+    return _posts.values
+        .where(
+          (p) =>
+              p.body.toLowerCase().contains(q) ||
+              p.tag.name.toLowerCase().contains(q.replaceAll(' ', '')),
+        )
+        .map((p) => _view(p, viewerId))
+        .toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  @override
+  Future<void> deletePost({
+    required String postId,
+    required String userId,
+  }) async {
+    final post = _posts[postId];
+    if (post == null || post.authorId != userId) {
+      throw const NotFoundFailure();
+    }
+    _posts.remove(postId);
+    _likes.remove(postId);
+    _comments.removeWhere((c) => c.postId == postId);
+    _changes.add(null);
+  }
+
+  @override
+  Future<void> deleteComment({
+    required String commentId,
+    required String userId,
+  }) async {
+    final before = _comments.length;
+    _comments.removeWhere((c) => c.id == commentId && c.authorId == userId);
+    if (_comments.length == before) {
+      throw const NotFoundFailure();
+    }
+    _commentLikes.remove(commentId);
+    _changes.add(null);
+  }
 
   @override
   Stream<Post> watchPost({required String postId, required String viewerId}) {
@@ -164,6 +228,14 @@ class MockFeedRepository implements FeedRepository {
     }
     if (body.trim().isEmpty) {
       throw const ValidationFailure(ValidationReason.commentEmpty);
+    }
+    // 100 comments in any 24 hours, as in add_comment.
+    final since = DateTime.now().subtract(const Duration(hours: 24));
+    if (_comments
+            .where((c) => c.authorId == authorId && c.createdAt.isAfter(since))
+            .length >=
+        100) {
+      throw const ValidationFailure(ValidationReason.dailyCommentLimit);
     }
     _nextComment++;
     final comment = Comment(

@@ -724,6 +724,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportSentMessage => 'Thank you. Our team will review this post.';
 
   @override
+  String get deleteAction => 'Delete';
+
+  @override
+  String get deletePostTitle => 'Delete this post?';
+
+  @override
+  String get deletePostMessage =>
+      'The post, its likes and comments will be deleted. This can’t be undone.';
+
+  @override
+  String get deleteCommentTitle => 'Delete this comment?';
+
+  @override
+  String get deleteCommentMessage => 'This can’t be undone.';
+
+  @override
+  String get reportCommentTitle => 'Report this comment';
+
+  @override
+  String get reportCommentSentMessage =>
+      'Thank you. Our team will review this comment.';
+
+  @override
+  String get postUnderReviewLabel =>
+      'Under review — only you can see this post';
+
+  @override
+  String get dailyCommentLimitError =>
+      'You\'ve reached today\'s limit of 100 comments. You can comment more tomorrow.';
+
+  @override
   String get tabStudents => 'Students';
 
   @override

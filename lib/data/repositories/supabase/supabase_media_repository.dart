@@ -92,6 +92,19 @@ class SupabaseMediaRepository implements MediaRepository {
   });
 
   @override
+  Future<String> uploadPostImage(String userId, Uint8List jpegBytes) =>
+      _guard(() async {
+        _checkOwner(userId);
+        final path = '$userId/post_${_now().microsecondsSinceEpoch}.jpg';
+        await _bucket(MediaBucket.postImages).uploadBinary(
+          path,
+          jpegBytes,
+          fileOptions: const FileOptions(contentType: 'image/jpeg'),
+        );
+        return path;
+      });
+
+  @override
   Future<Uint8List> downloadCertificate(String path) =>
       _guard(() => _bucket(MediaBucket.certificates).download(path));
 

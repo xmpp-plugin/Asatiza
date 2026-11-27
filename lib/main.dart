@@ -23,9 +23,7 @@ import 'data/repositories/discover_repository.dart';
 import 'data/repositories/feed_repository.dart';
 import 'data/repositories/media_repository.dart';
 import 'data/repositories/notification_repository.dart';
-import 'data/repositories/mock/mock_feed_repository.dart';
 import 'data/repositories/mock/mock_notification_repository.dart';
-import 'data/repositories/mock/mock_safety_repository.dart';
 import 'data/repositories/profile_repository.dart';
 import 'data/repositories/safety_repository.dart';
 import 'data/repositories/supabase/supabase_auth_repository.dart';
@@ -33,8 +31,10 @@ import 'data/repositories/supabase/supabase_block_repository.dart';
 import 'data/repositories/supabase/supabase_chat_repository.dart';
 import 'data/repositories/supabase/supabase_connection_repository.dart';
 import 'data/repositories/supabase/supabase_discover_repository.dart';
+import 'data/repositories/supabase/supabase_feed_repository.dart';
 import 'data/repositories/supabase/supabase_media_repository.dart';
 import 'data/repositories/supabase/supabase_profile_repository.dart';
+import 'data/repositories/supabase/supabase_safety_repository.dart';
 
 /// Composition root: the only place concrete repositories are created.
 ///
@@ -42,9 +42,10 @@ import 'data/repositories/supabase/supabase_profile_repository.dart';
 /// - real: accounts ([AuthRepository]), profiles ([ProfileRepository]),
 ///   Storage uploads ([MediaRepository]), the Teachers / Students tabs
 ///   ([DiscoverRepository]), blocks ([BlockRepository]), connections
-///   ([ConnectionRepository]) and chat ([ChatRepository], with Realtime);
-/// - mock until their phases: feed, notifications and post reports
-///   ([SafetyRepository]) (in-memory sample data, reset on restart).
+///   ([ConnectionRepository]), chat ([ChatRepository], with Realtime), the
+///   feed ([FeedRepository]) and reports ([SafetyRepository]);
+/// - mock until its phase: notifications (in-memory sample data, reset on
+///   restart).
 /// When a feature becomes real, replace its mock line below and move the
 /// mock class out of `lib/` into `test/fakes/` (PHASE_007 rule: the app
 /// keeps only the implementation it runs).
@@ -80,6 +81,8 @@ Future<void> main() async {
   final BlockRepository blocks = SupabaseBlockRepository(client);
   final ConnectionRepository connections = SupabaseConnectionRepository(client);
   final ChatRepository chats = SupabaseChatRepository(client);
+  final FeedRepository feed = SupabaseFeedRepository(client);
+  final SafetyRepository safety = SupabaseSafetyRepository(client);
   final DiscoverRepository discover = SupabaseDiscoverRepository(
     client,
     blocks,
@@ -96,9 +99,7 @@ Future<void> main() async {
   const DocumentPickerService documentPicker =
       FilePickerDocumentPickerService();
 
-  // Mock until their phases.
-  final feed = MockFeedRepository();
-  final safety = MockSafetyRepository();
+  // Mock until its phase.
   final notifications = MockNotificationRepository();
 
   runApp(

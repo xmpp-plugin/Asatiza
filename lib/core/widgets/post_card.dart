@@ -156,8 +156,16 @@ class PostCard extends StatelessWidget {
                 ),
             ],
           ),
+          if (post.isUnderReview)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.space2),
+              child: Text(
+                l10n.postUnderReviewLabel,
+                style: AppTextStyles.caption.copyWith(color: colors.danger),
+              ),
+            ),
           content,
-          if (post.imagePath != null)
+          if (post.imageUrl != null || post.imagePath != null)
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.space3),
               child: ClipRRect(
@@ -165,12 +173,25 @@ class PostCard extends StatelessWidget {
                 child: Container(
                   height: 150,
                   color: colors.brand100,
-                  child: SvgPicture.asset(
-                    post.imagePath!,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.bottomCenter,
-                    semanticsLabel: l10n.postPhotoLabel,
-                  ),
+                  child: post.imageUrl != null
+                      ? Image.network(
+                          post.imageUrl!,
+                          fit: BoxFit.cover,
+                          semanticLabel: l10n.postPhotoLabel,
+                          errorBuilder: (_, _, _) => Center(
+                            child: AppIcon(
+                              AppIcon.image,
+                              color: colors.inkMuted,
+                            ),
+                          ),
+                        )
+                      // Sample data in tests.
+                      : SvgPicture.asset(
+                          post.imagePath!,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.bottomCenter,
+                          semanticsLabel: l10n.postPhotoLabel,
+                        ),
                 ),
               ),
             ),

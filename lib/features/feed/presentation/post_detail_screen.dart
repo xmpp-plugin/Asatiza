@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/errors/failures.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/confirm_sheet.dart';
 import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/back_header.dart';
 import '../../../core/widgets/post_card.dart';
@@ -83,6 +85,57 @@ class _PostDetailViewState extends State<_PostDetailView> {
     }
   }
 
+  Future<void> _deletePost() async {
+    final l10n = AppLocalizations.of(context);
+    final cubit = context.read<PostDetailCubit>();
+    final confirmed = await ConfirmSheet.show(
+      context,
+      title: l10n.deletePostTitle,
+      message: l10n.deletePostMessage,
+      confirmLabel: l10n.deleteAction,
+      cancelLabel: l10n.cancelAction,
+      danger: true,
+    );
+    if (confirmed && await cubit.deletePost() && mounted) {
+      _leave();
+    }
+  }
+
+  Future<void> _deleteComment(String commentId) async {
+    final l10n = AppLocalizations.of(context);
+    final cubit = context.read<PostDetailCubit>();
+    final confirmed = await ConfirmSheet.show(
+      context,
+      title: l10n.deleteCommentTitle,
+      message: l10n.deleteCommentMessage,
+      confirmLabel: l10n.deleteAction,
+      cancelLabel: l10n.cancelAction,
+      danger: true,
+    );
+    if (confirmed) {
+      await cubit.deleteComment(commentId);
+    }
+  }
+
+  Future<void> _reportComment(PostDetailState state, String commentId) =>
+      ReportSheet.show(
+        context,
+        post: state.post!,
+        author:
+            state.people[state.comments
+                .firstWhere((c) => c.id == commentId)
+                .authorId]!,
+        reporterId: widget.user.id,
+        commentId: commentId,
+      );
+
+  String _errorText(ValidationReason reason, AppLocalizations l10n) =>
+      switch (reason) {
+        ValidationReason.dailyCommentLimit => l10n.dailyCommentLimitError,
+        ValidationReason.network => l10n.errorNoConnection,
+        _ => l10n.errorSomethingWentWrong,
+      };
+
   Future<void> _send() async {
     final ok = await context.read<PostDetailCubit>().addComment(_comment.text);
     if (ok) {
@@ -103,8 +156,19 @@ class _PostDetailViewState extends State<_PostDetailView> {
     final l10n = AppLocalizations.of(context);
     return BlocConsumer<PostDetailCubit, PostDetailState>(
       listenWhen: (a, b) =>
-          a.status != b.status && b.status == PostDetailStatus.notFound,
-      listener: (context, _) => _leave(),
+          (a.status != b.status && b.status == PostDetailStatus.notFound) ||
+          (b.error != null && a.error != b.error),
+      listener: (context, state) {
+        final error = state.error;
+        if (error != null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(_errorText(error, l10n))));
+          context.read<PostDetailCubit>().errorShown();
+          return;
+        }
+        _leave();
+      },
       builder: (context, state) {
         final cubit = context.read<PostDetailCubit>();
         final post = state.post;
@@ -119,9 +183,9 @@ class _PostDetailViewState extends State<_PostDetailView> {
                   title: l10n.postTitle,
                   onBack: _leave,
                   trailing: <Widget>[
-                    if (post != null && author != null && !isOwn)
+                    if (post != null && author != null)
                       IconButton(
-                        onPressed: () => _report(state),
+                        onPressed: isOwn ? _deletePost : () => _report(state),
                         tooltip: l10n.postOptionsAction,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints.tightFor(
@@ -157,7 +221,9 @@ class _PostDetailViewState extends State<_PostDetailView> {
                               onLike: cubit.toggleLike,
                               onComment: _focus.requestFocus,
                               onReport: isOwn ? null : () => _report(state),
-                              onMore: isOwn ? null : () => _report(state),
+                              onMore: isOwn
+                                  ? _deletePost
+                                  : () => _report(state),
                             ),
                             const SizedBox(height: AppSpacing.gap14),
                             SectionLabel(
@@ -174,6 +240,12 @@ class _PostDetailViewState extends State<_PostDetailView> {
                                       cubit.toggleCommentLike(comment.id),
                                   onReply: () =>
                                       _reply(state.people[comment.authorId]!),
+                                  onDelete: comment.authorId == widget.user.id
+                                      ? () => _deleteComment(comment.id)
+                                      : null,
+                                  onReport: comment.authorId == widget.user.id
+                                      ? null
+                                      : () => _reportComment(state, comment.id),
                                 ),
                               ],
                           ],

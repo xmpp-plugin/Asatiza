@@ -30,7 +30,8 @@ Everything in `docs/product/VERSION_1_PLAN.md` is not yet implemented. Phases ar
 - `docs/product/` is left unchanged.
 
 - ~~2026-11-26 (`PHASE_008`): "Message" showed "Chat is coming soon"~~ — closed by `PHASE_009` (real chat). Still open: the Notifications tab's sample items cannot act on real requests or open real chats (Notifications phase).
-- 2026-11-27 (`PHASE_009`): chat photos use `ImageCompressor.compressAvatar` (~512 px, ~60 KB) — sharper chat photos need a new compressor method (approval). Chats load the latest 200 messages only. Photos the other person sent stay in Storage after an account deletion (only the deleting user's own files are removed).
+- ~~2026-11-27 (`PHASE_009`): chat photos used the avatar compression~~ — closed by `PHASE_010` (`compressPhoto`, ~1280 px).
+- 2026-11-27 (`PHASE_010`): feed paging re-reads the first N posts on each page (offset paging; a post can repeat or be skipped if many arrive while scrolling; pull-to-refresh resets); the feed holds at most 500 posts per session; the 3-reporter auto-hide cannot be checked by the SQL script with only two profiles; reports of deleted users' content stay until the admin clears them; there is no admin app (dashboard only). Chats load the latest 200 messages only. Photos the other person sent stay in Storage after an account deletion (only the deleting user's own files are removed).
 
 ### Plan update 2026-11-26 — code not yet changed
 

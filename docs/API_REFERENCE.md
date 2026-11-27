@@ -2,6 +2,8 @@
 
 ## Verified
 
+VERIFIED 2026-11-27 (`PHASE_010`): `SupabaseFeedRepository`, `SupabaseSafetyRepository`. Contract additions: `FeedRepository.watchPosts(limit)`, `watchPostsBy`, `searchPosts`, `deletePost`, `deleteComment`; `SafetyRepository.reportComment`; `MediaRepository.uploadPostImage`, `MediaBucket.postImages`; `ImageCompressor.compressPhoto` (posts and chat); `Post.imageUrl`, `Post.isUnderReview`; `ValidationReason.dailyCommentLimit`. `SearchCubit` no longer takes `tagLabel` (search runs on the server).
+
 VERIFIED 2026-11-27 (`PHASE_009`, scope addition): `ValidationReason.dailyMessageLimit` / `dailyPhotoLimit` from `ChatRepository.sendMessage`; `ChatCubit.refresh()`; `ChatBubble.ticks` (✓ sent / ✓✓ seen).
 
 VERIFIED 2026-11-27 (`PHASE_009`): `SupabaseChatRepository` implements `ChatRepository` (Realtime-driven streams; channels removed on cancel; latest 200 messages; 1-hour signed photo URLs). Contract: `openConversation` opens an existing conversation read-only after a removal; `sendMessage` may throw `messageTooLong` / `notConnected`. New: `MediaRepository.uploadChatImage`, `MediaBucket.chatImages`, `Message.imageUrl`, `Conversation.canSend`, `ValidationReason.messageTooLong`. `ChatCubit` takes `MediaRepository`, `ImagePickerService`, `ImageCompressor`.

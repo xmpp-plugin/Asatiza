@@ -69,6 +69,14 @@ class MockMediaRepository implements MediaRepository {
   }
 
   @override
+  Future<String> uploadPostImage(String userId, Uint8List jpegBytes) async {
+    _maybeFail();
+    final path = '$userId/post_${_now().microsecondsSinceEpoch}.jpg';
+    _files['${MediaBucket.postImages.id}/$path'] = jpegBytes;
+    return path;
+  }
+
+  @override
   Future<String> uploadCertificate(
     String userId,
     Uint8List pdfBytes,

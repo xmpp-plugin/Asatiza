@@ -2,7 +2,7 @@
 
 Every project-owned file under `lib/` and `test/`. Generated and tool files are not catalogued (`lib/l10n/app_localizations*.dart` come from `flutter gen-l10n`). Assets: `assets/fonts/` (PHASE_001), `assets/icons/` (42 design icons), `assets/illustrations/` (6), `assets/images/` (2 logos) — PHASE_002.
 
-Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows added 2026-11-23 (`PHASE_004`) and 2026-11-24 (`PHASE_005`). Outside `lib/` and `test/`: `supabase/migrations/*.sql`, `supabase/tests/profiles_rls_checks.sql`, `supabase/tests/storage_policies_checks.sql` (`PHASE_005`), `env/supabase.example.json` (`PHASE_004`; template for the git-ignored, bundled `env/supabase.json`). Rows updated 2026-11-26 (`PHASE_006` scope change: percentage removed, profile status). Rows updated 2026-11-26 (`PHASE_007`: blocks, mocks of real features moved to `test/fakes/`). Rows updated 2026-11-26 (`PHASE_008`: connections). Rows updated 2026-11-27 (`PHASE_009`: chat, mocks of chat / connections / profiles moved to `test/fakes/`).
+Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows added 2026-11-23 (`PHASE_004`) and 2026-11-24 (`PHASE_005`). Outside `lib/` and `test/`: `supabase/migrations/*.sql`, `supabase/tests/profiles_rls_checks.sql`, `supabase/tests/storage_policies_checks.sql` (`PHASE_005`), `env/supabase.example.json` (`PHASE_004`; template for the git-ignored, bundled `env/supabase.json`). Rows updated 2026-11-26 (`PHASE_006` scope change: percentage removed, profile status). Rows updated 2026-11-26 (`PHASE_007`: blocks, mocks of real features moved to `test/fakes/`). Rows updated 2026-11-26 (`PHASE_008`: connections). Rows updated 2026-11-27 (`PHASE_009`: chat, mocks of chat / connections / profiles moved to `test/fakes/`). Rows updated 2026-11-27 (`PHASE_010`: feed, reports, mocks of feed / reports moved to `test/fakes/`).
 
 | Path | Purpose | Layer | Public types / functions |
 |---|---|---|---|
@@ -104,9 +104,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/data/repositories/discover_repository.dart` | Contract for the Teachers / Students tabs (visible people; reload by re-subscribing). | Repository interface | `DiscoverRepository` |
 | `lib/data/repositories/feed_repository.dart` | — | Repository interface | `FeedRepository` |
 | `lib/data/repositories/media_repository.dart` | Storage uploads, download of the own certificate, removals. | Repository interface | `MediaRepository` |
-| `lib/data/repositories/mock/mock_feed_repository.dart` | In-memory [FeedRepository] seeded with [buildMockPosts] and [buildMockComments]. State resets when the app restarts. | Mock data | `MockFeedRepository` |
 | `lib/data/repositories/mock/mock_notification_repository.dart` | In-memory [NotificationRepository] (resets on restart). | Mock data | `MockNotificationRepository` |
-| `lib/data/repositories/mock/mock_safety_repository.dart` | In-memory [SafetyRepository] (post reports only, until the Feed phase). | Mock data | `MockSafetyRepository` |
 | `lib/data/repositories/notification_repository.dart` | — | Repository interface | `NotificationRepository` |
 | `lib/data/repositories/profile_repository.dart` | — | Repository interface | `ProfileRepository` |
 | `lib/data/repositories/block_repository.dart` | Blocks contract (PHASE_007): block, unblock, blocked ids / users. | Repository interface | `BlockedUser`, `BlockRepository` |
@@ -118,7 +116,9 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `lib/data/repositories/supabase/supabase_connection_repository.dart` | `ConnectionRepository` on `public.connections`: RLS reads, writes through 3 database functions, `connection_count`; maps rule messages to `Failure`s. | Repository (Supabase) | `SupabaseConnectionRepository` |
 | `lib/data/repositories/supabase/supabase_discover_repository.dart` | `DiscoverRepository` on active `profiles` (+ details); drops people the viewer blocked and reloads when blocks change; student photos removed. | Repository (Supabase) | `SupabaseDiscoverRepository` |
 | `lib/data/repositories/supabase/supabase_failure_mapper.dart` | Maps Supabase Auth / PostgREST / Storage / network errors to `Failure`s. Pure. | Repository (Supabase) | `SupabaseFailureMapper` |
+| `lib/data/repositories/supabase/supabase_feed_repository.dart` | `FeedRepository` on posts / likes / comments: RLS reads, feed / profile / search functions, writes through functions, public photo URLs. | Repository (Supabase) | `SupabaseFeedRepository` |
 | `lib/data/repositories/supabase/supabase_media_repository.dart` | `MediaRepository` on Supabase Storage (owner folders; authenticated certificate download). | Repository (Supabase) | `SupabaseMediaRepository` |
+| `lib/data/repositories/supabase/supabase_safety_repository.dart` | `SafetyRepository` (reports of posts and comments) through `report_content`. | Repository (Supabase) | `SupabaseSafetyRepository` |
 | `lib/data/repositories/supabase/supabase_profile_repository.dart` | `ProfileRepository` on `profiles`, `teacher_details`, `student_details` (RLS). | Repository (Supabase) | `SupabaseProfileRepository` |
 | `lib/features/auth/bloc/login_cubit.dart` | Email + password log-in (no code at log-in, plan section 4). | Feature auth · bloc | `LoginCubit` |
 | `lib/features/auth/bloc/login_state.dart` | — | Feature auth · bloc | `LoginStatus`, `LoginState` |
@@ -250,6 +250,7 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `test/data/supabase/supabase_chat_repository_test.dart` | Tests | Test | `main` |
 | `test/data/supabase/supabase_connection_repository_test.dart` | Tests | Test | `main` |
 | `test/data/supabase/supabase_discover_repository_test.dart` | Tests | Test | `main` |
+| `test/data/supabase/supabase_feed_repository_test.dart` | Tests | Test | `main` |
 | `test/data/supabase/supabase_failure_mapper_test.dart` | Tests | Test | `main` |
 | `test/features/chat_notifications_test.dart` | Tests | Test | `settle`, `main` |
 | `test/features/cubits_test.dart` | Lets stream listeners and async cubit work run. | Test | `settle`, `main` |
@@ -264,6 +265,8 @@ Last audit: 2026-11-19 (`PHASE_002_UI_ADD_FULL_APP_DESIGN_MOCK_DATA`); rows adde
 | `test/fakes/mock_profile_repository.dart` | In-memory [ProfileRepository] seeded with [buildMockProfiles]. State resets when the app restarts. Test-only (moved from `lib/` in PHASE_009). | Test fake | `MockProfileRepository` |
 | `test/fakes/mock_auth_repository.dart` | In-memory [AuthRepository]. Any valid email + 8-character password signs in; any 6 digits are a valid code. Known emails (the two mock… Test-only (moved from `lib/` in PHASE_007). | Test fake | `MockAuthRepository` |
 | `test/fakes/mock_discover_repository.dart` | In-memory [DiscoverRepository] over the mock profiles and blocks. Test-only (moved from `lib/` in PHASE_007). | Test fake | `MockDiscoverRepository` |
+| `test/fakes/mock_feed_repository.dart` | In-memory [FeedRepository] seeded with [buildMockPosts] and [buildMockComments]. State resets when the app restarts. Test-only (moved from `lib/` in PHASE_010). | Test fake | `MockFeedRepository` |
+| `test/fakes/mock_safety_repository.dart` | In-memory [SafetyRepository] (post reports only, until the Feed phase). Test-only (moved from `lib/` in PHASE_010). | Test fake | `MockSafetyRepository` |
 | `test/fakes/mock_media_repository.dart` | In-memory [MediaRepository] for tests (`failNext`, `deleted`). Test-only (moved from `lib/` in PHASE_007). | Test fake | `MockMediaRepository` |
 | `test/helpers/test_app.dart` | The app wired with fresh mock repositories, as in `main.dart`. | Test | `TestApp`, `enterField`, `enterCode`, `tapText`, `loadDesignFonts` |
 

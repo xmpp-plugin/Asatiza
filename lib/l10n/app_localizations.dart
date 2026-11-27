@@ -1396,6 +1396,60 @@ abstract class AppLocalizations {
   /// **'Thank you. Our team will review this post.'**
   String get reportSentMessage;
 
+  /// No description provided for @deleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteAction;
+
+  /// No description provided for @deletePostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this post?'**
+  String get deletePostTitle;
+
+  /// No description provided for @deletePostMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The post, its likes and comments will be deleted. This can’t be undone.'**
+  String get deletePostMessage;
+
+  /// No description provided for @deleteCommentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this comment?'**
+  String get deleteCommentTitle;
+
+  /// No description provided for @deleteCommentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This can’t be undone.'**
+  String get deleteCommentMessage;
+
+  /// No description provided for @reportCommentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this comment'**
+  String get reportCommentTitle;
+
+  /// No description provided for @reportCommentSentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you. Our team will review this comment.'**
+  String get reportCommentSentMessage;
+
+  /// No description provided for @postUnderReviewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review — only you can see this post'**
+  String get postUnderReviewLabel;
+
+  /// No description provided for @dailyCommentLimitError.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached today\'s limit of 100 comments. You can comment more tomorrow.'**
+  String get dailyCommentLimitError;
+
   /// No description provided for @tabStudents.
   ///
   /// In en, this message translates to:

@@ -32,13 +32,9 @@ class PublicProfileCubit extends Cubit<PublicProfileState> {
         .watchConnections(viewerId)
         .listen(_onMine, onError: (Object _) {});
     _postsSub = _feed
-        .watchPosts(viewerId: viewerId)
+        .watchPostsBy(authorId: profileId, viewerId: viewerId)
         .listen(
-          (posts) => _emit(
-            state.copyWith(
-              postCount: posts.where((p) => p.authorId == profileId).length,
-            ),
-          ),
+          (posts) => _emit(state.copyWith(postCount: posts.length)),
           onError: (Object _) {},
         );
   }

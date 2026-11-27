@@ -17,7 +17,6 @@ import '../../../core/widgets/section_label.dart';
 import '../../../data/models/enums/fee_unit.dart';
 import '../../../data/models/enums/gender.dart';
 import '../../../data/models/enums/learner_age_group.dart';
-import '../../../data/models/enums/post_tag.dart';
 import '../../../data/models/enums/subject.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/discover_repository.dart';
@@ -49,7 +48,6 @@ class SearchResultsScreen extends StatelessWidget {
         viewerId: viewer.id,
         showTeachers: !viewer.isTeacher,
         subjectLabel: (s) => s.label(l10n),
-        tagLabel: (t) => t.label(l10n),
       ),
       child: _SearchView(viewer: viewer),
     );

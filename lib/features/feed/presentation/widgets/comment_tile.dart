@@ -19,6 +19,8 @@ class CommentTile extends StatelessWidget {
     required this.author,
     required this.onLike,
     required this.onReply,
+    this.onDelete,
+    this.onReport,
     super.key,
   });
 
@@ -26,6 +28,12 @@ class CommentTile extends StatelessWidget {
   final Profile author;
   final VoidCallback onLike;
   final VoidCallback onReply;
+
+  /// Shown on the viewer's own comment (PHASE_010).
+  final VoidCallback? onDelete;
+
+  /// Shown on other people's comments (PHASE_010).
+  final VoidCallback? onReport;
 
   static const RelativeTimeFormatter _time = RelativeTimeFormatter();
 
@@ -127,6 +135,21 @@ class CommentTile extends StatelessWidget {
                         child: Text(l10n.replyAction, style: metaStrong),
                       ),
                     ),
+                    for (final (label, action) in <(String, VoidCallback?)>[
+                      (l10n.deleteAction, onDelete),
+                      (l10n.reportAction, onReport),
+                    ])
+                      if (action != null) ...<Widget>[
+                        const SizedBox(width: AppSpacing.space4),
+                        Semantics(
+                          button: true,
+                          child: GestureDetector(
+                            onTap: action,
+                            behavior: HitTestBehavior.opaque,
+                            child: Text(label, style: metaStrong),
+                          ),
+                        ),
+                      ],
                   ],
                 ),
               ),

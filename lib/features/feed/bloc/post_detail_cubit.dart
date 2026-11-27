@@ -10,7 +10,8 @@ import '../../../data/repositories/feed_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
 import 'post_detail_state.dart';
 
-/// One post with its comments; like, comment and comment-like actions.
+/// One post with its comments; like, comment, comment-like and delete
+/// (own post / comment) actions.
 class PostDetailCubit extends Cubit<PostDetailState> {
   PostDetailCubit(
     this._feed,
@@ -92,16 +93,46 @@ class PostDetailCubit extends Cubit<PostDetailState> {
     if (body.trim().isEmpty || state.sending) {
       return false;
     }
-    emit(state.copyWith(sending: true));
+    emit(state.copyWith(sending: true, error: () => null));
     try {
       await _feed.addComment(postId: postId, authorId: viewerId, body: body);
       return true;
-    } on Failure {
+    } on Failure catch (f) {
+      _emitError(f.displayReason);
       return false;
     } finally {
       if (!isClosed) {
         emit(state.copyWith(sending: false));
       }
+    }
+  }
+
+  void _emitError(ValidationReason reason) {
+    if (!isClosed) {
+      emit(state.copyWith(error: () => reason));
+    }
+  }
+
+  /// Clears the error after it was shown.
+  void errorShown() => emit(state.copyWith(error: () => null));
+
+  /// Deletes the viewer's own post; true when it was deleted.
+  Future<bool> deletePost() async {
+    try {
+      await _feed.deletePost(postId: postId, userId: viewerId);
+      return true;
+    } on Failure catch (f) {
+      _emitError(f.displayReason);
+      return false;
+    }
+  }
+
+  /// Deletes the viewer's own comment.
+  Future<void> deleteComment(String commentId) async {
+    try {
+      await _feed.deleteComment(commentId: commentId, userId: viewerId);
+    } on Failure catch (f) {
+      _emitError(f.displayReason);
     }
   }
 

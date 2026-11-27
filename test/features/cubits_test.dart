@@ -12,10 +12,10 @@ import 'package:asatiza/data/models/enums/weekday.dart';
 import 'package:asatiza/data/models/profile.dart';
 import '../fakes/mock_auth_repository.dart';
 import 'package:asatiza/core/services/image_source_kind.dart';
-import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
+import '../fakes/mock_feed_repository.dart';
 import '../fakes/mock_media_repository.dart';
 import '../fakes/mock_profile_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
+import '../fakes/mock_safety_repository.dart';
 import 'package:asatiza/features/auth/bloc/login_cubit.dart';
 import 'package:asatiza/features/auth/bloc/login_state.dart';
 import 'package:asatiza/features/auth/bloc/otp_cubit.dart';
@@ -378,19 +378,25 @@ void main() {
   });
 
   test(
-    'CreatePostCubit: needs text and a tag; posts with the sample photo',
+    'CreatePostCubit: needs text and a tag; posts with an uploaded photo',
     () async {
-      final cubit = CreatePostCubit(feed, authorId: MockIds.ayesha)
-        ..bodyChanged('Which mushaf do you recommend for Hifz?');
+      final media = MockMediaRepository();
+      final cubit = CreatePostCubit(
+        feed,
+        authorId: MockIds.ayesha,
+        media: media,
+        picker: FakeImagePicker(),
+        compressor: const FakeImageCompressor(),
+      )..bodyChanged('Which mushaf do you recommend for Hifz?');
       expect(cubit.state.canPost, isFalse);
-      cubit
-        ..tagSelected(PostTag.question)
-        ..photoAdded();
+      cubit.tagSelected(PostTag.question);
+      await cubit.photoPicked(ImageSourceKind.gallery);
+      expect(cubit.state.photoPath, startsWith('${MockIds.ayesha}/post_'));
       await cubit.submit();
       expect(cubit.state.status, CreatePostStatus.posted);
       final posts = await feed.watchPosts(viewerId: MockIds.ayesha).first;
       final mine = posts.firstWhere((p) => p.body.startsWith('Which mushaf'));
-      expect(mine.imagePath, CreatePostCubit.sampleAttachment);
+      expect(mine.imagePath, cubit.state.photoPath);
       await cubit.close();
     },
   );

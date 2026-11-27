@@ -34,14 +34,9 @@ class MyProfileCubit extends Cubit<MyProfileState> {
           ),
         );
     _postsSub = feed
-        .watchPosts(viewerId: viewerId)
+        .watchPostsBy(authorId: viewerId, viewerId: viewerId)
         .listen(
-          (posts) => _emit(
-            state.copyWith(
-              posts: posts.where((p) => p.authorId == viewerId).toList()
-                ..sort((a, b) => b.createdAt.compareTo(a.createdAt)),
-            ),
-          ),
+          (posts) => _emit(state.copyWith(posts: posts)),
           onError: (Object _) {},
         );
     _connectionsSub = connections

@@ -2,6 +2,8 @@
 
 ## Verified Architecture (updated 2026-11-19, `PHASE_001`)
 
+VERIFIED 2026-11-27 (`PHASE_010`): the feed and reports are real (`SupabaseFeedRepository`, `SupabaseSafetyRepository`). `MockFeedRepository` and `MockSafetyRepository` moved to `test/fakes/`; only `MockNotificationRepository` remains in `lib/data/repositories/mock/`. `FeedOrdering` (connections first) is mirrored by `list_feed` and used by the test fake. Home pages 20 posts at a time (`FeedCubit.loadMore` / `refresh`).
+
 VERIFIED 2026-11-27 (`PHASE_009`): chat is real (`SupabaseChatRepository`, the app's first Supabase Realtime use; each stream owns its channel and removes it on cancel). `MockChatRepository`, `MockConnectionRepository` and `MockProfileRepository` moved to `test/fakes/` (PHASE_007 rule); `lib/data/repositories/mock/` now holds only the feed, notifications and reports mocks. Chat photos use the existing avatar compression (see `KNOWN_ISSUES`).
 
 VERIFIED 2026-11-26 (`PHASE_008`): connections are real (`SupabaseConnectionRepository`). `MockConnectionRepository` is no longer registered as `ConnectionRepository`; it stays in `lib/` only as `sampleConnections` behind the still-mock chat (moves to `test/fakes/` in the Chat phase). "Message" on real connections shows "Chat is coming soon" until then.

@@ -71,6 +71,9 @@ enum ValidationReason {
   /// 30 chat photos sent in the last 24 hours (PHASE_009).
   dailyPhotoLimit,
 
+  /// 100 comments in the last 24 hours (PHASE_010).
+  dailyCommentLimit,
+
   /// No connection (from [NetworkFailure]).
   network,
 

@@ -19,7 +19,10 @@ import '../bloc/report_state.dart';
 
 /// 22 Report sheet: five reasons, "Also block" + author, Cancel / Report.
 class ReportSheet extends StatelessWidget {
-  const ReportSheet({required this.author, super.key});
+  const ReportSheet({required this.author, this.isComment = false, super.key});
+
+  /// Reporting a comment rather than the post (title and message).
+  final bool isComment;
 
   final Profile author;
 
@@ -30,6 +33,7 @@ class ReportSheet extends StatelessWidget {
     required Post post,
     required Profile author,
     required String reporterId,
+    String? commentId,
   }) async {
     final safety = context.read<SafetyRepository>();
     final blocks = context.read<BlockRepository>();
@@ -44,12 +48,21 @@ class ReportSheet extends StatelessWidget {
           postId: post.id,
           authorId: author.id,
           reporterId: reporterId,
+          commentId: commentId,
         ),
-        child: ReportSheet(author: author),
+        child: ReportSheet(author: author, isComment: commentId != null),
       ),
     );
     if (sent ?? false) {
-      messenger.showSnackBar(SnackBar(content: Text(l10n.reportSentMessage)));
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            commentId == null
+                ? l10n.reportSentMessage
+                : l10n.reportCommentSentMessage,
+          ),
+        ),
+      );
     }
     return sent ?? false;
   }
@@ -71,7 +84,7 @@ class ReportSheet extends StatelessWidget {
           Semantics(
             header: true,
             child: Text(
-              l10n.reportTitle,
+              isComment ? l10n.reportCommentTitle : l10n.reportTitle,
               style: AppTextStyles.titleLg.copyWith(color: colors.ink),
             ),
           ),

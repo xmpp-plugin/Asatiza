@@ -14,6 +14,7 @@ class ReportCubit extends Cubit<ReportState> {
     required this.postId,
     required this.authorId,
     required this.reporterId,
+    this.commentId,
   }) : super(const ReportState());
 
   final SafetyRepository _safety;
@@ -21,6 +22,9 @@ class ReportCubit extends Cubit<ReportState> {
   final String postId;
   final String authorId;
   final String reporterId;
+
+  /// Set when a comment (not the post) is reported (PHASE_010).
+  final String? commentId;
 
   void reasonSelected(ReportReason reason) =>
       emit(state.copyWith(reason: reason));
@@ -33,11 +37,20 @@ class ReportCubit extends Cubit<ReportState> {
     }
     emit(state.copyWith(status: ReportStatus.sending));
     try {
-      await _safety.reportPost(
-        postId: postId,
-        reporterId: reporterId,
-        reason: reason,
-      );
+      final comment = commentId;
+      if (comment == null) {
+        await _safety.reportPost(
+          postId: postId,
+          reporterId: reporterId,
+          reason: reason,
+        );
+      } else {
+        await _safety.reportComment(
+          commentId: comment,
+          reporterId: reporterId,
+          reason: reason,
+        );
+      }
       if (state.alsoBlock) {
         await _blocks.blockUser(blockerId: reporterId, blockedId: authorId);
       }

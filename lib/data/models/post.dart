@@ -12,6 +12,8 @@ class Post extends Equatable {
     required this.createdAt,
     this.arabicVerse,
     this.imagePath,
+    this.imageUrl,
+    this.isUnderReview = false,
     this.likeCount = 0,
     this.commentCount = 0,
     this.likedByMe = false,
@@ -26,8 +28,14 @@ class Post extends Equatable {
   /// Optional Quranic verse shown centred in Amiri, right-to-left.
   final String? arabicVerse;
 
-  /// Storage path (mock: a bundled illustration asset).
+  /// `post-images` Storage path (test fakes: a bundled illustration asset).
   final String? imagePath;
+
+  /// Public URL of [imagePath], filled by the repository; never written.
+  final String? imageUrl;
+
+  /// Hidden by 3 reports; only its author still sees it (PHASE_010).
+  final bool isUnderReview;
   final int likeCount;
   final int commentCount;
 
@@ -43,6 +51,8 @@ class Post extends Equatable {
       createdAt: createdAt,
       arabicVerse: arabicVerse,
       imagePath: imagePath,
+      imageUrl: imageUrl,
+      isUnderReview: isUnderReview,
       likeCount: likeCount ?? this.likeCount,
       commentCount: commentCount ?? this.commentCount,
       likedByMe: likedByMe ?? this.likedByMe,
@@ -58,6 +68,8 @@ class Post extends Equatable {
     createdAt,
     arabicVerse,
     imagePath,
+    imageUrl,
+    isUnderReview,
     likeCount,
     commentCount,
     likedByMe,

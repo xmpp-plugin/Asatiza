@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/router/app_routes.dart';
+import '../../../core/services/image_compressor.dart';
+import '../../../core/services/image_picker_service.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -15,10 +16,12 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_chip.dart';
 import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/back_header.dart';
+import '../../../core/widgets/photo_source_sheet.dart';
 import '../../../core/widgets/section_label.dart';
 import '../../../data/models/enums/post_tag.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/feed_repository.dart';
+import '../../../data/repositories/media_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../bloc/create_post_cubit.dart';
 import '../bloc/create_post_state.dart';
@@ -33,8 +36,13 @@ class CreatePostScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.read<SessionCubit>().state.user!;
     return BlocProvider<CreatePostCubit>(
-      create: (context) =>
-          CreatePostCubit(context.read<FeedRepository>(), authorId: user.id),
+      create: (context) => CreatePostCubit(
+        context.read<FeedRepository>(),
+        authorId: user.id,
+        media: context.read<MediaRepository>(),
+        picker: context.read<ImagePickerService>(),
+        compressor: context.read<ImageCompressor>(),
+      ),
       child: _CreatePostView(user: user),
     );
   }
@@ -158,12 +166,16 @@ class _CreatePostView extends StatelessWidget {
                                           ),
                                           child: ColoredBox(
                                             color: colors.gold100,
-                                            child: SvgPicture.asset(
-                                              CreatePostCubit.sampleAttachment,
-                                              fit: BoxFit.cover,
-                                              semanticsLabel:
-                                                  l10n.postPhotoLabel,
-                                            ),
+                                            child: state.photoPreview == null
+                                                ? const SizedBox.shrink()
+                                                : Image.memory(
+                                                    state.photoPreview!,
+                                                    fit: BoxFit.cover,
+                                                    semanticLabel:
+                                                        l10n.postPhotoLabel,
+                                                    errorBuilder: (_, _, _) =>
+                                                        const SizedBox.shrink(),
+                                                  ),
                                           ),
                                         ),
                                       ),
@@ -276,7 +288,16 @@ class _CreatePostView extends StatelessWidget {
                     child: Row(
                       children: <Widget>[
                         TextButton.icon(
-                          onPressed: state.hasPhoto ? null : cubit.photoAdded,
+                          onPressed: state.hasPhoto || state.uploadingPhoto
+                              ? null
+                              : () async {
+                                  final source = await PhotoSourceSheet.show(
+                                    context,
+                                  );
+                                  if (source != null) {
+                                    await cubit.photoPicked(source);
+                                  }
+                                },
                           style: TextButton.styleFrom(
                             minimumSize: const Size(0, 44),
                             foregroundColor: colors.brand700,

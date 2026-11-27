@@ -264,7 +264,10 @@ void main() {
     await tester.pump();
     expect(find.text('39 / 1,500'), findsOneWidget);
     await tapText(tester, 'Question');
+    // Photo opens the Camera / Gallery sheet; the fake picker returns bytes.
     await tapText(tester, 'Photo');
+    await tapText(tester, 'Choose from gallery');
+    expect(find.byType(Image), findsWidgets);
     await tester.tap(find.widgetWithText(InkWell, 'Post'));
     await tester.pumpAndSettle();
 

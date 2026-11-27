@@ -23,11 +23,11 @@ import '../fakes/mock_auth_repository.dart';
 import '../fakes/mock_chat_repository.dart';
 import '../fakes/mock_connection_repository.dart';
 import '../fakes/mock_discover_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
+import '../fakes/mock_feed_repository.dart';
 import '../fakes/mock_media_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_notification_repository.dart';
 import '../fakes/mock_profile_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
+import '../fakes/mock_safety_repository.dart';
 import 'package:asatiza/data/repositories/profile_repository.dart';
 import 'package:asatiza/data/repositories/safety_repository.dart';
 import 'package:flutter/material.dart';
@@ -221,6 +221,10 @@ class FakeImageCompressor implements ImageCompressor {
   @override
   Future<Uint8List> compressAvatar(Uint8List bytes) async =>
       Uint8List.fromList(<int>[0xFF, 0xD8, ...bytes]);
+
+  @override
+  Future<Uint8List> compressPhoto(Uint8List bytes) async =>
+      Uint8List.fromList(<int>[0xFF, 0xD8, 0x01, ...bytes]);
 }
 
 /// [DocumentPickerService] returning [next] (null = the user cancelled).

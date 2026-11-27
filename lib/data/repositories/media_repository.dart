@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import '../models/enums/media_bucket.dart';
 
 /// Uploads and removals in Supabase Storage (PHASE_005: avatars and
-/// certificates; PHASE_009: chat photos; the Feed phase adds post images).
+/// certificates; PHASE_009: chat photos; PHASE_010: post photos).
 ///
 /// Paths are relative to the bucket (`<user-id>/<file>`), are built by the
 /// implementation from [userId] (never from user input) and are what
@@ -33,6 +33,11 @@ abstract interface class MediaRepository {
     String conversationId,
     Uint8List jpegBytes,
   );
+
+  /// Uploads a compressed JPEG post photo of [userId] (the signed-in user)
+  /// and returns its path (`<user-id>/post_<n>.jpg`). Throws as
+  /// [uploadAvatar].
+  Future<String> uploadPostImage(String userId, Uint8List jpegBytes);
 
   /// Downloads the signed-in user's own certificate at [path].
   /// Throws `NotFoundFailure` (missing or not allowed), `NetworkFailure`,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import '../../../core/session/session_cubit.dart';
 import '../../../core/session/session_state.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/widgets/confirm_sheet.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/post_card.dart';
 import '../../../core/widgets/post_card_skeleton.dart';
@@ -59,6 +62,22 @@ class _HomeView extends StatelessWidget {
     author: author,
     reporterId: user.id,
   );
+
+  Future<void> _deleteOwn(BuildContext context, Post post) async {
+    final l10n = AppLocalizations.of(context);
+    final cubit = context.read<FeedCubit>();
+    final confirmed = await ConfirmSheet.show(
+      context,
+      title: l10n.deletePostTitle,
+      message: l10n.deletePostMessage,
+      confirmLabel: l10n.deleteAction,
+      cancelLabel: l10n.cancelAction,
+      danger: true,
+    );
+    if (confirmed) {
+      await cubit.deletePost(post.id);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +134,7 @@ class _HomeView extends StatelessWidget {
                                     user,
                                   ),
                             onMore: post.authorId == user.id
-                                ? null
+                                ? () => _deleteOwn(context, post)
                                 : () => _report(
                                     context,
                                     post,
@@ -124,17 +143,38 @@ class _HomeView extends StatelessWidget {
                                   ),
                           ),
                     ];
-                    return ListView.separated(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                        AppSpacing.space4,
-                        AppSpacing.space1,
-                        AppSpacing.space4,
-                        AppSpacing.space4,
+                    if (state.canLoadMore && posts.isNotEmpty) {
+                      children.add(
+                        const Padding(
+                          padding: EdgeInsets.all(AppSpacing.space4),
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                      );
+                    }
+                    return RefreshIndicator(
+                      onRefresh: cubit.refresh,
+                      child: NotificationListener<ScrollNotification>(
+                        // Next page when the end is near (PHASE_010).
+                        onNotification: (n) {
+                          if (n.metrics.extentAfter < 600) {
+                            unawaited(cubit.loadMore());
+                          }
+                          return false;
+                        },
+                        child: ListView.separated(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                            AppSpacing.space4,
+                            AppSpacing.space1,
+                            AppSpacing.space4,
+                            AppSpacing.space4,
+                          ),
+                          itemCount: children.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: AppSpacing.space3),
+                          itemBuilder: (_, i) => children[i],
+                        ),
                       ),
-                      itemCount: children.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(height: AppSpacing.space3),
-                      itemBuilder: (_, i) => children[i],
                     );
                   },
                 ),

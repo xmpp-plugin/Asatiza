@@ -129,7 +129,7 @@ class ChatCubit extends Cubit<ChatState> {
         return false;
       }
       _emit(state.copyWith(uploadingPhoto: true));
-      final jpeg = await _compressor.compressAvatar(picked);
+      final jpeg = await _compressor.compressPhoto(picked);
       path = await _media.uploadChatImage(viewerId, id, jpeg);
     } on Failure catch (f) {
       _emit(
