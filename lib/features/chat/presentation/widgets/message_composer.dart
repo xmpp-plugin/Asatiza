@@ -63,6 +63,15 @@ class MessageComposer extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppRadius.pill),
                   ),
                   child: TextField(
+                    // PHASE_009: messages are at most 2,000 characters.
+                    maxLength: 2000,
+                    buildCounter:
+                        (
+                          _, {
+                          required currentLength,
+                          required isFocused,
+                          maxLength,
+                        }) => null,
                     controller: controller,
                     enabled: enabled,
                     textInputAction: TextInputAction.send,

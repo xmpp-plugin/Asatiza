@@ -1088,9 +1088,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notAcceptingRequestsLabel => 'Not accepting requests yet';
 
   @override
-  String get chatComingSoon => 'Chat is coming soon.';
-
-  @override
   String get connectionsTitle => 'My connections';
 
   @override
@@ -1174,6 +1171,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'You can chat once your connection request is accepted.';
 
   @override
+  String get chatReadOnlyMessage =>
+      'You\'re no longer connected. You can still read your messages.';
+
+  @override
+  String get messageTooLongError => 'Messages can be up to 2,000 characters.';
+
+  @override
+  String get dailyMessageLimitError =>
+      'You\'ve reached today\'s limit of 300 messages. You can send more tomorrow.';
+
+  @override
+  String get dailyPhotoLimitError =>
+      'You\'ve reached today\'s limit of 30 photos. You can still send text, and more photos tomorrow.';
+
+  @override
   String get connectedToday => 'Connected today';
 
   @override
@@ -1222,6 +1234,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get messageReadLabel => 'Read';
+
+  @override
+  String get messageSentLabel => 'Sent';
 
   @override
   String get notifWantsToConnect => 'wants to connect with you';

@@ -1,15 +1,20 @@
 import '../models/conversation.dart';
 import '../models/message.dart';
 
-/// Provisional contract for one-to-one chat (plan section 4: only between
-/// accepted connections). Throws only `Failure` types.
+/// One-to-one chat (plan section 4: only between accepted connections). The
+/// Supabase implementation enforces membership, connections and blocks in
+/// the database and streams changes live (PHASE_009). Throws only `Failure`
+/// types.
 abstract interface class ChatRepository {
   /// [userId]'s conversations, newest message first, with last message and
   /// unread count for [userId]. Emits again on every change.
   Stream<List<Conversation>> watchConversations(String userId);
 
   /// The conversation between [userId] and [otherId], created on first use.
-  /// Throws `ValidationFailure(notConnected)` unless they are connected.
+  /// An existing conversation opens even when they are no longer connected
+  /// (`Conversation.canSend` false: read-only). Throws
+  /// `ValidationFailure(notConnected)` when it would have to be created and
+  /// they are not connected; `NotFoundFailure` across a block.
   Future<Conversation> openConversation({
     required String userId,
     required String otherId,
@@ -22,8 +27,11 @@ abstract interface class ChatRepository {
     required String viewerId,
   });
 
-  /// Sends text and / or an image. Throws `ValidationFailure(messageEmpty)`
-  /// when both are empty.
+  /// Sends text and / or an image ([imagePath] from
+  /// `MediaRepository.uploadChatImage`). Throws `ValidationFailure` with
+  /// `messageEmpty` (both empty), `messageTooLong` (over 2,000 characters),
+  /// `notConnected` (connection removed), `dailyMessageLimit` (300 messages
+  /// in 24 hours) or `dailyPhotoLimit` (30 photos in 24 hours).
   Future<Message> sendMessage({
     required String conversationId,
     required String senderId,

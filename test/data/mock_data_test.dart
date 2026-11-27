@@ -6,7 +6,7 @@ import 'package:asatiza/data/models/enums/report_reason.dart';
 import 'package:asatiza/data/models/enums/user_role.dart';
 import '../fakes/mock_auth_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
+import '../fakes/mock_profile_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../fakes/fake_block_repository.dart';

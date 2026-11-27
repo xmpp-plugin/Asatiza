@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/router/app_routes.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -247,11 +248,6 @@ class _PublicProfileView extends StatelessWidget {
     ];
   }
 
-  void _chatComingSoon(BuildContext context) =>
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).chatComingSoon)),
-      );
-
   Widget _actions(
     BuildContext context,
     PublicProfileState state,
@@ -314,8 +310,9 @@ class _PublicProfileView extends StatelessWidget {
             Expanded(
               child: AppButton(
                 label: l10n.messageAction,
-                // Chat becomes real in the Chat phase (PHASE_008 decision 5).
-                onPressed: connected ? () => _chatComingSoon(context) : null,
+                onPressed: connected
+                    ? () => context.push(AppRoutes.chat(p.id))
+                    : null,
                 leading: AppIcon(
                   AppIcon.chat,
                   size: 18,

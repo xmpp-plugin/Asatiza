@@ -43,11 +43,25 @@ class ChatImageBubble extends StatelessWidget {
               child: Container(
                 height: 130,
                 color: colors.gold100,
-                child: SvgPicture.asset(
-                  message.imagePath!,
-                  fit: BoxFit.cover,
-                  semanticsLabel: l10n.chatPhotoLabel,
-                ),
+                child: message.imageUrl != null
+                    ? Image.network(
+                        message.imageUrl!,
+                        fit: BoxFit.cover,
+                        semanticLabel: l10n.chatPhotoLabel,
+                        errorBuilder: (_, _, _) => Center(
+                          child: AppIcon(AppIcon.image, color: colors.inkMuted),
+                        ),
+                      )
+                    : (message.imagePath ?? '').startsWith('assets/')
+                    // Sample data in tests.
+                    ? SvgPicture.asset(
+                        message.imagePath!,
+                        fit: BoxFit.cover,
+                        semanticsLabel: l10n.chatPhotoLabel,
+                      )
+                    : Center(
+                        child: AppIcon(AppIcon.image, color: colors.inkMuted),
+                      ),
               ),
             ),
             Padding(
@@ -79,16 +93,7 @@ class ChatImageBubble extends StatelessWidget {
                       ),
                       if (mine) ...<Widget>[
                         const SizedBox(width: AppSpacing.space1),
-                        Opacity(
-                          opacity: message.isRead ? 1 : 0.6,
-                          child: AppIcon(
-                            AppIcon.readTicks,
-                            size: 18,
-                            height: 12,
-                            strokeWidth: 2,
-                            color: metaColor,
-                          ),
-                        ),
+                        ChatBubble.ticks(message, metaColor),
                       ],
                     ],
                   ),

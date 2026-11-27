@@ -250,10 +250,7 @@ class _ConnectionsView extends StatelessWidget {
               children: <Widget>[
                 AppButton(
                   label: l10n.messageAction,
-                  // Chat becomes real in the Chat phase (PHASE_008).
-                  onPressed: () => ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(l10n.chatComingSoon))),
+                  onPressed: () => context.push(AppRoutes.chat(p.id)),
                   size: AppButtonSize.small,
                   variant: AppButtonVariant.secondary,
                   expand: false,

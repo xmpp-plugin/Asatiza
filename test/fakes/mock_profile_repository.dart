@@ -1,14 +1,16 @@
 import 'dart:async';
 
-import '../../../core/errors/failures.dart';
-import '../../../core/logic/profile_completeness_rules.dart';
-import '../../mock/mock_profiles.dart';
-import '../../models/profile.dart';
-import '../profile_repository.dart';
+import 'package:asatiza/core/errors/failures.dart';
+import 'package:asatiza/core/logic/profile_completeness_rules.dart';
+import 'package:asatiza/data/mock/mock_profiles.dart';
+import 'package:asatiza/data/models/profile.dart';
+import 'package:asatiza/data/repositories/profile_repository.dart';
 
 /// In-memory [ProfileRepository] seeded with [buildMockProfiles]. State
 /// resets when the app restarts. Like the database, it sets
 /// [Profile.isActive] on every write ([ProfileCompletenessRules]).
+// Test-only fake: the app uses the Supabase implementation (moved from
+// `lib/` in PHASE_009).
 class MockProfileRepository implements ProfileRepository {
   MockProfileRepository({DateTime? now})
     : _profiles = <String, Profile>{

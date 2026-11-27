@@ -1,14 +1,16 @@
 import 'dart:async';
 
-import '../../../core/errors/failures.dart';
-import '../../mock/mock_chats.dart';
-import '../../models/conversation.dart';
-import '../../models/message.dart';
-import '../chat_repository.dart';
+import 'package:asatiza/core/errors/failures.dart';
+import 'package:asatiza/data/mock/mock_chats.dart';
+import 'package:asatiza/data/models/conversation.dart';
+import 'package:asatiza/data/models/message.dart';
+import 'package:asatiza/data/repositories/chat_repository.dart';
 import 'mock_connection_repository.dart';
 
 /// In-memory [ChatRepository] (resets on restart). Chat is allowed only
 /// between accepted connections of [MockConnectionRepository].
+// Test-only fake: the app uses the Supabase implementation (moved from
+// `lib/` in PHASE_009).
 class MockChatRepository implements ChatRepository {
   MockChatRepository(this._connections, {DateTime? now}) : _now = now {
     final seed = buildMockChats(now ?? DateTime.now());
@@ -48,6 +50,9 @@ class MockChatRepository implements ChatRepository {
       startedAt: c.startedAt,
       lastMessage: own.isEmpty ? null : own.last,
       unreadCount: own.where((m) => m.senderId != viewerId && !m.isRead).length,
+      canSend: _connections
+          .acceptedIdsOf(viewerId)
+          .contains(c.otherId(viewerId)),
     );
   }
 
@@ -102,13 +107,15 @@ class MockChatRepository implements ChatRepository {
     required String userId,
     required String otherId,
   }) async {
-    if (!_connections.acceptedIdsOf(userId).contains(otherId)) {
-      throw const ValidationFailure(ValidationReason.notConnected);
-    }
+    // An existing conversation opens read-only after the connection was
+    // removed (ChatRepository contract, PHASE_009).
     for (final c in _conversations.values) {
       if (c.memberIds.contains(userId) && c.memberIds.contains(otherId)) {
         return _view(c, userId);
       }
+    }
+    if (!_connections.acceptedIdsOf(userId).contains(otherId)) {
+      throw const ValidationFailure(ValidationReason.notConnected);
     }
     final created = Conversation(
       id: 'chat-${_nextConversation++}',
@@ -152,6 +159,21 @@ class MockChatRepository implements ChatRepository {
     final text = body?.trim();
     if ((text == null || text.isEmpty) && imagePath == null) {
       throw const ValidationFailure(ValidationReason.messageEmpty);
+    }
+    if (text != null && text.length > 2000) {
+      throw const ValidationFailure(ValidationReason.messageTooLong);
+    }
+    // Daily limits (any 24 hours), as in send_message.
+    final since = _clock.subtract(const Duration(hours: 24));
+    final recent = _messages
+        .where((m) => m.senderId == senderId && m.sentAt.isAfter(since))
+        .toList();
+    if (recent.length >= 300) {
+      throw const ValidationFailure(ValidationReason.dailyMessageLimit);
+    }
+    if (imagePath != null &&
+        recent.where((m) => m.imagePath != null).length >= 30) {
+      throw const ValidationFailure(ValidationReason.dailyPhotoLimit);
     }
     final message = Message(
       id: 'message-${_nextMessage++}',

@@ -1,10 +1,10 @@
 import 'package:asatiza/core/errors/failures.dart';
 import 'package:asatiza/core/session/shell_badges_cubit.dart';
 import 'package:asatiza/data/mock/mock_profiles.dart';
-import 'package:asatiza/data/repositories/mock/mock_chat_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
+import '../fakes/mock_chat_repository.dart';
+import '../fakes/mock_connection_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_notification_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
+import '../fakes/mock_profile_repository.dart';
 import 'package:asatiza/features/chat/bloc/chat_cubit.dart';
 import 'package:asatiza/features/chat/presentation/chat_screen.dart';
 import 'package:asatiza/features/chat/presentation/widgets/conversation_tile.dart';
@@ -17,6 +17,11 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import '../helpers/test_app.dart';
 import '../fakes/fake_block_repository.dart';
+import 'package:asatiza/core/services/image_source_kind.dart';
+import '../fakes/mock_media_repository.dart';
+import 'package:asatiza/core/widgets/app_icon.dart';
+import 'package:asatiza/data/models/message.dart';
+import 'package:asatiza/features/chat/presentation/widgets/chat_bubble.dart';
 
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));
 
@@ -111,13 +116,85 @@ void main() {
       await cubit.close();
     });
 
-    test('chat cubit marks read and sends', () async {
-      final cubit = ChatCubit(
-        chats,
-        profiles,
-        viewerId: MockIds.ayesha,
-        otherId: MockIds.ahmed,
+    ChatCubit chatCubit({
+      String otherId = '',
+      MockMediaRepository? media,
+      FakeImagePicker? picker,
+    }) => ChatCubit(
+      chats,
+      profiles,
+      media: media ?? MockMediaRepository(),
+      picker: picker ?? FakeImagePicker(),
+      compressor: const FakeImageCompressor(),
+      viewerId: MockIds.ayesha,
+      otherId: otherId.isEmpty ? MockIds.ahmed : otherId,
+    );
+
+    test('chat cubit sends a photo; refuses over 2,000 characters', () async {
+      final media = MockMediaRepository();
+      final cubit = chatCubit(media: media);
+      await settle();
+      expect(await cubit.send(text: 'a' * 2001), isFalse);
+      expect(cubit.state.error, ValidationReason.messageTooLong);
+      cubit.errorShown();
+      expect(await cubit.sendPhoto(ImageSourceKind.gallery), isTrue);
+      await settle();
+      final last = cubit.state.messages.last;
+      expect(
+        last.imagePath,
+        startsWith('${MockIds.ayesha}/${cubit.state.conversation!.id}_'),
       );
+      await cubit.close();
+    });
+
+    test('chat cubit: 30 photos a day, then a clear limit message', () async {
+      final cubit = chatCubit();
+      await settle();
+      for (var i = 0; i < 30; i++) {
+        expect(await cubit.sendPhoto(ImageSourceKind.gallery), isTrue);
+      }
+      expect(await cubit.sendPhoto(ImageSourceKind.gallery), isFalse);
+      expect(cubit.state.error, ValidationReason.dailyPhotoLimit);
+      cubit.errorShown();
+      // Text still works after the photo limit.
+      expect(await cubit.send(text: 'Text is still fine'), isTrue);
+      await cubit.close();
+    });
+
+    test('ticks: one tick when sent, two when seen', () {
+      final sent = Message(
+        id: 'm',
+        conversationId: 'c',
+        senderId: MockIds.ayesha,
+        sentAt: DateTime(2026, 11, 27),
+      );
+      final unread = ChatBubble.ticks(sent, Colors.white) as Opacity;
+      expect((unread.child! as AppIcon).name, AppIcon.check);
+      final seen = ChatBubble.ticks(
+        sent.markRead(DateTime(2026, 11, 27, 1)),
+        Colors.white,
+      );
+      expect((seen as AppIcon).name, AppIcon.readTicks);
+    });
+
+    test('chat cubit: removed connection opens read-only', () async {
+      final cubit = chatCubit();
+      await settle();
+      expect(cubit.state.canSend, isTrue);
+      final c = (await connections.watchConnections(MockIds.ayesha).first)
+          .firstWhere((c) => c.involves(MockIds.ahmed));
+      await connections.remove(connectionId: c.id, userId: MockIds.ayesha);
+      await cubit.close();
+      final readOnly = chatCubit();
+      await settle();
+      expect(readOnly.state.canSend, isFalse);
+      expect(readOnly.state.messages, isNotEmpty);
+      expect(await readOnly.send(text: 'Hello?'), isFalse);
+      await readOnly.close();
+    });
+
+    test('chat cubit marks read and sends', () async {
+      final cubit = chatCubit();
       await settle();
       expect(cubit.state.other?.id, MockIds.ahmed);
       expect(cubit.state.messages.where((m) => !m.isRead), isEmpty);

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:asatiza/core/logic/discover_visibility_rules.dart';
 import 'package:asatiza/data/models/profile.dart';
 import 'package:asatiza/data/repositories/discover_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
+import 'mock_profile_repository.dart';
 
 import 'fake_block_repository.dart';
 

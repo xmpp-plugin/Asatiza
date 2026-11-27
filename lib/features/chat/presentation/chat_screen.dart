@@ -3,15 +3,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/errors/failures.dart';
 import '../../../core/router/app_routes.dart';
+import '../../../core/services/image_compressor.dart';
+import '../../../core/services/image_picker_service.dart';
 import '../../../core/session/session_cubit.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/photo_source_sheet.dart';
+import '../../../core/widgets/skeleton_box.dart';
 import '../../../data/models/message.dart';
 import '../../../data/models/profile.dart';
 import '../../../data/repositories/chat_repository.dart';
+import '../../../data/repositories/media_repository.dart';
 import '../../../data/repositories/profile_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../bloc/chat_cubit.dart';
@@ -38,6 +46,9 @@ class ChatScreen extends StatelessWidget {
       create: (context) => ChatCubit(
         context.read<ChatRepository>(),
         context.read<ProfileRepository>(),
+        media: context.read<MediaRepository>(),
+        picker: context.read<ImagePickerService>(),
+        compressor: context.read<ImageCompressor>(),
         viewerId: viewer.id,
         otherId: otherId,
       ),
@@ -58,8 +69,21 @@ class _ChatView extends StatefulWidget {
 class _ChatViewState extends State<_ChatView> {
   final TextEditingController _text = TextEditingController();
 
+  /// Reloads when the app comes back, in case a live "seen" update or
+  /// message was missed while it was in the background.
+  late final AppLifecycleListener _lifecycle = AppLifecycleListener(
+    onResume: () => context.read<ChatCubit>().refresh(),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle;
+  }
+
   @override
   void dispose() {
+    _lifecycle.dispose();
     _text.dispose();
     super.dispose();
   }
@@ -74,6 +98,18 @@ class _ChatViewState extends State<_ChatView> {
       _text.clear();
     }
   }
+
+  static String _errorText(ValidationReason reason, AppLocalizations l10n) =>
+      switch (reason) {
+        ValidationReason.messageTooLong => l10n.messageTooLongError,
+        ValidationReason.dailyMessageLimit => l10n.dailyMessageLimitError,
+        ValidationReason.dailyPhotoLimit => l10n.dailyPhotoLimitError,
+        ValidationReason.notConnected => l10n.chatReadOnlyMessage,
+        ValidationReason.network => l10n.errorNoConnection,
+        ValidationReason.fileTooLarge ||
+        ValidationReason.fileTypeNotAllowed => l10n.uploadErrorFailed,
+        _ => l10n.errorSomethingWentWrong,
+      };
 
   static DateTime _day(DateTime t) => DateTime(t.year, t.month, t.day);
 
@@ -110,7 +146,7 @@ class _ChatViewState extends State<_ChatView> {
       previousDay = day;
       final mine = m.senderId == widget.viewerId;
       items.add(
-        m.imagePath != null
+        m.imagePath != null || m.imageUrl != null
             ? ChatImageBubble(message: m, mine: mine)
             : ChatBubble(message: m, mine: mine),
       );
@@ -122,7 +158,14 @@ class _ChatViewState extends State<_ChatView> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final colors = Theme.of(context).extension<AppColors>()!;
-    return BlocBuilder<ChatCubit, ChatState>(
+    return BlocConsumer<ChatCubit, ChatState>(
+      listenWhen: (a, b) => b.error != null && a.error != b.error,
+      listener: (context, state) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_errorText(state.error!, l10n))));
+        context.read<ChatCubit>().errorShown();
+      },
       builder: (context, state) {
         final cubit = context.read<ChatCubit>();
         final other = state.other;
@@ -156,6 +199,8 @@ class _ChatViewState extends State<_ChatView> {
                           ),
                         ),
                       )
+                    : state.status == ChatStatus.loading
+                    ? const _ChatSkeleton()
                     : ListView.separated(
                         reverse: true,
                         padding: const EdgeInsetsDirectional.symmetric(
@@ -168,16 +213,95 @@ class _ChatViewState extends State<_ChatView> {
                         itemBuilder: (_, i) => items[i],
                       ),
               ),
-              MessageComposer(
-                controller: _text,
-                enabled: ready && !state.sending,
-                onSend: _send,
-                onPhoto: () => cubit.send(imagePath: ChatCubit.samplePhoto),
-              ),
+              if (ready && !state.canSend)
+                _ReadOnlyNote(text: l10n.chatReadOnlyMessage)
+              else
+                MessageComposer(
+                  controller: _text,
+                  enabled: ready && !state.sending && !state.uploadingPhoto,
+                  onSend: _send,
+                  onPhoto: () async {
+                    final source = await PhotoSourceSheet.show(context);
+                    if (source != null) {
+                      await cubit.sendPhoto(source);
+                    }
+                  },
+                ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+/// Shown instead of the composer when the two are no longer connected.
+class _ReadOnlyNote extends StatelessWidget {
+  const _ReadOnlyNote({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+    return SafeArea(
+      top: false,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.space4),
+        decoration: BoxDecoration(
+          color: colors.surface000,
+          border: Border(top: BorderSide(color: colors.line)),
+        ),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: AppTextStyles.helper.copyWith(color: colors.inkMuted),
+        ),
+      ),
+    );
+  }
+}
+
+/// Placeholder bubbles while a chat loads (no blank screen).
+class _ChatSkeleton extends StatelessWidget {
+  const _ChatSkeleton();
+
+  static const List<(bool, double)> _bubbles = <(bool, double)>[
+    (false, 0.55),
+    (true, 0.45),
+    (false, 0.7),
+    (true, 0.35),
+    (false, 0.5),
+    (true, 0.6),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: AppLocalizations.of(context).loadingLabel,
+      child: ListView.separated(
+        reverse: true,
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: AppSpacing.gap14,
+          vertical: AppSpacing.space3,
+        ),
+        itemCount: _bubbles.length,
+        separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.space3),
+        itemBuilder: (_, i) {
+          final (mine, width) = _bubbles[i];
+          return Align(
+            alignment: mine
+                ? AlignmentDirectional.centerEnd
+                : AlignmentDirectional.centerStart,
+            child: FractionallySizedBox(
+              widthFactor: width,
+              child: const SkeletonBox(height: 40, radius: AppRadius.lg),
+            ),
+          );
+        },
+      ),
     );
   }
 }

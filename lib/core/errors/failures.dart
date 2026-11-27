@@ -62,6 +62,15 @@ enum ValidationReason {
   /// The receiver's profile is not active yet (PHASE_008).
   receiverNotActive,
 
+  /// A chat message is over 2,000 characters (PHASE_009).
+  messageTooLong,
+
+  /// 300 chat messages sent in the last 24 hours (PHASE_009).
+  dailyMessageLimit,
+
+  /// 30 chat photos sent in the last 24 hours (PHASE_009).
+  dailyPhotoLimit,
+
   /// No connection (from [NetworkFailure]).
   network,
 

@@ -6,7 +6,7 @@ import 'package:asatiza/data/models/profile.dart';
 import 'package:asatiza/data/models/student_details.dart';
 import 'package:asatiza/data/models/teacher_details.dart';
 import 'package:asatiza/data/repositories/auth_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
+import 'mock_profile_repository.dart';
 
 /// In-memory [AuthRepository]. Any valid email + 8-character password signs
 /// in; any 6 digits are a valid code. Known emails (the two mock accounts

@@ -1,18 +1,20 @@
 import 'dart:async';
 
-import '../../../core/errors/failures.dart';
-import '../../../core/logic/discover_visibility_rules.dart';
-import '../../../features/connections/logic/connect_note_rules.dart';
-import '../../mock/mock_connections.dart';
-import '../../models/connection.dart';
-import '../../models/enums/connection_status.dart';
-import '../connection_repository.dart';
+import 'package:asatiza/core/errors/failures.dart';
+import 'package:asatiza/core/logic/discover_visibility_rules.dart';
+import 'package:asatiza/features/connections/logic/connect_note_rules.dart';
+import 'package:asatiza/data/mock/mock_connections.dart';
+import 'package:asatiza/data/models/connection.dart';
+import 'package:asatiza/data/models/enums/connection_status.dart';
+import 'package:asatiza/data/repositories/connection_repository.dart';
 import 'mock_profile_repository.dart';
 
 /// In-memory [ConnectionRepository] (resets on restart). Since PHASE_008 the
 /// app uses `SupabaseConnectionRepository`; this class stays in `lib/` only
 /// as the sample connections behind the still-mock chat (`main.dart`) and
 /// moves to `test/fakes/` with the Chat phase.
+// Test-only fake: the app uses the Supabase implementation (moved from
+// `lib/` in PHASE_009).
 class MockConnectionRepository implements ConnectionRepository {
   MockConnectionRepository(this._profiles, {DateTime? now}) : _now = now {
     for (final c in buildMockConnections(now ?? DateTime.now())) {

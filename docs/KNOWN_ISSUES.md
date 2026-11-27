@@ -29,7 +29,8 @@ Everything in `docs/product/VERSION_1_PLAN.md` is not yet implemented. Phases ar
 - 2026-11-18: SOLID rules adopted (`docs/CLASS_AND_COMPONENT_RULES.md`). Repositories differ from plan section 11: profile access is split into `ProfileRepository`, `DiscoverRepository` and `MediaRepository`, plus `SafetyRepository`; business rules live in pure-Dart `logic/` classes; platform plugins sit behind `lib/core/services/` interfaces.
 - `docs/product/` is left unchanged.
 
-- 2026-11-26 (`PHASE_008`, temporary): "Message" on a real connection shows "Chat is coming soon" (chat still mock); the Notifications tab's sample request items cannot act on real requests (Notifications phase).
+- ~~2026-11-26 (`PHASE_008`): "Message" showed "Chat is coming soon"~~ — closed by `PHASE_009` (real chat). Still open: the Notifications tab's sample items cannot act on real requests or open real chats (Notifications phase).
+- 2026-11-27 (`PHASE_009`): chat photos use `ImageCompressor.compressAvatar` (~512 px, ~60 KB) — sharper chat photos need a new compressor method (approval). Chats load the latest 200 messages only. Photos the other person sent stay in Storage after an account deletion (only the deleting user's own files are removed).
 
 ### Plan update 2026-11-26 — code not yet changed
 

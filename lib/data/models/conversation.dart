@@ -11,6 +11,7 @@ class Conversation extends Equatable {
     required this.startedAt,
     this.lastMessage,
     this.unreadCount = 0,
+    this.canSend = true,
   });
 
   final String id;
@@ -23,6 +24,10 @@ class Conversation extends Equatable {
   final Message? lastMessage;
   final int unreadCount;
 
+  /// The two are still connected and not blocked (server-computed). False
+  /// after the connection was removed: the history stays, read-only.
+  final bool canSend;
+
   /// The other member, seen from [userId].
   String otherId(String userId) =>
       memberIds.firstWhere((id) => id != userId, orElse: () => userId);
@@ -34,5 +39,6 @@ class Conversation extends Equatable {
     startedAt,
     lastMessage,
     unreadCount,
+    canSend,
   ];
 }

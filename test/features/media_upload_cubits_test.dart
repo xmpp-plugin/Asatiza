@@ -5,7 +5,7 @@ import 'package:asatiza/data/models/enums/media_bucket.dart';
 import 'package:asatiza/data/models/picked_document.dart';
 import 'package:asatiza/data/models/teacher_details.dart';
 import '../fakes/mock_media_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
+import '../fakes/mock_profile_repository.dart';
 import 'package:asatiza/features/profile/bloc/certificate_viewer_cubit.dart';
 import 'package:asatiza/features/profile/bloc/certificate_viewer_state.dart';
 import 'package:asatiza/features/profile/bloc/edit_profile_cubit.dart';

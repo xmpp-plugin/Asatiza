@@ -11,9 +11,9 @@ import 'package:asatiza/data/models/enums/learner_age_group.dart';
 import 'package:asatiza/data/models/enums/subject.dart';
 import 'package:asatiza/data/models/profile.dart';
 import 'package:asatiza/data/repositories/discover_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
+import '../fakes/mock_connection_repository.dart';
 import '../fakes/mock_discover_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
+import '../fakes/mock_profile_repository.dart';
 import 'package:asatiza/features/connections/bloc/connect_request_cubit.dart';
 import 'package:asatiza/features/connections/bloc/connections_cubit.dart';
 import 'package:asatiza/features/connections/logic/connect_note_rules.dart';
@@ -36,6 +36,7 @@ import '../helpers/test_app.dart';
 import '../fakes/fake_block_repository.dart';
 import 'package:asatiza/data/repositories/connection_repository.dart';
 import 'package:asatiza/data/models/connection.dart';
+import 'package:asatiza/features/chat/presentation/chat_screen.dart';
 
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));
 
@@ -456,9 +457,7 @@ void main() {
       await app.stop(tester);
     });
 
-    testWidgets('Message on a connection says chat is coming soon', (
-      tester,
-    ) async {
+    testWidgets('Message on a connection opens the chat', (tester) async {
       final app = TestApp();
       await app.startSignedIn(tester);
       await tester.tap(find.bySemanticsLabel('Teachers'));
@@ -467,7 +466,7 @@ void main() {
       await tester.enterText(find.byType(TextField), 'Qari Ahmed');
       await tester.pumpAndSettle();
       await tapText(tester, 'Message');
-      expect(find.text('Chat is coming soon.'), findsOneWidget);
+      expect(find.byType(ChatScreen), findsOneWidget);
       await app.stop(tester);
     });
 

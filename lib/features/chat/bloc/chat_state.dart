@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../core/errors/failures.dart';
+
 import '../../../data/models/conversation.dart';
 import '../../../data/models/message.dart';
 import '../../../data/models/profile.dart';
@@ -14,6 +16,8 @@ class ChatState extends Equatable {
     this.conversation,
     this.messages = const <Message>[],
     this.sending = false,
+    this.uploadingPhoto = false,
+    this.error,
   });
 
   final ChatStatus status;
@@ -26,12 +30,23 @@ class ChatState extends Equatable {
   final List<Message> messages;
   final bool sending;
 
+  /// A photo is being compressed and uploaded.
+  final bool uploadingPhoto;
+
+  /// Why the last send failed (shown once as a snackbar); null otherwise.
+  final ValidationReason? error;
+
+  /// False after the connection was removed: history only (PHASE_009).
+  bool get canSend => conversation?.canSend ?? false;
+
   ChatState copyWith({
     ChatStatus? status,
     Profile? other,
     Conversation? conversation,
     List<Message>? messages,
     bool? sending,
+    bool? uploadingPhoto,
+    ValidationReason? Function()? error,
   }) {
     return ChatState(
       status: status ?? this.status,
@@ -39,6 +54,8 @@ class ChatState extends Equatable {
       conversation: conversation ?? this.conversation,
       messages: messages ?? this.messages,
       sending: sending ?? this.sending,
+      uploadingPhoto: uploadingPhoto ?? this.uploadingPhoto,
+      error: error != null ? error() : this.error,
     );
   }
 
@@ -49,5 +66,7 @@ class ChatState extends Equatable {
     conversation,
     messages,
     sending,
+    uploadingPhoto,
+    error,
   ];
 }

@@ -2,6 +2,8 @@
 
 ## Verified Architecture (updated 2026-11-19, `PHASE_001`)
 
+VERIFIED 2026-11-27 (`PHASE_009`): chat is real (`SupabaseChatRepository`, the app's first Supabase Realtime use; each stream owns its channel and removes it on cancel). `MockChatRepository`, `MockConnectionRepository` and `MockProfileRepository` moved to `test/fakes/` (PHASE_007 rule); `lib/data/repositories/mock/` now holds only the feed, notifications and reports mocks. Chat photos use the existing avatar compression (see `KNOWN_ISSUES`).
+
 VERIFIED 2026-11-26 (`PHASE_008`): connections are real (`SupabaseConnectionRepository`). `MockConnectionRepository` is no longer registered as `ConnectionRepository`; it stays in `lib/` only as `sampleConnections` behind the still-mock chat (moves to `test/fakes/` in the Chat phase). "Message" on real connections shows "Chat is coming soon" until then.
 
 VERIFIED 2026-11-26 (`PHASE_007`): blocks are real (`BlockRepository` → `SupabaseBlockRepository`); post reports stay on `MockSafetyRepository`. DECIDED rule (developer, PHASE_007): `lib/` keeps only the implementation the app runs — when a feature becomes real, its mock repository moves from `lib/data/repositories/mock/` to `test/fakes/` as a test-only fake. Moved so far: `MockAuthRepository`, `MockDiscoverRepository`, `MockMediaRepository`, block code (`FakeBlockRepository`). `MockProfileRepository` stays in `lib/` while it is the sample-people source for the remaining mocks.

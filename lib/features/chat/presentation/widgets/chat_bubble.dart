@@ -43,6 +43,25 @@ class ChatBubble extends StatelessWidget {
     messenger.showSnackBar(SnackBar(content: Text(l10n.linkCopiedMessage)));
   }
 
+  /// ✓ sent (not seen yet), ✓✓ seen by the other person (PHASE_009).
+  static Widget ticks(Message message, Color color) => message.isRead
+      ? AppIcon(
+          AppIcon.readTicks,
+          size: 12,
+          height: 12,
+          strokeWidth: 2,
+          color: color,
+        )
+      : Opacity(
+          opacity: 0.8,
+          child: AppIcon(
+            AppIcon.check,
+            size: 12,
+            height: 12,
+            strokeWidth: 2,
+            color: color,
+          ),
+        );
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
@@ -135,7 +154,9 @@ class _MessageMeta extends StatelessWidget {
     final colors = Theme.of(context).extension<AppColors>()!;
     final color = mine ? colors.brand100 : colors.inkMuted;
     return Semantics(
-      label: mine && message.isRead ? l10n.messageReadLabel : null,
+      label: mine
+          ? (message.isRead ? l10n.messageReadLabel : l10n.messageSentLabel)
+          : null,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -148,16 +169,7 @@ class _MessageMeta extends StatelessWidget {
           ),
           if (mine) ...<Widget>[
             const SizedBox(width: AppSpacing.space1),
-            Opacity(
-              opacity: message.isRead ? 1 : 0.6,
-              child: AppIcon(
-                AppIcon.readTicks,
-                size: 18,
-                height: 12,
-                strokeWidth: 2,
-                color: color,
-              ),
-            ),
+            ChatBubble.ticks(message, color),
           ],
         ],
       ),

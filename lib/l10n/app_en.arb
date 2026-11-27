@@ -607,7 +607,6 @@
   "connectReceiverNotActiveTeacher": "This teacher is still completing their profile. You can connect once it's complete.",
   "connectReceiverNotActiveStudent": "This student is still completing their profile. You can connect once it's complete.",
   "notAcceptingRequestsLabel": "Not accepting requests yet",
-  "chatComingSoon": "Chat is coming soon.",
   "connectionsTitle": "My connections",
   "connectedTab": "Connected {count}",
   "@connectedTab": {
@@ -666,6 +665,10 @@
   "chatPhotoLabel": "Photo",
   "chatUnavailableTitle": "Chat not available",
   "chatUnavailableMessage": "You can chat once your connection request is accepted.",
+  "chatReadOnlyMessage": "You're no longer connected. You can still read your messages.",
+  "messageTooLongError": "Messages can be up to 2,000 characters.",
+  "dailyMessageLimitError": "You've reached today's limit of 300 messages. You can send more tomorrow.",
+  "dailyPhotoLimitError": "You've reached today's limit of 30 photos. You can still send text, and more photos tomorrow.",
   "connectedToday": "Connected today",
   "connectedDaysAgo": "{days, plural, =1{Connected yesterday} other{Connected {days} days ago}}",
   "@connectedDaysAgo": {
@@ -686,6 +689,7 @@
   "markAllReadAction": "Mark all read",
   "messageFieldHint": "Message",
   "messageReadLabel": "Read",
+  "messageSentLabel": "Sent",
   "notifWantsToConnect": "wants to connect with you",
   "notifAccepted": "accepted your request. Say salam!",
   "notifCommented": "commented: “{text}”",

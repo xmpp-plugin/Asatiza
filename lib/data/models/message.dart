@@ -10,6 +10,7 @@ class Message extends Equatable {
     required this.sentAt,
     this.body,
     this.imagePath,
+    this.imageUrl,
     this.readAt,
   });
 
@@ -19,8 +20,13 @@ class Message extends Equatable {
   final DateTime sentAt;
   final String? body;
 
-  /// Image attachment (asset path in the mock phase).
+  /// Image attachment: a `chat-images` Storage path (PHASE_009), or an asset
+  /// path in test fakes.
   final String? imagePath;
+
+  /// Short-lived signed URL of [imagePath], filled by the repository when
+  /// reading; never written to the database. Null for test fakes.
+  final String? imageUrl;
 
   /// When the other person read it; null while unread.
   final DateTime? readAt;
@@ -34,6 +40,7 @@ class Message extends Equatable {
     sentAt: sentAt,
     body: body,
     imagePath: imagePath,
+    imageUrl: imageUrl,
     readAt: readAt ?? at,
   );
 
@@ -45,6 +52,7 @@ class Message extends Equatable {
     sentAt,
     body,
     imagePath,
+    imageUrl,
     readAt,
   ];
 }

@@ -11,7 +11,9 @@ import 'supabase_failure_mapper.dart';
 /// [MediaRepository] on Supabase Storage (migration
 /// `20261124120000_storage_avatars_certificates.sql`): every user writes only
 /// inside their own `<user-id>/` folder; `avatars` is public read,
-/// `certificates` is readable by its owner only (no public or signed URL).
+/// `certificates` is readable by its owner only (no public or signed URL),
+/// `chat-images` is readable by the two conversation members
+/// (`20261129120000_chat.sql`).
 class SupabaseMediaRepository implements MediaRepository {
   SupabaseMediaRepository(
     this._client, {
@@ -68,6 +70,23 @@ class SupabaseMediaRepository implements MediaRepository {
       path,
       pdfBytes,
       fileOptions: const FileOptions(contentType: 'application/pdf'),
+    );
+    return path;
+  });
+
+  @override
+  Future<String> uploadChatImage(
+    String userId,
+    String conversationId,
+    Uint8List jpegBytes,
+  ) => _guard(() async {
+    _checkOwner(userId);
+    final path =
+        '$userId/${conversationId}_${_now().microsecondsSinceEpoch}.jpg';
+    await _bucket(MediaBucket.chatImages).uploadBinary(
+      path,
+      jpegBytes,
+      fileOptions: const FileOptions(contentType: 'image/jpeg'),
     );
     return path;
   });

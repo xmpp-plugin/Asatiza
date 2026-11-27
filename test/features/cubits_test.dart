@@ -14,7 +14,7 @@ import '../fakes/mock_auth_repository.dart';
 import 'package:asatiza/core/services/image_source_kind.dart';
 import 'package:asatiza/data/repositories/mock/mock_feed_repository.dart';
 import '../fakes/mock_media_repository.dart';
-import 'package:asatiza/data/repositories/mock/mock_profile_repository.dart';
+import '../fakes/mock_profile_repository.dart';
 import 'package:asatiza/data/repositories/mock/mock_safety_repository.dart';
 import 'package:asatiza/features/auth/bloc/login_cubit.dart';
 import 'package:asatiza/features/auth/bloc/login_state.dart';
@@ -39,7 +39,7 @@ import '../helpers/test_app.dart';
 import '../fakes/fake_block_repository.dart';
 import 'package:asatiza/features/discover/bloc/public_profile_cubit.dart';
 import 'package:asatiza/features/settings/bloc/blocked_users_cubit.dart';
-import 'package:asatiza/data/repositories/mock/mock_connection_repository.dart';
+import '../fakes/mock_connection_repository.dart';
 
 /// Lets stream listeners and async cubit work run.
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));

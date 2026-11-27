@@ -1918,12 +1918,6 @@ abstract class AppLocalizations {
   /// **'Not accepting requests yet'**
   String get notAcceptingRequestsLabel;
 
-  /// No description provided for @chatComingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat is coming soon.'**
-  String get chatComingSoon;
-
   /// No description provided for @connectionsTitle.
   ///
   /// In en, this message translates to:
@@ -2062,6 +2056,30 @@ abstract class AppLocalizations {
   /// **'You can chat once your connection request is accepted.'**
   String get chatUnavailableMessage;
 
+  /// No description provided for @chatReadOnlyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re no longer connected. You can still read your messages.'**
+  String get chatReadOnlyMessage;
+
+  /// No description provided for @messageTooLongError.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages can be up to 2,000 characters.'**
+  String get messageTooLongError;
+
+  /// No description provided for @dailyMessageLimitError.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached today\'s limit of 300 messages. You can send more tomorrow.'**
+  String get dailyMessageLimitError;
+
+  /// No description provided for @dailyPhotoLimitError.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached today\'s limit of 30 photos. You can still send text, and more photos tomorrow.'**
+  String get dailyPhotoLimitError;
+
   /// No description provided for @connectedToday.
   ///
   /// In en, this message translates to:
@@ -2139,6 +2157,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read'**
   String get messageReadLabel;
+
+  /// No description provided for @messageSentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get messageSentLabel;
 
   /// No description provided for @notifWantsToConnect.
   ///
